@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 
-const Header = ({ searchTerm, onSearchChange }) => {
+const Header = ({ searchTerm = '', onSearchChange = () => {} }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   
   return (

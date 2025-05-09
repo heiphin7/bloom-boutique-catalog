@@ -1,6 +1,5 @@
-
 import { useEffect, useState } from "react";
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, useNavigate } from "react-router-dom";
 import { Heart, ShoppingCart, Star, StarHalf, StarOff } from "lucide-react";
 import { toast } from "@/components/ui/use-toast";
 import Header from "../components/Header";
@@ -10,10 +9,20 @@ import { Button } from "@/components/ui/button";
 
 const ProductDetail = () => {
   const { id } = useParams();
+  const navigate = useNavigate();
   const [flower, setFlower] = useState(null);
   const [quantity, setQuantity] = useState(1);
   const [isLoading, setIsLoading] = useState(true);
   const [relatedFlowers, setRelatedFlowers] = useState([]);
+  const [searchTerm, setSearchTerm] = useState('');
+  
+  // Handle search
+  const handleSearchChange = (e) => {
+    setSearchTerm(e.target.value);
+    if (e.key === 'Enter' && e.target.value.trim()) {
+      navigate('/?search=' + e.target.value.trim());
+    }
+  };
   
   useEffect(() => {
     // Simulate loading delay
@@ -64,7 +73,7 @@ const ProductDetail = () => {
   if (isLoading) {
     return (
       <div className="min-h-screen flex flex-col">
-        <Header />
+        <Header searchTerm={searchTerm} onSearchChange={handleSearchChange} />
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full flex-grow py-12">
           <div className="animate-pulse">
             <div className="h-8 bg-gray-200 rounded w-3/4 mb-6"></div>
@@ -88,7 +97,7 @@ const ProductDetail = () => {
   if (!flower) {
     return (
       <div className="min-h-screen flex flex-col">
-        <Header />
+        <Header searchTerm={searchTerm} onSearchChange={handleSearchChange} />
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full flex-grow py-12 text-center">
           <h1 className="text-3xl font-bold text-gray-800 mb-4">Product Not Found</h1>
           <p className="text-gray-600 mb-8">We couldn't find the flower you're looking for.</p>
@@ -129,7 +138,7 @@ const ProductDetail = () => {
 
   return (
     <div className="min-h-screen flex flex-col">
-      <Header />
+      <Header searchTerm={searchTerm} onSearchChange={handleSearchChange} />
       
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full flex-grow pb-12 pt-6 animate-fade-in">
         {/* Breadcrumbs */}
