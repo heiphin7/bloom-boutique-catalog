@@ -1,5 +1,6 @@
 
 import React from 'react';
+import { Link } from 'react-router-dom';
 
 const FlowerCard = ({ flower }) => {
   const badgeClass = flower.isNew ? 'badge-new' : flower.onSale ? 'badge-sale' : flower.isBestseller ? 'badge-bestseller' : '';
@@ -17,9 +18,9 @@ const FlowerCard = ({ flower }) => {
         />
         <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 transition-all flex items-center justify-center">
           <div className="transform translate-y-8 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300">
-            <button className="bg-white text-gray-800 rounded-full p-3 mx-1 hover:bg-floral-lavender hover:text-white transition-colors">
+            <Link to={`/product/${flower.id}`} className="bg-white text-gray-800 rounded-full p-3 mx-1 hover:bg-floral-lavender hover:text-white transition-colors">
               <i className="fa-solid fa-eye"></i>
-            </button>
+            </Link>
             <button className="bg-white text-gray-800 rounded-full p-3 mx-1 hover:bg-floral-lavender hover:text-white transition-colors">
               <i className="fa-solid fa-heart"></i>
             </button>
@@ -30,7 +31,7 @@ const FlowerCard = ({ flower }) => {
         </div>
       </div>
       
-      <div className="p-4">
+      <Link to={`/product/${flower.id}`} className="block p-4">
         <div className="flex items-center mb-1">
           {flower.colors.map((color, index) => (
             <span 
@@ -70,7 +71,7 @@ const FlowerCard = ({ flower }) => {
             <span className="text-xs text-gray-500 ml-1">({flower.reviewCount})</span>
           </div>
         </div>
-      </div>
+      </Link>
     </div>
   );
 };
