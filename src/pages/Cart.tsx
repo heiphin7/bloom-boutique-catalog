@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Trash2, ChevronLeft, ShoppingCart } from "lucide-react";
@@ -23,8 +22,11 @@ const Cart = () => {
   // Handle search
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(e.target.value);
-    if (e.key === 'Enter' && e.target.value.trim()) {
-      navigate('/?search=' + e.target.value.trim());
+  };
+
+  const handleSearchKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter' && searchTerm.trim()) {
+      navigate('/?search=' + searchTerm.trim());
     }
   };
 
@@ -41,7 +43,7 @@ const Cart = () => {
 
   return (
     <div className="min-h-screen flex flex-col">
-      <Header searchTerm={searchTerm} onSearchChange={handleSearchChange} />
+      <Header searchTerm={searchTerm} onSearchChange={handleSearchChange} onSearchKeyDown={handleSearchKeyDown} />
       
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full flex-grow pb-12 pt-6 animate-fade-in">
         {/* Breadcrumbs */}

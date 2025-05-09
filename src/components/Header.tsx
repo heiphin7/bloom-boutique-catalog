@@ -1,151 +1,267 @@
 
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
-import { useCart } from '../contexts/CartContext';
+import React, { useState } from "react";
+import { Link, useNavigate, useLocation } from "react-router-dom";
+import { ShoppingCart, User, Menu, Search, X } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
+import { useCart } from "../contexts/CartContext";
 
-const Header = ({ searchTerm = '', onSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {} }) => {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
+type HeaderProps = {
+  searchTerm?: string;
+  onSearchChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onSearchKeyDown?: (e: React.KeyboardEvent<HTMLInputElement>) => void;
+};
+
+const Header: React.FC<HeaderProps> = ({ 
+  searchTerm = "", 
+  onSearchChange = () => {}, 
+  onSearchKeyDown = () => {} 
+}) => {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [searchOpen, setSearchOpen] = useState(false);
   const { getItemCount } = useCart();
+  
   const cartItemCount = getItemCount();
   
+  const toggleMobileMenu = () => {
+    setMobileMenuOpen(!mobileMenuOpen);
+    if (searchOpen) setSearchOpen(false);
+  };
+  
+  const toggleSearch = () => {
+    setSearchOpen(!searchOpen);
+    if (mobileMenuOpen) setMobileMenuOpen(false);
+  };
+  
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (searchTerm.trim()) {
+      navigate(`/?search=${searchTerm.trim()}`);
+      setSearchOpen(false);
+    }
+  };
+  
   return (
-    <header className="bg-white shadow-sm">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="border-b border-gray-100 py-3">
-          <div className="flex justify-between items-center">
-            <div className="flex items-center space-x-4">
-              <a href="#" className="text-gray-500 hover:text-floral-lavender transition-colors">
-                <i className="fa-solid fa-location-dot"></i>
-                <span className="ml-1 text-sm">Store Locator</span>
-              </a>
-              <a href="#" className="text-gray-500 hover:text-floral-lavender transition-colors">
-                <i className="fa-solid fa-phone"></i>
-                <span className="ml-1 text-sm">+1 (555) 123-4567</span>
-              </a>
-            </div>
-            <div className="flex items-center space-x-4">
-              <a href="#" className="text-gray-500 hover:text-floral-lavender transition-colors">
-                <i className="fa-solid fa-truck-fast"></i>
-                <span className="ml-1 text-sm">Order Tracking</span>
-              </a>
-              <div className="h-4 w-px bg-gray-200"></div>
-              <a href="#" className="text-gray-500 hover:text-floral-lavender transition-colors">
-                <i className="fa-solid fa-user"></i>
-                <span className="ml-1 text-sm">Account</span>
-              </a>
-            </div>
-          </div>
-        </div>
-        
-        <div className="flex flex-wrap items-center justify-between py-4">
-          <div className="flex items-center">
+    <header className="sticky top-0 z-40 w-full border-b bg-white">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex h-16 items-center justify-between">
+          {/* Logo */}
+          <div className="flex">
             <Link to="/" className="flex items-center">
-              <i className="fa-solid fa-seedling text-floral-lavender text-3xl mr-2"></i>
-              <span className="font-playfair font-bold text-2xl">Bloom & Petal</span>
+              <span className="text-2xl font-playfair font-bold text-floral-lavender">Blossom</span>
+              <span className="ml-2 text-2xl font-playfair font-light">Boutique</span>
             </Link>
           </div>
           
-          <div className="hidden md:flex items-center flex-1 max-w-md mx-auto">
-            <div className="w-full">
-              <div className="relative">
-                <input
-                  type="text"
-                  value={searchTerm}
-                  onChange={onSearchChange}
-                  onKeyDown={(e) => e.key === 'Enter' && onSearchChange(e as any)}
-                  placeholder="Search for flowers..."
-                  className="w-full border border-gray-200 rounded-full py-2 pl-10 pr-4 focus:border-floral-lavender focus:ring-1 focus:ring-floral-lavender focus:outline-none"
-                />
-                <div className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
-                  <i className="fa-solid fa-magnifying-glass"></i>
-                </div>
-              </div>
-            </div>
-          </div>
-          
-          <div className="flex items-center space-x-4">
-            <a href="#" className="relative hidden sm:flex items-center justify-center h-10 w-10 rounded-full hover:bg-gray-100 transition-colors">
-              <i className="fa-solid fa-heart text-gray-600"></i>
-              <span className="absolute -top-1 -right-1 bg-floral-lavender text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">3</span>
-            </a>
-            <Link to="/cart" className="relative flex items-center justify-center h-10 w-10 rounded-full hover:bg-gray-100 transition-colors">
-              <i className="fa-solid fa-cart-shopping text-gray-600"></i>
-              {cartItemCount > 0 && (
-                <span className="absolute -top-1 -right-1 bg-floral-lavender text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
-                  {cartItemCount > 99 ? '99+' : cartItemCount}
-                </span>
+          {/* Desktop Navigation */}
+          <nav className="hidden md:flex items-center space-x-6">
+            <Link 
+              to="/" 
+              className={cn(
+                "text-sm font-medium transition-colors hover:text-floral-lavender",
+                location.pathname === "/" ? "text-floral-lavender" : "text-foreground"
               )}
-            </Link>
-            <button
-              onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="md:hidden flex items-center justify-center h-10 w-10 rounded-full hover:bg-gray-100 transition-colors"
             >
-              <i className={`fa-solid ${isMenuOpen ? 'fa-xmark' : 'fa-bars'} text-gray-600`}></i>
-            </button>
+              Home
+            </Link>
+            <Link 
+              to="/shop" 
+              className={cn(
+                "text-sm font-medium transition-colors hover:text-floral-lavender",
+                location.pathname === "/shop" ? "text-floral-lavender" : "text-foreground"
+              )}
+            >
+              Shop
+            </Link>
+            <Link 
+              to="/about" 
+              className={cn(
+                "text-sm font-medium transition-colors hover:text-floral-lavender",
+                location.pathname === "/about" ? "text-floral-lavender" : "text-foreground"
+              )}
+            >
+              About
+            </Link>
+            <Link 
+              to="/contact" 
+              className={cn(
+                "text-sm font-medium transition-colors hover:text-floral-lavender",
+                location.pathname === "/contact" ? "text-floral-lavender" : "text-foreground"
+              )}
+            >
+              Contact
+            </Link>
+            <Link 
+              to="/payment" 
+              className={cn(
+                "text-sm font-medium transition-colors hover:text-floral-lavender",
+                location.pathname === "/payment" ? "text-floral-lavender" : "text-foreground"
+              )}
+            >
+              Payment
+            </Link>
+          </nav>
+          
+          {/* Desktop Actions */}
+          <div className="hidden md:flex items-center space-x-4">
+            <form onSubmit={handleSearch} className="relative w-full max-w-sm">
+              <Input
+                type="search"
+                placeholder="Search..."
+                className="w-full pl-3 pr-10"
+                value={searchTerm}
+                onChange={onSearchChange}
+                onKeyDown={onSearchKeyDown}
+              />
+              <Button
+                type="submit"
+                size="icon"
+                variant="ghost"
+                className="absolute right-0 top-0 h-full"
+              >
+                <Search className="h-4 w-4" />
+                <span className="sr-only">Search</span>
+              </Button>
+            </form>
+            <Link to="/account">
+              <Button variant="ghost" size="icon">
+                <User className="h-5 w-5" />
+                <span className="sr-only">Account</span>
+              </Button>
+            </Link>
+            <Link to="/cart" className="relative">
+              <Button variant="ghost" size="icon">
+                <ShoppingCart className="h-5 w-5" />
+                <span className="sr-only">Cart</span>
+                {cartItemCount > 0 && (
+                  <span className="absolute -top-1 -right-1 bg-floral-lavender text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+                    {cartItemCount}
+                  </span>
+                )}
+              </Button>
+            </Link>
+          </div>
+          
+          {/* Mobile Menu Button */}
+          <div className="flex md:hidden items-center space-x-2">
+            <Button 
+              variant="ghost" 
+              size="icon" 
+              onClick={toggleSearch}
+              className={cn(searchOpen && "bg-gray-100")}
+            >
+              <Search className="h-5 w-5" />
+              <span className="sr-only">Search</span>
+            </Button>
+            <Link to="/cart" className="relative">
+              <Button variant="ghost" size="icon">
+                <ShoppingCart className="h-5 w-5" />
+                <span className="sr-only">Cart</span>
+                {cartItemCount > 0 && (
+                  <span className="absolute -top-1 -right-1 bg-floral-lavender text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+                    {cartItemCount}
+                  </span>
+                )}
+              </Button>
+            </Link>
+            <Button variant="ghost" size="icon" onClick={toggleMobileMenu}>
+              {mobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+              <span className="sr-only">Menu</span>
+            </Button>
           </div>
         </div>
         
-        <div className="md:hidden py-3 border-t border-gray-100">
-          <div className="relative">
-            <input
-              type="text"
-              value={searchTerm}
-              onChange={onSearchChange}
-              onKeyDown={(e) => e.key === 'Enter' && onSearchChange(e as any)}
-              placeholder="Search for flowers..."
-              className="w-full border border-gray-200 rounded-full py-2 pl-10 pr-4 focus:border-floral-lavender focus:ring-1 focus:ring-floral-lavender focus:outline-none"
-            />
-            <div className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
-              <i className="fa-solid fa-magnifying-glass"></i>
-            </div>
+        {/* Mobile Search Bar */}
+        {searchOpen && (
+          <div className="md:hidden py-3 border-t">
+            <form onSubmit={handleSearch} className="relative">
+              <Input
+                type="search"
+                placeholder="Search..."
+                className="w-full pl-3 pr-10"
+                value={searchTerm}
+                onChange={onSearchChange}
+                onKeyDown={onSearchKeyDown}
+              />
+              <Button
+                type="submit"
+                size="icon"
+                variant="ghost"
+                className="absolute right-0 top-0 h-full"
+              >
+                <Search className="h-4 w-4" />
+                <span className="sr-only">Search</span>
+              </Button>
+            </form>
           </div>
-        </div>
+        )}
         
-        <nav className="hidden md:flex py-3 border-t border-gray-100">
-          <ul className="flex space-x-8">
-            <li>
-              <a href="#" className="font-medium hover:text-floral-lavender transition-colors">Home</a>
-            </li>
-            <li>
-              <a href="#" className="font-medium text-floral-lavender border-b-2 border-floral-lavender pb-1">Shop</a>
-            </li>
-            <li>
-              <a href="#" className="font-medium hover:text-floral-lavender transition-colors">Collections</a>
-            </li>
-            <li>
-              <a href="#" className="font-medium hover:text-floral-lavender transition-colors">Occasions</a>
-            </li>
-            <li>
-              <a href="#" className="font-medium hover:text-floral-lavender transition-colors">About Us</a>
-            </li>
-            <li>
-              <a href="#" className="font-medium hover:text-floral-lavender transition-colors">Contact</a>
-            </li>
-          </ul>
-        </nav>
-        
-        {isMenuOpen && (
-          <nav className="md:hidden py-4 border-t border-gray-100 animate-fade-in">
-            <ul className="space-y-4">
-              <li>
-                <a href="#" className="block font-medium hover:text-floral-lavender transition-colors">Home</a>
-              </li>
-              <li>
-                <a href="#" className="block font-medium text-floral-lavender">Shop</a>
-              </li>
-              <li>
-                <a href="#" className="block font-medium hover:text-floral-lavender transition-colors">Collections</a>
-              </li>
-              <li>
-                <a href="#" className="block font-medium hover:text-floral-lavender transition-colors">Occasions</a>
-              </li>
-              <li>
-                <a href="#" className="block font-medium hover:text-floral-lavender transition-colors">About Us</a>
-              </li>
-              <li>
-                <a href="#" className="block font-medium hover:text-floral-lavender transition-colors">Contact</a>
-              </li>
-            </ul>
+        {/* Mobile Menu */}
+        {mobileMenuOpen && (
+          <nav className="md:hidden py-4 border-t space-y-3">
+            <Link 
+              to="/" 
+              className={cn(
+                "block px-2 py-1.5 text-base font-medium hover:bg-gray-100 rounded-md",
+                location.pathname === "/" ? "text-floral-lavender" : "text-foreground"
+              )}
+              onClick={() => setMobileMenuOpen(false)}
+            >
+              Home
+            </Link>
+            <Link 
+              to="/shop" 
+              className={cn(
+                "block px-2 py-1.5 text-base font-medium hover:bg-gray-100 rounded-md",
+                location.pathname === "/shop" ? "text-floral-lavender" : "text-foreground"
+              )}
+              onClick={() => setMobileMenuOpen(false)}
+            >
+              Shop
+            </Link>
+            <Link 
+              to="/about" 
+              className={cn(
+                "block px-2 py-1.5 text-base font-medium hover:bg-gray-100 rounded-md",
+                location.pathname === "/about" ? "text-floral-lavender" : "text-foreground"
+              )}
+              onClick={() => setMobileMenuOpen(false)}
+            >
+              About
+            </Link>
+            <Link 
+              to="/contact" 
+              className={cn(
+                "block px-2 py-1.5 text-base font-medium hover:bg-gray-100 rounded-md",
+                location.pathname === "/contact" ? "text-floral-lavender" : "text-foreground"
+              )}
+              onClick={() => setMobileMenuOpen(false)}
+            >
+              Contact
+            </Link>
+            <Link 
+              to="/payment" 
+              className={cn(
+                "block px-2 py-1.5 text-base font-medium hover:bg-gray-100 rounded-md",
+                location.pathname === "/payment" ? "text-floral-lavender" : "text-foreground"
+              )}
+              onClick={() => setMobileMenuOpen(false)}
+            >
+              Payment
+            </Link>
+            <Link 
+              to="/account" 
+              className={cn(
+                "block px-2 py-1.5 text-base font-medium hover:bg-gray-100 rounded-md",
+                location.pathname === "/account" ? "text-floral-lavender" : "text-foreground"
+              )}
+              onClick={() => setMobileMenuOpen(false)}
+            >
+              Account
+            </Link>
           </nav>
         )}
       </div>
