@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { ShoppingCart, Heart, Check, ChevronLeft } from "lucide-react";
@@ -66,7 +67,7 @@ const ProductDetail = () => {
   // Filter related products (excluding the current one)
   const relatedProducts = flowers
     .filter(f => f.id !== Number(id))
-    .filter(f => flower ? f.category === flower.category : true)
+    .filter(f => flower ? f.type === flower.type : true)
     .slice(0, 4);
   
   // Redirect to 404 if flower not found
@@ -173,7 +174,7 @@ const ProductDetail = () => {
             </div>
             
             <div className="text-sm text-gray-500">
-              Category: <Link to={`/?category=${flower.category}`} className="text-floral-lavender hover:underline">{flower.category}</Link>
+              Category: <Link to={`/?category=${flower.type}`} className="text-floral-lavender hover:underline">{flower.type}</Link>
             </div>
           </div>
         </div>
