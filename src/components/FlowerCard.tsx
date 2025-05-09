@@ -1,10 +1,30 @@
 
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { useCart } from '../contexts/CartContext';
 
 const FlowerCard = ({ flower }) => {
   const badgeClass = flower.isNew ? 'badge-new' : flower.onSale ? 'badge-sale' : flower.isBestseller ? 'badge-bestseller' : '';
   const badgeText = flower.isNew ? 'New' : flower.onSale ? 'Sale' : flower.isBestseller ? 'Bestseller' : '';
+  const { addToCart } = useCart();
+  
+  const handleAddToCart = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    addToCart({
+      id: flower.id,
+      name: flower.name,
+      price: flower.price,
+      image: flower.image,
+      quantity: 1
+    });
+  };
+  
+  const handleAddToWishlist = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    // Wishlist functionality would go here
+  };
   
   return (
     <div className="catalog-card group animate-slide-up">
@@ -21,10 +41,16 @@ const FlowerCard = ({ flower }) => {
             <Link to={`/product/${flower.id}`} className="bg-white text-gray-800 rounded-full p-3 mx-1 hover:bg-floral-lavender hover:text-white transition-colors">
               <i className="fa-solid fa-eye"></i>
             </Link>
-            <button className="bg-white text-gray-800 rounded-full p-3 mx-1 hover:bg-floral-lavender hover:text-white transition-colors">
+            <button 
+              className="bg-white text-gray-800 rounded-full p-3 mx-1 hover:bg-floral-lavender hover:text-white transition-colors"
+              onClick={handleAddToWishlist}
+            >
               <i className="fa-solid fa-heart"></i>
             </button>
-            <button className="bg-white text-gray-800 rounded-full p-3 mx-1 hover:bg-floral-lavender hover:text-white transition-colors">
+            <button 
+              className="bg-white text-gray-800 rounded-full p-3 mx-1 hover:bg-floral-lavender hover:text-white transition-colors"
+              onClick={handleAddToCart}
+            >
               <i className="fa-solid fa-cart-plus"></i>
             </button>
           </div>

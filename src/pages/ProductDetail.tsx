@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { Heart, ShoppingCart, Star, StarHalf, StarOff } from "lucide-react";
@@ -6,6 +7,7 @@ import Header from "../components/Header";
 import Footer from "../components/Footer";
 import { flowers } from "../data/flowers";
 import { Button } from "@/components/ui/button";
+import { useCart } from "../contexts/CartContext";
 
 const ProductDetail = () => {
   const { id } = useParams();
@@ -15,9 +17,10 @@ const ProductDetail = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [relatedFlowers, setRelatedFlowers] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
+  const { addToCart } = useCart();
   
   // Handle search
-  const handleSearchChange = (e) => {
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(e.target.value);
     if (e.key === 'Enter' && e.target.value.trim()) {
       navigate('/?search=' + e.target.value.trim());
@@ -57,16 +60,21 @@ const ProductDetail = () => {
   };
   
   const handleAddToCart = () => {
-    toast({
-      title: "Added to cart",
-      description: `${quantity} x ${flower.name} added to your cart`,
-    });
+    if (flower) {
+      addToCart({
+        id: flower.id,
+        name: flower.name,
+        price: flower.price,
+        image: flower.image,
+        quantity: quantity
+      });
+    }
   };
   
   const handleAddToWishlist = () => {
     toast({
       title: "Added to wishlist",
-      description: `${flower.name} added to your wishlist`,
+      description: `${flower?.name} added to your wishlist`,
     });
   };
   

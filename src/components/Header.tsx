@@ -1,8 +1,12 @@
 
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
+import { useCart } from '../contexts/CartContext';
 
-const Header = ({ searchTerm = '', onSearchChange = () => {} }) => {
+const Header = ({ searchTerm = '', onSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {} }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const { getItemCount } = useCart();
+  const cartItemCount = getItemCount();
   
   return (
     <header className="bg-white shadow-sm">
@@ -35,10 +39,10 @@ const Header = ({ searchTerm = '', onSearchChange = () => {} }) => {
         
         <div className="flex flex-wrap items-center justify-between py-4">
           <div className="flex items-center">
-            <a href="/" className="flex items-center">
+            <Link to="/" className="flex items-center">
               <i className="fa-solid fa-seedling text-floral-lavender text-3xl mr-2"></i>
               <span className="font-playfair font-bold text-2xl">Bloom & Petal</span>
-            </a>
+            </Link>
           </div>
           
           <div className="hidden md:flex items-center flex-1 max-w-md mx-auto">
@@ -48,6 +52,7 @@ const Header = ({ searchTerm = '', onSearchChange = () => {} }) => {
                   type="text"
                   value={searchTerm}
                   onChange={onSearchChange}
+                  onKeyDown={(e) => e.key === 'Enter' && onSearchChange(e as any)}
                   placeholder="Search for flowers..."
                   className="w-full border border-gray-200 rounded-full py-2 pl-10 pr-4 focus:border-floral-lavender focus:ring-1 focus:ring-floral-lavender focus:outline-none"
                 />
@@ -63,10 +68,14 @@ const Header = ({ searchTerm = '', onSearchChange = () => {} }) => {
               <i className="fa-solid fa-heart text-gray-600"></i>
               <span className="absolute -top-1 -right-1 bg-floral-lavender text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">3</span>
             </a>
-            <a href="#" className="relative flex items-center justify-center h-10 w-10 rounded-full hover:bg-gray-100 transition-colors">
+            <Link to="/cart" className="relative flex items-center justify-center h-10 w-10 rounded-full hover:bg-gray-100 transition-colors">
               <i className="fa-solid fa-cart-shopping text-gray-600"></i>
-              <span className="absolute -top-1 -right-1 bg-floral-lavender text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">2</span>
-            </a>
+              {cartItemCount > 0 && (
+                <span className="absolute -top-1 -right-1 bg-floral-lavender text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+                  {cartItemCount > 99 ? '99+' : cartItemCount}
+                </span>
+              )}
+            </Link>
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
               className="md:hidden flex items-center justify-center h-10 w-10 rounded-full hover:bg-gray-100 transition-colors"
@@ -82,6 +91,7 @@ const Header = ({ searchTerm = '', onSearchChange = () => {} }) => {
               type="text"
               value={searchTerm}
               onChange={onSearchChange}
+              onKeyDown={(e) => e.key === 'Enter' && onSearchChange(e as any)}
               placeholder="Search for flowers..."
               className="w-full border border-gray-200 rounded-full py-2 pl-10 pr-4 focus:border-floral-lavender focus:ring-1 focus:ring-floral-lavender focus:outline-none"
             />
