@@ -1,0 +1,78 @@
+
+import React from 'react';
+
+const FlowerCard = ({ flower }) => {
+  const badgeClass = flower.isNew ? 'badge-new' : flower.onSale ? 'badge-sale' : flower.isBestseller ? 'badge-bestseller' : '';
+  const badgeText = flower.isNew ? 'New' : flower.onSale ? 'Sale' : flower.isBestseller ? 'Bestseller' : '';
+  
+  return (
+    <div className="catalog-card group animate-slide-up">
+      {badgeText && <span className={`ribbon ${badgeClass}`}>{badgeText}</span>}
+      
+      <div className="relative overflow-hidden h-64">
+        <img 
+          src={flower.image} 
+          alt={flower.name} 
+          className="w-full h-full object-cover object-center transition-transform duration-500 group-hover:scale-105"
+        />
+        <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 transition-all flex items-center justify-center">
+          <div className="transform translate-y-8 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300">
+            <button className="bg-white text-gray-800 rounded-full p-3 mx-1 hover:bg-floral-lavender hover:text-white transition-colors">
+              <i className="fa-solid fa-eye"></i>
+            </button>
+            <button className="bg-white text-gray-800 rounded-full p-3 mx-1 hover:bg-floral-lavender hover:text-white transition-colors">
+              <i className="fa-solid fa-heart"></i>
+            </button>
+            <button className="bg-white text-gray-800 rounded-full p-3 mx-1 hover:bg-floral-lavender hover:text-white transition-colors">
+              <i className="fa-solid fa-cart-plus"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+      
+      <div className="p-4">
+        <div className="flex items-center mb-1">
+          {flower.colors.map((color, index) => (
+            <span 
+              key={index} 
+              className="w-3 h-3 rounded-full mr-1 border border-gray-200" 
+              style={{ backgroundColor: color }}
+              title={color}
+            ></span>
+          ))}
+        </div>
+        
+        <h3 className="text-lg font-medium mb-1">{flower.name}</h3>
+        
+        <p className="text-sm text-gray-500 mb-2 line-clamp-2">{flower.description}</p>
+        
+        <div className="flex items-center justify-between">
+          <div className="flex items-center">
+            {flower.onSale ? (
+              <>
+                <span className="text-gray-400 line-through mr-2">${flower.originalPrice.toFixed(2)}</span>
+                <span className="text-floral-peach font-semibold">${flower.price.toFixed(2)}</span>
+              </>
+            ) : (
+              <span className="font-semibold">${flower.price.toFixed(2)}</span>
+            )}
+          </div>
+          
+          <div className="flex items-center">
+            {[...Array(5)].map((_, index) => (
+              <i 
+                key={index} 
+                className={`fa-solid fa-star text-xs ${
+                  index < flower.rating ? 'text-yellow-400' : 'text-gray-300'
+                }`}
+              ></i>
+            ))}
+            <span className="text-xs text-gray-500 ml-1">({flower.reviewCount})</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default FlowerCard;

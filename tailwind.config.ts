@@ -1,12 +1,13 @@
+
 import type { Config } from "tailwindcss";
 
 export default {
 	darkMode: ["class"],
 	content: [
-		"./pages/**/*.{ts,tsx}",
-		"./components/**/*.{ts,tsx}",
-		"./app/**/*.{ts,tsx}",
-		"./src/**/*.{ts,tsx}",
+		"./pages/**/*.{ts,tsx,html,js}",
+		"./components/**/*.{ts,tsx,html,js}",
+		"./app/**/*.{ts,tsx,html,js}",
+		"./src/**/*.{ts,tsx,html,js}",
 	],
 	prefix: "",
 	theme: {
@@ -61,8 +62,22 @@ export default {
 					'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
-				}
+				},
+        floral: {
+          'pink': '#f5a9b8',
+          'lavender': '#9b87f5',
+          'sage': '#a3c9a8',
+          'cream': '#f9f3e5',
+          'blush': '#f7d1d1',
+          'mint': '#d1e8df',
+          'peach': '#ffcba4',
+          'sky': '#c6e6fb'
+        }
 			},
+			fontFamily: {
+        'playfair': ['"Playfair Display"', 'serif'],
+        'poppins': ['Poppins', 'sans-serif']
+      },
 			borderRadius: {
 				lg: 'var(--radius)',
 				md: 'calc(var(--radius) - 2px)',
@@ -84,11 +99,21 @@ export default {
 					to: {
 						height: '0'
 					}
-				}
+				},
+        'fade-in': {
+          '0%': { opacity: '0' },
+          '100%': { opacity: '1' }
+        },
+        'slide-up': {
+          '0%': { transform: 'translateY(10px)', opacity: '0' },
+          '100%': { transform: 'translateY(0)', opacity: '1' }
+        }
 			},
 			animation: {
 				'accordion-down': 'accordion-down 0.2s ease-out',
-				'accordion-up': 'accordion-up 0.2s ease-out'
+				'accordion-up': 'accordion-up 0.2s ease-out',
+        'fade-in': 'fade-in 0.5s ease-out',
+        'slide-up': 'slide-up 0.5s ease-out'
 			}
 		}
 	},
