@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Trash2, ChevronLeft, ShoppingCart } from "lucide-react";
@@ -40,6 +41,11 @@ const Cart = () => {
   const subtotal = getCartTotal();
   const shipping = subtotal > 0 ? (subtotal < 50 ? 10 : 0) : 0;
   const total = subtotal + shipping;
+
+  // Handle checkout
+  const handleCheckout = () => {
+    navigate('/payment');
+  };
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -188,7 +194,10 @@ const Cart = () => {
                   </div>
                 </div>
                 
-                <Button className="w-full bg-floral-lavender hover:bg-floral-lavender/90">
+                <Button 
+                  className="w-full bg-floral-lavender hover:bg-floral-lavender/90" 
+                  onClick={handleCheckout}
+                >
                   Proceed to Checkout
                 </Button>
               </div>
