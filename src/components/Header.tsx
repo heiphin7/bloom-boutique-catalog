@@ -39,7 +39,7 @@ const Header: React.FC<HeaderProps> = ({
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     if (searchTerm.trim()) {
-      navigate(`/?search=${searchTerm.trim()}`);
+      navigate(`/catalog?search=${searchTerm.trim()}`);
       setSearchOpen(false);
     }
   };
@@ -68,13 +68,13 @@ const Header: React.FC<HeaderProps> = ({
               Home
             </Link>
             <Link 
-              to="/shop" 
+              to="/catalog" 
               className={cn(
                 "text-sm font-medium transition-colors hover:text-floral-lavender",
-                location.pathname === "/shop" ? "text-floral-lavender" : "text-foreground"
+                location.pathname === "/catalog" ? "text-floral-lavender" : "text-foreground"
               )}
             >
-              Shop
+              Catalog
             </Link>
             <Link 
               to="/about" 
@@ -213,14 +213,14 @@ const Header: React.FC<HeaderProps> = ({
               Home
             </Link>
             <Link 
-              to="/shop" 
+              to="/catalog" 
               className={cn(
                 "block px-2 py-1.5 text-base font-medium hover:bg-gray-100 rounded-md",
-                location.pathname === "/shop" ? "text-floral-lavender" : "text-foreground"
+                location.pathname === "/catalog" ? "text-floral-lavender" : "text-foreground"
               )}
               onClick={() => setMobileMenuOpen(false)}
             >
-              Shop
+              Catalog
             </Link>
             <Link 
               to="/about" 

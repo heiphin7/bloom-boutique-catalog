@@ -10,6 +10,7 @@ import Cart from "./pages/Cart";
 import Payment from "./pages/Payment";
 import Orders from "./pages/Orders";
 import NotFound from "./pages/NotFound";
+import Catalog from "./pages/Catalog";
 import { CartProvider } from "./contexts/CartContext";
 import { OrdersProvider } from "./contexts/OrdersContext";
 
@@ -25,6 +26,7 @@ const App = () => (
             <Sonner />
             <Routes>
               <Route path="/" element={<Index />} />
+              <Route path="/catalog" element={<Catalog />} />
               <Route path="/product/:id" element={<ProductDetail />} />
               <Route path="/cart" element={<Cart />} />
               <Route path="/payment" element={<Payment />} />
