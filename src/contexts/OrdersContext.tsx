@@ -2,7 +2,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { toast } from "@/components/ui/use-toast";
 import { getSessionOrders, updateOrderStatus as updateOrderStatusService, createOrder } from '@/services/orderService';
-import type { CartItem } from './CartContext';
+import type { CartItem } from '@/types/cart';
 import { useAuth } from './AuthContext';
 
 // Define order types
