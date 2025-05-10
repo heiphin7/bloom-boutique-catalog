@@ -2,6 +2,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { toast } from "@/components/ui/use-toast";
 import { getCurrentCart, addItemToCart, removeCartItem, updateCartItemQuantity, clearCart as clearCartService, getCartTotal as getCartTotalService } from '@/services/cartService';
+import { useAuth } from './AuthContext';
 
 // Define types
 export type CartItem = {
@@ -46,14 +47,28 @@ export const CartProvider: React.FC<{children: React.ReactNode}> = ({ children }
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [cartTotal, setCartTotal] = useState(0);
+  const { user } = useAuth();
 
-  // Fetch cart on component mount
+  // Fetch cart when auth state changes
   useEffect(() => {
-    refreshCart();
-  }, []);
+    if (user) {
+      refreshCart();
+    } else {
+      setCartItems([]);
+      setCartTotal(0);
+      setLoading(false);
+    }
+  }, [user]);
 
   // Refresh cart from Supabase
   const refreshCart = async () => {
+    if (!user) {
+      setCartItems([]);
+      setCartTotal(0);
+      setLoading(false);
+      return;
+    }
+
     setLoading(true);
     try {
       const cart = await getCurrentCart();
@@ -92,6 +107,15 @@ export const CartProvider: React.FC<{children: React.ReactNode}> = ({ children }
 
   // Add item to cart
   const addToCart = async (itemToAdd: Omit<CartItem, 'id'>) => {
+    if (!user) {
+      toast({
+        title: "Authentication required",
+        description: "Please sign in to add items to your cart",
+        variant: "destructive"
+      });
+      return;
+    }
+
     try {
       const success = await addItemToCart(itemToAdd.product_id, itemToAdd.quantity);
       
@@ -116,6 +140,8 @@ export const CartProvider: React.FC<{children: React.ReactNode}> = ({ children }
 
   // Remove item from cart
   const removeFromCart = async (id: string) => {
+    if (!user) return;
+    
     try {
       const itemToRemove = cartItems.find(item => item.id === id);
       
@@ -144,6 +170,8 @@ export const CartProvider: React.FC<{children: React.ReactNode}> = ({ children }
 
   // Update quantity of an item
   const updateQuantity = async (id: string, quantity: number) => {
+    if (!user) return;
+    
     try {
       if (quantity <= 0) {
         removeFromCart(id);
@@ -168,6 +196,8 @@ export const CartProvider: React.FC<{children: React.ReactNode}> = ({ children }
 
   // Clear the entire cart
   const clearCart = async () => {
+    if (!user) return;
+    
     try {
       const success = await clearCartService();
       

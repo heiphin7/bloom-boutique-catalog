@@ -1,29 +1,53 @@
 
 import { supabase } from "@/integrations/supabase/client";
-import { getOrCreateSessionToken } from "./sessionService";
-import { getCurrentCart, clearCart } from "./cartService";
 import type { OrderWithItems } from "@/types/supabase";
 
 // Create an order from cart
 export const createOrder = async (
   customerInfo: { 
-    id?: string;  // Make id optional
+    id?: string;
     name: string;
     email: string;
     shippingAddress: any;
   }
 ): Promise<string | null> => {
   try {
-    const sessionToken = await getOrCreateSessionToken();
-    const cart = await getCurrentCart();
+    // Get current user
+    const { data: { user } } = await supabase.auth.getUser();
+    
+    if (!user) {
+      console.error('User must be authenticated to create an order');
+      return null;
+    }
+    
+    // Get cart
+    const { data: cart } = await supabase
+      .from('carts')
+      .select('id')
+      .eq('user_id', user.id)
+      .maybeSingle();
+    
+    if (!cart) {
+      console.error('No cart found for user');
+      return null;
+    }
+    
+    // Get cart items
+    const { data: cartItems } = await supabase
+      .from('cart_items')
+      .select(`
+        *,
+        product:products(*)
+      `)
+      .eq('cart_id', cart.id);
     
     // If no cart or empty cart, return null
-    if (!cart || !cart.items.length) {
+    if (!cartItems || !cartItems.length) {
       return null;
     }
     
     // Calculate total
-    const total = cart.items.reduce((sum, item) => 
+    const total = cartItems.reduce((sum, item) => 
       sum + (item.product.price * item.quantity), 0
     );
     
@@ -31,13 +55,13 @@ export const createOrder = async (
     const { data: order, error: orderError } = await supabase
       .from('orders')
       .insert({
-        session_token: sessionToken,
+        user_id: user.id,
         customer_name: customerInfo.name,
         customer_email: customerInfo.email,
         shipping_address: customerInfo.shippingAddress,
         total,
         status: 'unpaid',
-        ...(customerInfo.id ? { id: customerInfo.id } : {}) // Include ID if provided
+        ...(customerInfo.id ? { id: customerInfo.id } : {})
       })
       .select()
       .single();
@@ -48,9 +72,9 @@ export const createOrder = async (
     }
     
     // Create order items
-    const orderItems = cart.items.map(item => ({
+    const orderItems = cartItems.map(item => ({
       order_id: order.id,
-      product_id: item.product.id,
+      product_id: item.product_id,
       product_name: item.product.name,
       product_price: item.product.price,
       product_image: item.product.image,
@@ -79,11 +103,19 @@ export const createOrder = async (
 // Get a specific order by ID
 export const getOrderById = async (orderId: string): Promise<OrderWithItems | null> => {
   try {
+    // Get current user
+    const { data: { user } } = await supabase.auth.getUser();
+    
+    if (!user) {
+      return null;
+    }
+    
     // Get order
     const { data: order, error: orderError } = await supabase
       .from('orders')
       .select('*')
       .eq('id', orderId)
+      .eq('user_id', user.id)
       .maybeSingle();
     
     if (orderError || !order) {
@@ -108,7 +140,7 @@ export const getOrderById = async (orderId: string): Promise<OrderWithItems | nu
     // Return order with items
     return {
       ...order,
-      items: orderItems
+      items: orderItems || []
     };
   } catch (error) {
     console.error('Error getting order:', error);
@@ -116,16 +148,21 @@ export const getOrderById = async (orderId: string): Promise<OrderWithItems | nu
   }
 };
 
-// Get all orders for current session
+// Get all orders for current user
 export const getSessionOrders = async (): Promise<OrderWithItems[]> => {
   try {
-    const sessionToken = await getOrCreateSessionToken();
+    // Get current user
+    const { data: { user } } = await supabase.auth.getUser();
+    
+    if (!user) {
+      return [];
+    }
     
     // Get orders
     const { data: orders, error: ordersError } = await supabase
       .from('orders')
       .select('*')
-      .eq('session_token', sessionToken)
+      .eq('user_id', user.id)
       .order('created_at', { ascending: false });
     
     if (ordersError || !orders) {
@@ -189,3 +226,45 @@ export const updateOrderStatus = async (
     return false;
   }
 };
+
+// Helper function to clear cart
+const clearCart = async (): Promise<boolean> => {
+  try {
+    // Get current user
+    const { data: { user } } = await supabase.auth.getUser();
+    
+    if (!user) {
+      return false;
+    }
+    
+    // Get cart
+    const { data: cart } = await supabase
+      .from('carts')
+      .select('id')
+      .eq('user_id', user.id)
+      .maybeSingle();
+    
+    if (!cart) {
+      return true; // No cart to clear
+    }
+    
+    // Delete cart items
+    const { error } = await supabase
+      .from('cart_items')
+      .delete()
+      .eq('cart_id', cart.id);
+    
+    if (error) {
+      console.error('Error clearing cart:', error);
+      return false;
+    }
+    
+    return true;
+  } catch (error) {
+    console.error('Error clearing cart:', error);
+    return false;
+  }
+};
+
+// Re-export the clearCart function for public use
+export { clearCart };

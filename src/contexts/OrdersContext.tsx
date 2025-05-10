@@ -3,6 +3,7 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 import { toast } from "@/components/ui/use-toast";
 import { getSessionOrders, updateOrderStatus as updateOrderStatusService, createOrder } from '@/services/orderService';
 import type { CartItem } from './CartContext';
+import { useAuth } from './AuthContext';
 
 // Define order types
 export type Order = {
@@ -46,14 +47,26 @@ export const useOrders = () => useContext(OrdersContext);
 export const OrdersProvider: React.FC<{children: React.ReactNode}> = ({ children }) => {
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
+  const { user } = useAuth();
 
-  // Load orders on component mount
+  // Load orders when auth state changes
   useEffect(() => {
-    refreshOrders();
-  }, []);
+    if (user) {
+      refreshOrders();
+    } else {
+      setOrders([]);
+      setLoading(false);
+    }
+  }, [user]);
 
   // Refresh orders from Supabase
   const refreshOrders = async () => {
+    if (!user) {
+      setOrders([]);
+      setLoading(false);
+      return;
+    }
+
     setLoading(true);
     try {
       const supabaseOrders = await getSessionOrders();
@@ -95,6 +108,15 @@ export const OrdersProvider: React.FC<{children: React.ReactNode}> = ({ children
 
   // Add a new order
   const addOrder = async (orderData: OrderInput): Promise<string | null> => {
+    if (!user) {
+      toast({
+        title: "Authentication required",
+        description: "Please sign in to place an order",
+        variant: "destructive"
+      });
+      return null;
+    }
+    
     try {
       // Use createOrder service
       const orderId = await createOrder({
@@ -136,6 +158,8 @@ export const OrdersProvider: React.FC<{children: React.ReactNode}> = ({ children
 
   // Update order status
   const updateOrderStatus = async (orderId: string, status: "paid" | "unpaid"): Promise<boolean> => {
+    if (!user) return false;
+    
     try {
       const success = await updateOrderStatusService(orderId, status);
       

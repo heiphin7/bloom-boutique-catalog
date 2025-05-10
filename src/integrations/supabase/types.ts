@@ -54,28 +54,23 @@ export type Database = {
           id: string
           session_token: string
           updated_at: string | null
+          user_id: string | null
         }
         Insert: {
           created_at?: string | null
           id?: string
           session_token: string
           updated_at?: string | null
+          user_id?: string | null
         }
         Update: {
           created_at?: string | null
           id?: string
           session_token?: string
           updated_at?: string | null
+          user_id?: string | null
         }
-        Relationships: [
-          {
-            foreignKeyName: "carts_session_token_fkey"
-            columns: ["session_token"]
-            isOneToOne: true
-            referencedRelation: "sessions"
-            referencedColumns: ["token"]
-          },
-        ]
+        Relationships: []
       }
       order_items: {
         Row: {
@@ -134,6 +129,7 @@ export type Database = {
           stripe_session_id: string | null
           total: number
           updated_at: string | null
+          user_id: string | null
         }
         Insert: {
           created_at?: string | null
@@ -146,6 +142,7 @@ export type Database = {
           stripe_session_id?: string | null
           total: number
           updated_at?: string | null
+          user_id?: string | null
         }
         Update: {
           created_at?: string | null
@@ -158,16 +155,9 @@ export type Database = {
           stripe_session_id?: string | null
           total?: number
           updated_at?: string | null
+          user_id?: string | null
         }
-        Relationships: [
-          {
-            foreignKeyName: "orders_session_token_fkey"
-            columns: ["session_token"]
-            isOneToOne: false
-            referencedRelation: "sessions"
-            referencedColumns: ["token"]
-          },
-        ]
+        Relationships: []
       }
       products: {
         Row: {
@@ -223,6 +213,30 @@ export type Database = {
           rating?: number | null
           review_count?: number | null
           type?: string | null
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          created_at: string | null
+          email: string | null
+          id: string
+          name: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          email?: string | null
+          id: string
+          name?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          email?: string | null
+          id?: string
+          name?: string | null
+          updated_at?: string | null
         }
         Relationships: []
       }

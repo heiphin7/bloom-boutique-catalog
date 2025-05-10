@@ -1,17 +1,20 @@
-
 import { supabase } from "@/integrations/supabase/client";
-import { getOrCreateSessionToken } from "./sessionService";
 import type { CartWithItems, Product } from "@/types/supabase";
 
 // Get or create cart
 export const getOrCreateCart = async (): Promise<string> => {
-  const sessionToken = await getOrCreateSessionToken();
+  // Get current user
+  const { data: { user } } = await supabase.auth.getUser();
+  
+  if (!user) {
+    throw new Error('User must be authenticated to access cart');
+  }
   
   // Check if the user already has a cart
   const { data: existingCart, error: fetchError } = await supabase
     .from('carts')
     .select('id')
-    .eq('session_token', sessionToken)
+    .eq('user_id', user.id)
     .maybeSingle();
   
   if (fetchError) {
@@ -27,7 +30,7 @@ export const getOrCreateCart = async (): Promise<string> => {
   // If no cart exists, create a new one
   const { data: newCart, error: insertError } = await supabase
     .from('carts')
-    .insert({ session_token: sessionToken })
+    .insert({ user_id: user.id })
     .select('id')
     .single();
   
@@ -42,13 +45,18 @@ export const getOrCreateCart = async (): Promise<string> => {
 // Get current cart with items
 export const getCurrentCart = async (): Promise<CartWithItems | null> => {
   try {
-    const sessionToken = await getOrCreateSessionToken();
+    // Get current user
+    const { data: { user } } = await supabase.auth.getUser();
+    
+    if (!user) {
+      return null;
+    }
     
     // Get cart
     const { data: cart, error: cartError } = await supabase
       .from('carts')
       .select('*')
-      .eq('session_token', sessionToken)
+      .eq('user_id', user.id)
       .maybeSingle();
     
     if (cartError) {

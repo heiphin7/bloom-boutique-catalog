@@ -1,11 +1,20 @@
 
 import React, { useState } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
-import { ShoppingCart, User, Menu, Search, X } from "lucide-react";
+import { ShoppingCart, User, Menu, Search, X, LogOut } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { useCart } from "../contexts/CartContext";
+import { useAuth } from "../contexts/AuthContext";
+import { 
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 type HeaderProps = {
   searchTerm?: string;
@@ -23,6 +32,7 @@ const Header: React.FC<HeaderProps> = ({
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const { getItemCount } = useCart();
+  const { user, signOut, profile } = useAuth();
   
   const cartItemCount = getItemCount();
   
@@ -103,6 +113,15 @@ const Header: React.FC<HeaderProps> = ({
             >
               Payment
             </Link>
+            <Link 
+              to="/orders" 
+              className={cn(
+                "text-sm font-medium transition-colors hover:text-floral-lavender",
+                location.pathname === "/orders" ? "text-floral-lavender" : "text-foreground"
+              )}
+            >
+              Orders
+            </Link>
           </nav>
           
           {/* Desktop Actions */}
@@ -126,12 +145,37 @@ const Header: React.FC<HeaderProps> = ({
                 <span className="sr-only">Search</span>
               </Button>
             </form>
-            <Link to="/account">
-              <Button variant="ghost" size="icon">
-                <User className="h-5 w-5" />
-                <span className="sr-only">Account</span>
-              </Button>
-            </Link>
+            
+            {/* User dropdown */}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" size="icon">
+                  <User className="h-5 w-5" />
+                  <span className="sr-only">Account</span>
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                {user ? (
+                  <>
+                    <DropdownMenuLabel>
+                      {profile?.name || user.email}
+                    </DropdownMenuLabel>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem asChild>
+                      <Link to="/orders" className="w-full cursor-pointer">My Orders</Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => signOut()} className="text-red-600 cursor-pointer">
+                      <LogOut className="mr-2 h-4 w-4" /> Sign Out
+                    </DropdownMenuItem>
+                  </>
+                ) : (
+                  <DropdownMenuItem asChild>
+                    <Link to="/auth" className="w-full cursor-pointer">Sign In</Link>
+                  </DropdownMenuItem>
+                )}
+              </DropdownMenuContent>
+            </DropdownMenu>
+            
             <Link to="/cart" className="relative">
               <Button variant="ghost" size="icon">
                 <ShoppingCart className="h-5 w-5" />
@@ -253,15 +297,41 @@ const Header: React.FC<HeaderProps> = ({
               Payment
             </Link>
             <Link 
-              to="/account" 
+              to="/orders" 
               className={cn(
                 "block px-2 py-1.5 text-base font-medium hover:bg-gray-100 rounded-md",
-                location.pathname === "/account" ? "text-floral-lavender" : "text-foreground"
+                location.pathname === "/orders" ? "text-floral-lavender" : "text-foreground"
               )}
               onClick={() => setMobileMenuOpen(false)}
             >
-              Account
+              Orders
             </Link>
+
+            {user ? (
+              <>
+                <div className="px-2 py-1.5 text-base font-medium text-foreground">
+                  {profile?.name || user.email}
+                </div>
+                <Button 
+                  variant="ghost" 
+                  className="w-full justify-start px-2 py-1.5 text-base font-medium text-red-600 hover:bg-gray-100 rounded-md"
+                  onClick={() => {
+                    signOut();
+                    setMobileMenuOpen(false);
+                  }}
+                >
+                  <LogOut className="mr-2 h-4 w-4" /> Sign Out
+                </Button>
+              </>
+            ) : (
+              <Link 
+                to="/auth" 
+                className="block px-2 py-1.5 text-base font-medium hover:bg-gray-100 rounded-md text-floral-lavender"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                Sign In
+              </Link>
+            )}
           </nav>
         )}
       </div>

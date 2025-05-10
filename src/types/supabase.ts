@@ -1,12 +1,22 @@
 
 // Import the Database type from the auto-generated types
 import type { Database } from '@/integrations/supabase/types';
+import type { User } from '@supabase/supabase-js';
 
 // Product type definition
 export type Product = Database['public']['Tables']['products']['Row'];
 
 // Session type definition
 export type Session = Database['public']['Tables']['sessions']['Row'];
+
+// Profile type definition
+export type Profile = {
+  id: string;
+  name: string | null;
+  email: string | null;
+  created_at: string | null;
+  updated_at: string | null;
+};
 
 // Cart type definition
 export type Cart = Database['public']['Tables']['carts']['Row'];
@@ -29,4 +39,11 @@ export type CartWithItems = Cart & {
 
 export type OrderWithItems = Order & {
   items: (OrderItem & { product?: Product })[];
+};
+
+// Auth related types
+export type AuthUser = User;
+
+export type UserWithProfile = AuthUser & {
+  profile: Profile;
 };
