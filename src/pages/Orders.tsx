@@ -10,48 +10,19 @@ import { Badge } from "@/components/ui/badge";
 import { toast } from "@/components/ui/use-toast";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
-
-// Mock orders data - in a real app, this would come from an API
-const mockOrders = [
-  {
-    id: "ord_1",
-    date: "2025-05-08",
-    total: 79.95,
-    status: "paid",
-    products: [
-      { id: 1, name: "Spring Bouquet", quantity: 1, price: 49.95, image: "/placeholder.svg" },
-      { id: 2, name: "Rose Bundle", quantity: 1, price: 30.00, image: "/placeholder.svg" }
-    ],
-    stripeSessionId: "cs_test_a1b2c3"
-  },
-  {
-    id: "ord_2",
-    date: "2025-05-07",
-    total: 64.50,
-    status: "unpaid",
-    products: [
-      { id: 3, name: "Summer Mix", quantity: 1, price: 39.50, image: "/placeholder.svg" },
-      { id: 4, name: "Tropical Arrangement", quantity: 1, price: 25.00, image: "/placeholder.svg" }
-    ],
-    stripeSessionId: "cs_test_d4e5f6"
-  },
-  {
-    id: "ord_3",
-    date: "2025-05-05",
-    total: 129.90,
-    status: "paid",
-    products: [
-      { id: 5, name: "Deluxe Wedding Package", quantity: 1, price: 129.90, image: "/placeholder.svg" }
-    ],
-    stripeSessionId: "cs_test_g7h8i9"
-  }
-];
+import { useOrders } from "../contexts/OrdersContext";
 
 const Orders = () => {
-  const [orders, setOrders] = useState(mockOrders);
+  const { getOrders } = useOrders();
+  const [orders, setOrders] = useState(getOrders());
   const [searchTerm, setSearchTerm] = useState("");
   const [filterStatus, setFilterStatus] = useState("all");
   const navigate = useNavigate();
+  
+  // Update orders when they change in context
+  useEffect(() => {
+    setOrders(getOrders());
+  }, [getOrders]);
   
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(e.target.value);
@@ -82,16 +53,14 @@ const Orders = () => {
   });
   
   const handlePayment = (orderId: string, stripeSessionId: string) => {
-    // In a real app, this would create a new Stripe session or use an existing one
+    // In a real app, this would redirect to an existing Stripe session or create a new one
     toast({
       title: "Redirecting to payment",
       description: `Processing order ${orderId}...`,
     });
     
-    // Simulate payment redirect
-    setTimeout(() => {
-      navigate('/payment');
-    }, 1000);
+    // Navigate to payment page
+    navigate('/payment');
   };
 
   return (
@@ -216,7 +185,7 @@ const Orders = () => {
                   
                   {order.status === "unpaid" && (
                     <Button 
-                      onClick={() => handlePayment(order.id, order.stripeSessionId)}
+                      onClick={() => handlePayment(order.id, order.stripeSessionId || "")}
                       className="bg-floral-lavender hover:bg-floral-lavender/90"
                     >
                       <CreditCard className="mr-2 h-4 w-4" />

@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { ShoppingCart, CreditCard, Check } from "lucide-react";
@@ -10,6 +9,7 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "@/components/ui/use-toast";
 import { useCart } from "../contexts/CartContext";
+import { useOrders } from "../contexts/OrdersContext";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 
@@ -35,11 +35,17 @@ const cardElementOptions = {
   },
 };
 
+// Helper function to generate order ID
+const generateOrderId = () => {
+  return `ord_${Math.random().toString(36).substring(2, 10)}`;
+};
+
 // Payment Form Component
 const PaymentForm = () => {
   const stripe = useStripe();
   const elements = useElements();
-  const { getCartTotal, clearCart } = useCart();
+  const { getCartTotal, clearCart, cartItems } = useCart();
+  const { addOrder } = useOrders();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [email, setEmail] = useState("");
@@ -50,6 +56,8 @@ const PaymentForm = () => {
   // Calculate total amount
   const amount = getCartTotal();
   const formattedAmount = (amount).toFixed(2);
+  const shipping = amount > 0 ? (amount < 50 ? 10 : 0) : 0;
+  const total = amount + shipping;
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -83,7 +91,7 @@ const PaymentForm = () => {
       // and confirm it with the Stripe API
       
       // Get token from Stripe (to test card validation)
-      const { error: stripeError } = await stripe.createToken(cardElement);
+      const { error: stripeError, token } = await stripe.createToken(cardElement);
 
       if (stripeError) {
         setError(stripeError.message || "Payment failed. Please try again.");
@@ -91,8 +99,31 @@ const PaymentForm = () => {
         return;
       }
 
+      // Generate an order ID
+      const orderId = generateOrderId();
+      const stripeSessionId = token ? token.id : `session_${Math.random().toString(36).substring(2, 10)}`;
+
+      // Create an order with status "unpaid" initially
+      const newOrder = {
+        id: orderId,
+        date: new Date().toISOString(),
+        total: total,
+        status: "unpaid" as const,
+        products: [...cartItems],
+        stripeSessionId: stripeSessionId
+      };
+      
+      // Add order to OrdersContext
+      addOrder(newOrder);
+
       // Simulate payment processing delay
       setTimeout(() => {
+        // Payment successful - update order status to paid
+        addOrder({
+          ...newOrder,
+          status: "paid" as const
+        });
+        
         // Payment successful
         setSuccess(true);
         clearCart(); // Clear the cart after successful payment
@@ -102,9 +133,9 @@ const PaymentForm = () => {
           description: `Thank you for your purchase of $${formattedAmount}`,
         });
         
-        // After 2 seconds, redirect to home
+        // After 2 seconds, redirect to orders page
         setTimeout(() => {
-          navigate('/');
+          navigate('/orders');
         }, 2000);
         
         setLoading(false);
@@ -125,7 +156,7 @@ const PaymentForm = () => {
         </div>
         <h2 className="text-2xl font-semibold mb-2">Payment Successful!</h2>
         <p className="text-gray-600 mb-4">Thank you for your purchase.</p>
-        <p className="text-gray-600">Redirecting you to the homepage...</p>
+        <p className="text-gray-600">Redirecting you to your orders...</p>
       </div>
     );
   }
@@ -186,7 +217,7 @@ const PaymentForm = () => {
             Processing...
           </div>
         ) : (
-          <>Pay ${formattedAmount}</>
+          <>Pay ${total.toFixed(2)}</>
         )}
       </Button>
     </form>
