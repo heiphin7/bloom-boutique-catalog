@@ -41,6 +41,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     // Set up auth state listener FIRST
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (event, newSession) => {
+        console.log('Auth state changed:', event);
         setSession(newSession);
         setUser(newSession?.user ?? null);
 
@@ -127,6 +128,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const signUp = async (email: string, password: string, name: string) => {
     try {
       setIsLoading(true);
+      
+      console.log('Starting sign up process with:', { email, name });
+      
       const { data, error } = await supabase.auth.signUp({
         email,
         password,
@@ -136,6 +140,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           },
         },
       });
+
+      console.log('Sign up response:', { data, error });
 
       if (error) {
         toast({
@@ -148,14 +154,18 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
       toast({
         title: 'Account created',
-        description: 'Please check your email for verification instructions.',
+        description: 'Your account has been created successfully.',
       });
       
       // Auto login if email verification is not required
       if (data.session) {
         navigate('/');
       } else {
-        navigate('/auth/confirm');
+        toast({
+          title: 'Verification required',
+          description: 'Please check your email for verification instructions.',
+        });
+        navigate('/auth');
       }
     } catch (error) {
       console.error('Error signing up:', error);

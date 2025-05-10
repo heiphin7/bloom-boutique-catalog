@@ -1,4 +1,3 @@
-
 import { supabase } from "@/integrations/supabase/client";
 import type { CartWithItems, Product } from "@/types/supabase";
 
@@ -29,15 +28,9 @@ export const getOrCreateCart = async (): Promise<string> => {
   }
   
   // If no cart exists, create a new one
-  // Generate a UUID for session_token to satisfy the type requirements
-  const sessionToken = crypto.randomUUID();
-  
   const { data: newCart, error: insertError } = await supabase
     .from('carts')
-    .insert({ 
-      user_id: user.id,
-      session_token: sessionToken
-    })
+    .insert({ user_id: user.id })
     .select('id')
     .single();
   

@@ -52,21 +52,18 @@ export type Database = {
         Row: {
           created_at: string | null
           id: string
-          session_token: string
           updated_at: string | null
           user_id: string | null
         }
         Insert: {
           created_at?: string | null
           id?: string
-          session_token: string
           updated_at?: string | null
           user_id?: string | null
         }
         Update: {
           created_at?: string | null
           id?: string
-          session_token?: string
           updated_at?: string | null
           user_id?: string | null
         }
@@ -123,7 +120,6 @@ export type Database = {
           customer_email: string
           customer_name: string
           id: string
-          session_token: string
           shipping_address: Json
           status: string
           stripe_session_id: string | null
@@ -136,7 +132,6 @@ export type Database = {
           customer_email: string
           customer_name: string
           id?: string
-          session_token: string
           shipping_address: Json
           status?: string
           stripe_session_id?: string | null
@@ -149,7 +144,6 @@ export type Database = {
           customer_email?: string
           customer_name?: string
           id?: string
-          session_token?: string
           shipping_address?: Json
           status?: string
           stripe_session_id?: string | null
