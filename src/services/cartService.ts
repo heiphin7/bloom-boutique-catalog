@@ -81,20 +81,22 @@ export const getOrCreateCart = async (): Promise<string> => {
 // Get current cart with items
 export const getCurrentCart = async (): Promise<CartWithItems | null> => {
   try {
+    console.log("🔍 Starting getCurrentCart function");
+    
     // Get current user
     const { data: { user }, error: userError } = await supabase.auth.getUser();
     
     if (userError) {
-      console.error('Error getting user:', userError);
+      console.error('❌ Error getting user:', userError);
       return null;
     }
     
     if (!user) {
-      console.error('No authenticated user found');
+      console.error('❌ No authenticated user found');
       return null;
     }
     
-    console.log('Getting cart for user ID:', user.id);
+    console.log('👤 Getting cart for user ID:', user.id);
     
     // Get cart
     const { data: cart, error: cartError } = await supabase
@@ -104,7 +106,7 @@ export const getCurrentCart = async (): Promise<CartWithItems | null> => {
       .maybeSingle();
     
     if (cartError) {
-      console.error('Error fetching cart:', cartError);
+      console.error('❌ Error fetching cart:', cartError);
       console.error('Error code:', cartError.code);
       console.error('Error message:', cartError.message);
       console.error('Error details:', cartError.details);
@@ -114,7 +116,7 @@ export const getCurrentCart = async (): Promise<CartWithItems | null> => {
     // If no cart exists, create one
     if (!cart) {
       try {
-        console.log('No cart found, creating one for user:', user.id);
+        console.log('🛒 No cart found, creating one for user:', user.id);
         const cartId = await getOrCreateCart();
         
         const { data: newCart, error: newCartError } = await supabase
@@ -124,24 +126,25 @@ export const getCurrentCart = async (): Promise<CartWithItems | null> => {
           .single();
           
         if (newCartError || !newCart) {
-          console.error('Error fetching newly created cart:', newCartError);
+          console.error('❌ Error fetching newly created cart:', newCartError);
           return null;
         }
         
-        console.log('Successfully created and fetched new cart:', newCart);
+        console.log('✅ Successfully created and fetched new cart:', newCart);
         return {
           ...newCart,
           items: []
         };
       } catch (error) {
-        console.error('Error creating cart:', error);
+        console.error('❌ Error creating cart:', error);
         return null;
       }
     }
     
-    console.log('Found existing cart:', cart.id);
+    console.log('✅ Found existing cart with ID:', cart.id);
     
     // Get cart items with product details
+    console.log('🔍 Fetching cart items for cart ID:', cart.id);
     const { data: itemsWithProducts, error: itemsError } = await supabase
       .from('cart_items')
       .select(`
@@ -151,20 +154,29 @@ export const getCurrentCart = async (): Promise<CartWithItems | null> => {
       .eq('cart_id', cart.id);
     
     if (itemsError) {
-      console.error('Error fetching cart items:', itemsError);
+      console.error('❌ Error fetching cart items:', itemsError);
+      console.error('Error code:', itemsError.code);
+      console.error('Error message:', itemsError.message);
+      console.error('Error details:', itemsError.details);
       return null;
     }
     
+    console.log('✅ Successfully fetched cart items:', itemsWithProducts ? itemsWithProducts.length : 0);
+    console.log('📦 Items data:', JSON.stringify(itemsWithProducts, null, 2));
+    
     // Format the response
-    return {
+    const formattedCart = {
       ...cart,
-      items: itemsWithProducts.map(item => ({
+      items: itemsWithProducts ? itemsWithProducts.map(item => ({
         ...item,
         product: item.product as Product,
-      })),
+      })) : [],
     };
+    
+    console.log('🛒 Returning formatted cart with items');
+    return formattedCart;
   } catch (error) {
-    console.error('Error retrieving cart:', error);
+    console.error('❌ Error retrieving cart:', error);
     return null;
   }
 };

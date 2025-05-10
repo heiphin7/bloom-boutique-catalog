@@ -15,9 +15,12 @@ export const CartProvider: React.FC<{children: React.ReactNode}> = ({ children }
 
   // Fetch cart when auth state changes
   useEffect(() => {
+    console.log('🔄 CartProvider auth state changed:', user ? `User ${user.id} logged in` : 'No user');
+    
     if (user) {
       refreshCart();
     } else {
+      console.log('🔄 No user, clearing cart state');
       setCartItems([]);
       setCartTotal(0);
       setLoading(false);
@@ -26,7 +29,10 @@ export const CartProvider: React.FC<{children: React.ReactNode}> = ({ children }
 
   // Refresh cart from Supabase
   const refreshCart = async () => {
+    console.log('🔄 Starting refreshCart function');
+    
     if (!user) {
+      console.log('⚠️ refreshCart called but no user is logged in');
       setCartItems([]);
       setCartTotal(0);
       setLoading(false);
@@ -35,36 +41,62 @@ export const CartProvider: React.FC<{children: React.ReactNode}> = ({ children }
 
     setLoading(true);
     try {
+      console.log('🔍 Fetching cart data for user:', user.id);
       const cart = await getCurrentCart();
+      console.log('📦 Cart data received:', cart ? 'Success' : 'No cart returned');
       
       if (cart) {
-        // Transform cart items to match our CartItem type
-        const items: CartItem[] = cart.items.map(item => ({
-          id: item.id,
-          product_id: item.product_id,
-          name: item.product.name,
-          price: item.product.price,
-          image: item.product.image,
-          quantity: item.quantity
-        }));
+        console.log('🛒 Cart items count:', cart.items ? cart.items.length : 0);
         
+        // Transform cart items to match our CartItem type
+        const items: CartItem[] = cart.items.map(item => {
+          if (!item.product) {
+            console.warn('⚠️ Cart item without product data:', item);
+            return {
+              id: item.id,
+              product_id: item.product_id,
+              name: 'Unknown Product',
+              price: 0,
+              image: null,
+              quantity: item.quantity
+            };
+          }
+          
+          return {
+            id: item.id,
+            product_id: item.product_id,
+            name: item.product.name,
+            price: item.product.price,
+            image: item.product.image,
+            quantity: item.quantity
+          };
+        });
+        
+        console.log('✅ Transformed items:', items.length);
         setCartItems(items);
         
         // Calculate total
         const total = items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+        console.log('💰 Calculated cart total:', total);
         setCartTotal(total);
       } else {
+        console.log('⚠️ No cart data returned, setting empty state');
         setCartItems([]);
         setCartTotal(0);
       }
     } catch (error) {
-      console.error("Error refreshing cart:", error);
+      console.error("❌ Error refreshing cart:", error);
       toast({
         title: "Error",
         description: "Failed to fetch your cart",
         variant: "destructive"
       });
+      
+      // Reset state on error to prevent infinite loading
+      setCartItems([]);
+      setCartTotal(0);
     } finally {
+      console.log('✅ Cart refresh complete, setting loading to false');
       setLoading(false);
     }
   };
