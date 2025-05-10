@@ -12,6 +12,8 @@ export const getOrCreateCart = async (): Promise<string> => {
       console.error('No authenticated user found');
       throw new Error('User must be authenticated to access cart');
     }
+
+    console.log("Checking cart for user ID:", user?.id);
     
     // Check if the user already has a cart
     const { data: existingCart, error: fetchError } = await supabase
@@ -32,9 +34,13 @@ export const getOrCreateCart = async (): Promise<string> => {
     
     // If no cart exists, create a new one
     console.log('Creating new cart for user:', user.id);
+    
+    // Create cart with required user_id field
     const { data: newCart, error: insertError } = await supabase
       .from('carts')
-      .insert({ user_id: user.id })
+      .insert({ 
+        user_id: user.id  // Ensure user_id is explicitly passed
+      })
       .select('id')
       .single();
     
