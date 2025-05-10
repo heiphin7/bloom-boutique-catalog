@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { ShoppingCart, CreditCard, Check } from "lucide-react";
@@ -9,7 +10,7 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "@/components/ui/use-toast";
 import { useCart } from "../contexts/CartContext";
-import { useOrders } from "../contexts/OrdersContext";
+import { useOrders, OrderInput } from "../contexts/OrdersContext";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 import { getCurrentCart } from "@/services/cartService";
@@ -99,7 +100,7 @@ const PaymentForm = () => {
       }
       
       // Create order in database
-      const orderId = await addOrder({
+      const orderData: OrderInput = {
         customer_name: name,
         customer_email: email,
         shipping_address: address,
@@ -107,8 +108,9 @@ const PaymentForm = () => {
         status: "unpaid",
         products: [],
         stripeSessionId: token ? token.id : undefined
-        // No need for id here since we're creating a new order
-      });
+      };
+      
+      const orderId = await addOrder(orderData);
       
       if (!orderId) {
         setError("Failed to create order. Please try again.");
@@ -121,7 +123,7 @@ const PaymentForm = () => {
         try {
           // Update order status to paid
           await addOrder({
-            id: orderId, // This is needed to identify which order to update
+            id: orderId, // Include orderId for update
             customer_name: name,
             customer_email: email,
             shipping_address: address,
