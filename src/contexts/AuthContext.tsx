@@ -176,6 +176,21 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         description: 'Your account has been created successfully.',
       });
       
+      // Create a cart for the new user
+      if (data.user) {
+        try {
+          const { error: cartError } = await supabase
+            .from('carts')
+            .insert({ user_id: data.user.id });
+          
+          if (cartError) {
+            console.error('Error creating cart for new user:', cartError);
+          }
+        } catch (cartError) {
+          console.error('Exception creating cart:', cartError);
+        }
+      }
+      
       // Auto login if email verification is not required
       if (data.session) {
         navigate('/');
