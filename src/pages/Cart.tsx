@@ -5,7 +5,6 @@ import { Trash2, ChevronLeft, ShoppingCart } from "lucide-react";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 import { useCart } from "../contexts/CartContext";
-import { useAuth } from "../contexts/AuthContext";
 import { Button } from "@/components/ui/button";
 import { 
   Table, 
@@ -20,8 +19,6 @@ const Cart = () => {
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState("");
   const { cartItems, updateQuantity, removeFromCart, clearCart, getCartTotal, loading, refreshCart } = useCart();
-  const { user } = useAuth();
-  const [isRefreshing, setIsRefreshing] = useState(false);
 
   // Handle search
   const handleSearchChange = (e) => {
@@ -34,36 +31,12 @@ const Cart = () => {
     }
   };
 
-  // Redirect to auth if not logged in
-  useEffect(() => {
-    console.log('🔍 Cart page - Auth check:', user ? 'User authenticated' : 'No user');
-    if (!user) {
-      console.log('⚠️ No authenticated user, redirecting to /auth');
-      navigate('/auth');
-    }
-  }, [user, navigate]);
-
   // Refresh cart on page load
   useEffect(() => {
-    console.log('🔍 Cart page - Initial load, refreshing cart data');
-    const loadCart = async () => {
-      try {
-        setIsRefreshing(true);
-        await refreshCart();
-      } catch (error) {
-        console.error('❌ Error refreshing cart:', error);
-      } finally {
-        setIsRefreshing(false);
-      }
-    };
-    
-    if (user) {
-      loadCart();
-    }
-  }, [refreshCart, user]);
+    refreshCart();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
-  // Combine loading states for better UX
-  const isLoading = loading || isRefreshing;
 
   // Handle quantity change
   const handleQuantityChange = (id, currentQuantity, change) => {
@@ -81,13 +54,7 @@ const Cart = () => {
     navigate('/payment');
   };
 
-  if (!user) {
-    console.log('🔍 Cart page - No user detected, rendering nothing while redirecting');
-    return null; // Return nothing while the redirect happens
-  }
-
-  if (isLoading) {
-    console.log('🔄 Cart page - Showing loading state');
+  if (loading) {
     return (
       <div className="min-h-screen flex flex-col">
         <Header searchTerm={searchTerm} onSearchChange={handleSearchChange} onSearchKeyDown={handleSearchKeyDown} />
@@ -101,8 +68,6 @@ const Cart = () => {
     );
   }
 
-  console.log('✅ Cart page - Rendering cart items:', cartItems.length);
-  
   return (
     <div className="min-h-screen flex flex-col">
       <Header searchTerm={searchTerm} onSearchChange={handleSearchChange} onSearchKeyDown={handleSearchKeyDown} />
