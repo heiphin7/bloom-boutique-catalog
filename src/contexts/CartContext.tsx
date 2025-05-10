@@ -162,6 +162,12 @@ export const CartProvider: React.FC<{children: React.ReactNode}> = ({ children }
           
           // Refresh cart
           refreshCart();
+        } else {
+          toast({
+            title: "Error",
+            description: "Failed to remove item from cart",
+            variant: "destructive"
+          });
         }
       }
     } catch (error) {
@@ -189,6 +195,12 @@ export const CartProvider: React.FC<{children: React.ReactNode}> = ({ children }
       if (success) {
         // Refresh cart
         refreshCart();
+      } else {
+        toast({
+          title: "Error",
+          description: "Failed to update quantity",
+          variant: "destructive"
+        });
       }
     } catch (error) {
       console.error("Error updating quantity:", error);
@@ -215,6 +227,12 @@ export const CartProvider: React.FC<{children: React.ReactNode}> = ({ children }
         
         // Refresh cart
         refreshCart();
+      } else {
+        toast({
+          title: "Error",
+          description: "Failed to clear cart",
+          variant: "destructive"
+        });
       }
     } catch (error) {
       console.error("Error clearing cart:", error);

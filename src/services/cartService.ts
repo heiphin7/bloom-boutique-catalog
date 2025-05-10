@@ -4,43 +4,56 @@ import type { CartWithItems, Product } from "@/types/supabase";
 
 // Get or create cart
 export const getOrCreateCart = async (): Promise<string> => {
-  // Get current user
-  const { data: { user } } = await supabase.auth.getUser();
-  
-  if (!user) {
-    throw new Error('User must be authenticated to access cart');
+  try {
+    // Get current user
+    const { data: { user } } = await supabase.auth.getUser();
+    
+    if (!user) {
+      console.error('No authenticated user found');
+      throw new Error('User must be authenticated to access cart');
+    }
+    
+    // Check if the user already has a cart
+    const { data: existingCart, error: fetchError } = await supabase
+      .from('carts')
+      .select('id')
+      .eq('user_id', user.id)
+      .maybeSingle();
+    
+    if (fetchError) {
+      console.error('Error fetching cart:', fetchError);
+      throw new Error('Failed to fetch cart');
+    }
+    
+    // If cart exists, return its ID
+    if (existingCart?.id) {
+      return existingCart.id;
+    }
+    
+    // If no cart exists, create a new one
+    console.log('Creating new cart for user:', user.id);
+    const { data: newCart, error: insertError } = await supabase
+      .from('carts')
+      .insert({ user_id: user.id })
+      .select('id')
+      .single();
+    
+    if (insertError) {
+      console.error('Error creating cart:', insertError);
+      throw new Error('Failed to create cart');
+    }
+    
+    if (!newCart) {
+      console.error('No cart was created');
+      throw new Error('Failed to create cart - no data returned');
+    }
+    
+    console.log('Successfully created cart:', newCart.id);
+    return newCart.id;
+  } catch (error) {
+    console.error('Exception in getOrCreateCart:', error);
+    throw error;
   }
-  
-  // Check if the user already has a cart
-  const { data: existingCart, error: fetchError } = await supabase
-    .from('carts')
-    .select('id')
-    .eq('user_id', user.id)
-    .maybeSingle();
-  
-  if (fetchError) {
-    console.error('Error fetching cart:', fetchError);
-    throw new Error('Failed to fetch cart');
-  }
-  
-  // If cart exists, return its ID
-  if (existingCart?.id) {
-    return existingCart.id;
-  }
-  
-  // If no cart exists, create a new one
-  const { data: newCart, error: insertError } = await supabase
-    .from('carts')
-    .insert({ user_id: user.id })
-    .select('id')
-    .single();
-  
-  if (insertError || !newCart) {
-    console.error('Error creating cart:', insertError);
-    throw new Error('Failed to create cart');
-  }
-  
-  return newCart.id;
 };
 
 // Get current cart with items
@@ -123,7 +136,9 @@ export const getCurrentCart = async (): Promise<CartWithItems | null> => {
 // Add item to cart
 export const addItemToCart = async (productId: number, quantity: number): Promise<boolean> => {
   try {
+    console.log('Adding to cart:', { productId, quantity });
     const cartId = await getOrCreateCart();
+    console.log('Cart ID:', cartId);
     
     // Check if item already exists in cart
     const { data: existingItem, error: checkError } = await supabase
@@ -140,29 +155,38 @@ export const addItemToCart = async (productId: number, quantity: number): Promis
     
     if (existingItem) {
       // Update quantity of existing item
+      console.log('Updating existing item:', existingItem.id);
+      const newQuantity = existingItem.quantity + quantity;
+      
       const { error: updateError } = await supabase
         .from('cart_items')
-        .update({ quantity: existingItem.quantity + quantity })
+        .update({ quantity: newQuantity })
         .eq('id', existingItem.id);
       
       if (updateError) {
         console.error('Error updating cart item:', updateError);
         return false;
       }
+      
+      console.log('Successfully updated item quantity to', newQuantity);
     } else {
       // Add new item
-      const { error: insertError } = await supabase
+      console.log('Adding new item to cart');
+      const { data, error: insertError } = await supabase
         .from('cart_items')
         .insert({
           cart_id: cartId,
           product_id: productId,
           quantity
-        });
+        })
+        .select();
       
       if (insertError) {
         console.error('Error adding item to cart:', insertError);
         return false;
       }
+      
+      console.log('Successfully added new item to cart', data);
     }
     
     return true;
