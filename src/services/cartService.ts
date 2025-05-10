@@ -29,17 +29,22 @@ export const getOrCreateCart = async (): Promise<string> => {
     
     // If cart exists, return its ID
     if (existingCart?.id) {
+      console.log('Found existing cart with ID:', existingCart.id);
       return existingCart.id;
     }
     
     // If no cart exists, create a new one
     console.log('Creating new cart for user:', user.id);
     
+    const insertPayload = { user_id: user.id };
+    console.log('Cart insert payload:', insertPayload);
+    
     // Create cart with required user_id field
     const { data: newCart, error: insertError } = await supabase
       .from('carts')
-      .insert({ 
-        user_id: user.id  // Ensure user_id is explicitly passed
+      .upsert(insertPayload, { 
+        onConflict: 'user_id',
+        ignoreDuplicates: false
       })
       .select('id')
       .single();
@@ -88,6 +93,7 @@ export const getCurrentCart = async (): Promise<CartWithItems | null> => {
     // If no cart exists, create one
     if (!cart) {
       try {
+        console.log('No cart found, creating one for user:', user.id);
         const cartId = await getOrCreateCart();
         
         const { data: newCart, error: newCartError } = await supabase
@@ -101,6 +107,7 @@ export const getCurrentCart = async (): Promise<CartWithItems | null> => {
           return null;
         }
         
+        console.log('Successfully created and fetched new cart:', newCart);
         return {
           ...newCart,
           items: []
@@ -164,27 +171,35 @@ export const addItemToCart = async (productId: number, quantity: number): Promis
       console.log('Updating existing item:', existingItem.id);
       const newQuantity = existingItem.quantity + quantity;
       
-      const { error: updateError } = await supabase
+      const updatePayload = { quantity: newQuantity };
+      console.log('Cart item update payload:', updatePayload);
+      
+      const { data: updatedItem, error: updateError } = await supabase
         .from('cart_items')
-        .update({ quantity: newQuantity })
-        .eq('id', existingItem.id);
+        .update(updatePayload)
+        .eq('id', existingItem.id)
+        .select();
       
       if (updateError) {
         console.error('Error updating cart item:', updateError);
         return false;
       }
       
-      console.log('Successfully updated item quantity to', newQuantity);
+      console.log('Successfully updated item quantity to', newQuantity, 'Response:', updatedItem);
     } else {
       // Add new item
       console.log('Adding new item to cart');
+      const insertPayload = {
+        cart_id: cartId,
+        product_id: productId,
+        quantity,
+        added_at: new Date().toISOString()
+      };
+      console.log('Cart item insert payload:', insertPayload);
+      
       const { data, error: insertError } = await supabase
         .from('cart_items')
-        .insert({
-          cart_id: cartId,
-          product_id: productId,
-          quantity
-        })
+        .insert(insertPayload)
         .select();
       
       if (insertError) {
@@ -210,16 +225,20 @@ export const updateCartItemQuantity = async (itemId: string, quantity: number): 
       return removeCartItem(itemId);
     }
     
-    const { error } = await supabase
+    console.log('Updating cart item quantity:', { itemId, quantity });
+    
+    const { data, error } = await supabase
       .from('cart_items')
       .update({ quantity })
-      .eq('id', itemId);
+      .eq('id', itemId)
+      .select();
     
     if (error) {
       console.error('Error updating cart item quantity:', error);
       return false;
     }
     
+    console.log('Successfully updated cart item quantity:', data);
     return true;
   } catch (error) {
     console.error('Error updating cart item:', error);
@@ -230,16 +249,20 @@ export const updateCartItemQuantity = async (itemId: string, quantity: number): 
 // Remove item from cart
 export const removeCartItem = async (itemId: string): Promise<boolean> => {
   try {
-    const { error } = await supabase
+    console.log('Removing cart item:', itemId);
+    
+    const { data, error } = await supabase
       .from('cart_items')
       .delete()
-      .eq('id', itemId);
+      .eq('id', itemId)
+      .select();
     
     if (error) {
       console.error('Error removing cart item:', error);
       return false;
     }
     
+    console.log('Successfully removed cart item:', data);
     return true;
   } catch (error) {
     console.error('Error removing cart item:', error);
@@ -251,17 +274,20 @@ export const removeCartItem = async (itemId: string): Promise<boolean> => {
 export const clearCart = async (): Promise<boolean> => {
   try {
     const cartId = await getOrCreateCart();
+    console.log('Clearing cart:', cartId);
     
-    const { error } = await supabase
+    const { data, error } = await supabase
       .from('cart_items')
       .delete()
-      .eq('cart_id', cartId);
+      .eq('cart_id', cartId)
+      .select();
     
     if (error) {
       console.error('Error clearing cart:', error);
       return false;
     }
     
+    console.log('Successfully cleared cart:', data);
     return true;
   } catch (error) {
     console.error('Error clearing cart:', error);

@@ -179,12 +179,22 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       // Create a cart for the new user
       if (data.user) {
         try {
-          const { error: cartError } = await supabase
+          console.log('Creating cart for new user with ID:', data.user.id);
+          
+          const { data: cartData, error: cartError } = await supabase
             .from('carts')
-            .insert({ user_id: data.user.id });
+            .upsert({ 
+              user_id: data.user.id 
+            }, {
+              onConflict: 'user_id',
+              ignoreDuplicates: false
+            })
+            .select('id');
           
           if (cartError) {
             console.error('Error creating cart for new user:', cartError);
+          } else {
+            console.log('Successfully created cart for new user:', cartData);
           }
         } catch (cartError) {
           console.error('Exception creating cart:', cartError);
