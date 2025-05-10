@@ -51,11 +51,15 @@ export const createOrder = async (
       sum + (item.product.price * item.quantity), 0
     );
     
+    // Generate a UUID for session_token to satisfy the type requirements
+    const sessionToken = crypto.randomUUID();
+    
     // Create order
     const { data: order, error: orderError } = await supabase
       .from('orders')
       .insert({
         user_id: user.id,
+        session_token: sessionToken,
         customer_name: customerInfo.name,
         customer_email: customerInfo.email,
         shipping_address: customerInfo.shippingAddress,
