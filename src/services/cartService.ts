@@ -50,6 +50,7 @@ export const getCurrentCart = async (): Promise<CartWithItems | null> => {
     const { data: { user } } = await supabase.auth.getUser();
     
     if (!user) {
+      console.error('No authenticated user found');
       return null;
     }
     
@@ -65,9 +66,30 @@ export const getCurrentCart = async (): Promise<CartWithItems | null> => {
       return null;
     }
     
-    // If no cart exists, return null
+    // If no cart exists, create one
     if (!cart) {
-      return null;
+      try {
+        const cartId = await getOrCreateCart();
+        
+        const { data: newCart, error: newCartError } = await supabase
+          .from('carts')
+          .select('*')
+          .eq('id', cartId)
+          .single();
+          
+        if (newCartError || !newCart) {
+          console.error('Error fetching newly created cart:', newCartError);
+          return null;
+        }
+        
+        return {
+          ...newCart,
+          items: []
+        };
+      } catch (error) {
+        console.error('Error creating cart:', error);
+        return null;
+      }
     }
     
     // Get cart items with product details

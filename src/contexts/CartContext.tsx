@@ -127,6 +127,12 @@ export const CartProvider: React.FC<{children: React.ReactNode}> = ({ children }
         
         // Refresh cart
         refreshCart();
+      } else {
+        toast({
+          title: "Error",
+          description: "Failed to add item to cart",
+          variant: "destructive"
+        });
       }
     } catch (error) {
       console.error("Error adding to cart:", error);
