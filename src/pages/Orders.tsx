@@ -21,7 +21,7 @@ const Orders = () => {
   // Update orders when component mounts
   useEffect(() => {
     refreshOrders();
-  }, [refreshOrders]);
+  }, []);
   
   const handleSearchChange = (e) => {
     setSearchTerm(e.target.value);
