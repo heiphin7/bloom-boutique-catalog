@@ -7,6 +7,7 @@ import type { OrderWithItems } from "@/types/supabase";
 // Create an order from cart
 export const createOrder = async (
   customerInfo: { 
+    id?: string;  // Make id optional
     name: string;
     email: string;
     shippingAddress: any;
@@ -35,7 +36,8 @@ export const createOrder = async (
         customer_email: customerInfo.email,
         shipping_address: customerInfo.shippingAddress,
         total,
-        status: 'unpaid'
+        status: 'unpaid',
+        ...(customerInfo.id ? { id: customerInfo.id } : {}) // Include ID if provided
       })
       .select()
       .single();

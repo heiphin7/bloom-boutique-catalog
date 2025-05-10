@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { ShoppingCart, CreditCard, Check } from "lucide-react";
@@ -108,6 +107,7 @@ const PaymentForm = () => {
         status: "unpaid",
         products: [],
         stripeSessionId: token ? token.id : undefined
+        // No need for id here since we're creating a new order
       });
       
       if (!orderId) {
