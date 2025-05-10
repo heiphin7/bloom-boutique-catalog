@@ -5,65 +5,58 @@ import type { CartWithItems, Product } from "@/types/supabase";
 // Get or create cart
 export const getOrCreateCart = async (): Promise<string> => {
   try {
-    // Get current user
-    const { data: { user } } = await supabase.auth.getUser();
-    console.log("User at cart creation:", user); // <- покажет null?
-    
-    if (!user) {
-      console.error('No authenticated user found');
-      throw new Error('User must be authenticated to access cart');
+    const { data: userResult, error: userError } = await supabase.auth.getUser();
+
+    if (userError || !userResult?.user?.id) {
+      console.error("❌ Ошибка получения пользователя или пользователь не авторизован:", userError);
+      throw new Error("User must be authenticated to access or create cart.");
     }
 
-    console.log("Checking cart for user ID:", user?.id);
-    
-    // Check if the user already has a cart
+    const userId = userResult.user.id;
+    console.log("👤 Текущий user_id:", userId);
+
+    // Проверяем наличие уже существующей корзины
     const { data: existingCart, error: fetchError } = await supabase
-      .from('carts')
-      .select('id')
-      .eq('user_id', user.id)
+      .from("carts")
+      .select("id")
+      .eq("user_id", userId)
       .maybeSingle();
-    
+
     if (fetchError) {
-      console.error('Error fetching cart:', fetchError);
-      throw new Error('Failed to fetch cart');
+      console.error("❌ Ошибка при получении корзины:", fetchError);
+      throw new Error("Failed to fetch cart.");
     }
-    
-    // If cart exists, return its ID
+
     if (existingCart?.id) {
-      console.log('Found existing cart with ID:', existingCart.id);
+      console.log("✅ Найдена существующая корзина:", existingCart.id);
       return existingCart.id;
     }
-    
-    // If no cart exists, create a new one
-    console.log('Creating new cart for user:', user.id);
-    
-    const insertPayload = { user_id: user.id };
-    console.log('Cart insert payload:', insertPayload);
-    
-    // Create cart with required user_id field
+
+    // Вставляем новую корзину
+    const insertPayload = { user_id: userId };
+    console.log("🛒 Создание новой корзины с payload:", insertPayload);
+
     const { data: newCart, error: insertError } = await supabase
-      .from('carts')
-      .upsert(insertPayload, { 
-        onConflict: 'user_id',
-        ignoreDuplicates: false
-      })
-      .select('id')
+      .from("carts")
+      .insert(insertPayload)
+      .select("id")
       .single();
-    
+
     if (insertError) {
-      console.error('Error creating cart:', insertError);
-      throw new Error('Failed to create cart');
+      console.error("❌ Ошибка при создании корзины:", insertError);
+      throw new Error("Failed to insert new cart.");
     }
-    
-    if (!newCart) {
-      console.error('No cart was created');
-      throw new Error('Failed to create cart - no data returned');
+
+    if (!newCart?.id) {
+      console.error("❌ Корзина создана, но ID не вернулся.");
+      throw new Error("Cart created but no ID returned.");
     }
-    
-    console.log('Successfully created cart:', newCart.id);
+
+    console.log("✅ Корзина успешно создана:", newCart.id);
     return newCart.id;
+
   } catch (error) {
-    console.error('Exception in getOrCreateCart:', error);
+    console.error("❌ Ошибка в getOrCreateCart:", error);
     throw error;
   }
 };
