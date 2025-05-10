@@ -1,8 +1,9 @@
+
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { ShoppingCart, CreditCard, Check } from "lucide-react";
 import { loadStripe } from "@stripe/stripe-js";
-import { Elements, CardElement, useStripe, useElements } from "@stripe/react-stripe";
+import { Elements, CardElement, useStripe, useElements } from "@stripe/react-stripe-js";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -120,7 +121,7 @@ const PaymentForm = () => {
         try {
           // Update order status to paid
           await addOrder({
-            id: orderId,
+            id: orderId, // This is needed to identify which order to update
             customer_name: name,
             customer_email: email,
             shipping_address: address,

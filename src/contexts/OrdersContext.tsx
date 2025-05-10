@@ -19,7 +19,7 @@ export type Order = {
 
 type OrdersContextType = {
   orders: Order[];
-  addOrder: (order: Omit<Order, 'id' | 'date'>) => Promise<string | null>;
+  addOrder: (order: Omit<Order, 'date'>) => Promise<string | null>;
   getOrders: () => Promise<Order[]>;
   updateOrderStatus: (orderId: string, status: "paid" | "unpaid") => Promise<boolean>;
   loading: boolean;
@@ -91,10 +91,11 @@ export const OrdersProvider: React.FC<{children: React.ReactNode}> = ({ children
   };
 
   // Add a new order
-  const addOrder = async (orderData: Omit<Order, 'id' | 'date'>): Promise<string | null> => {
+  const addOrder = async (orderData: Omit<Order, 'date'>): Promise<string | null> => {
     try {
       // Use createOrder service
       const orderId = await createOrder({
+        id: orderData.id, // Now this is allowed in the type
         name: orderData.customer_name,
         email: orderData.customer_email,
         shippingAddress: orderData.shipping_address

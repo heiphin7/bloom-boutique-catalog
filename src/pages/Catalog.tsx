@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import Header from "../components/Header";
@@ -15,7 +16,7 @@ const Catalog = () => {
     colors: [],
     occasions: [],
     types: [],
-    priceRange: [0, 200],
+    priceRange: [0, 200] as [number, number], // Explicitly type as tuple
   });
   const [sortOption, setSortOption] = useState("featured");
   const [isLoading, setIsLoading] = useState(true);
@@ -67,7 +68,7 @@ const Catalog = () => {
       const newFilters = {...prev};
       
       if (filterType === "priceRange") {
-        newFilters.priceRange = value;
+        newFilters.priceRange = value as [number, number];
       } else if (Array.isArray(prev[filterType])) {
         if (prev[filterType].includes(value)) {
           // Remove filter if already selected
