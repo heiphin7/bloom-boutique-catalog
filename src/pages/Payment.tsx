@@ -310,9 +310,11 @@ const Payment = () => {
   const navigate = useNavigate();
   
   // Refresh cart on mount
+  // only once on component mount
   useEffect(() => {
     refreshCart();
-  }, [refreshCart]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
   
   const handleSearchChange = (e) => {
     setSearchTerm(e.target.value);
