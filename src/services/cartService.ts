@@ -7,6 +7,7 @@ export const getOrCreateCart = async (): Promise<string> => {
   try {
     // Get current user
     const { data: { user } } = await supabase.auth.getUser();
+    console.log("User at cart creation:", user); // <- покажет null?
     
     if (!user) {
       console.error('No authenticated user found');
