@@ -44,12 +44,17 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         console.log('Auth state changed:', event);
         setSession(newSession);
         setUser(newSession?.user ?? null);
-
-        // If session changed, fetch profile
+    
         if (newSession?.user) {
-          setTimeout(() => {
-            fetchProfile(newSession.user.id);
-          }, 0);
+          fetchProfile(newSession.user.id);
+    
+          // ✅ Создаём корзину, если надо
+          import('@/services/cartService').then(({ getOrCreateCart }) => {
+            console.log('Triggering getOrCreateCart from onAuthStateChange...');
+            getOrCreateCart()
+              .then((id) => console.log('Cart ID (onAuthStateChange):', id))
+              .catch((err) => console.error('Failed to create/fetch cart:', err));
+          });
         } else {
           setProfile(null);
         }
