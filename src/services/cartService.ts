@@ -34,16 +34,19 @@ export const getOrCreateCart = async (): Promise<string> => {
 
     // Вставляем новую корзину
     const insertPayload = { user_id: userId };
-    console.log("🛒 Создание новой корзины с payload:", insertPayload);
+    console.log("🛒 Создание новой корзины с payload:", JSON.stringify(insertPayload, null, 2));
 
-    const { data: newCart, error: insertError } = await supabase
+    const { data: newCart, error: insertError, status } = await supabase
       .from("carts")
       .insert(insertPayload)
       .select("id")
       .single();
+    
+    console.log("🛒 Статус создания корзины:", status);
 
     if (insertError) {
       console.error("❌ Ошибка при создании корзины:", insertError);
+      console.error("❌ Отправленные данные:", insertPayload);
       throw new Error("Failed to insert new cart.");
     }
 
@@ -65,12 +68,19 @@ export const getOrCreateCart = async (): Promise<string> => {
 export const getCurrentCart = async (): Promise<CartWithItems | null> => {
   try {
     // Get current user
-    const { data: { user } } = await supabase.auth.getUser();
+    const { data: { user }, error: userError } = await supabase.auth.getUser();
+    
+    if (userError) {
+      console.error('Error getting user:', userError);
+      return null;
+    }
     
     if (!user) {
       console.error('No authenticated user found');
       return null;
     }
+    
+    console.log('Getting cart for user ID:', user.id);
     
     // Get cart
     const { data: cart, error: cartError } = await supabase
@@ -112,6 +122,8 @@ export const getCurrentCart = async (): Promise<CartWithItems | null> => {
       }
     }
     
+    console.log('Found existing cart:', cart.id);
+    
     // Get cart items with product details
     const { data: itemsWithProducts, error: itemsError } = await supabase
       .from('cart_items')
@@ -144,8 +156,19 @@ export const getCurrentCart = async (): Promise<CartWithItems | null> => {
 export const addItemToCart = async (productId: number, quantity: number): Promise<boolean> => {
   try {
     console.log('Adding to cart:', { productId, quantity });
+    
+    const { data: userResult, error: userError } = await supabase.auth.getUser();
+    
+    if (userError || !userResult?.user?.id) {
+      console.error('Error getting user or user not authenticated:', userError);
+      return false;
+    }
+    
+    console.log('Current user ID:', userResult.user.id);
+    
+    // Get or create cart
     const cartId = await getOrCreateCart();
-    console.log('Cart ID:', cartId);
+    console.log('Resolved cart ID:', cartId);
     
     // Check if item already exists in cart
     const { data: existingItem, error: checkError } = await supabase
@@ -166,16 +189,19 @@ export const addItemToCart = async (productId: number, quantity: number): Promis
       const newQuantity = existingItem.quantity + quantity;
       
       const updatePayload = { quantity: newQuantity };
-      console.log('Cart item update payload:', updatePayload);
+      console.log('Cart item update payload:', JSON.stringify(updatePayload, null, 2));
       
-      const { data: updatedItem, error: updateError } = await supabase
+      const { data: updatedItem, error: updateError, status } = await supabase
         .from('cart_items')
         .update(updatePayload)
         .eq('id', existingItem.id)
         .select();
       
+      console.log('Update status:', status);
+      
       if (updateError) {
         console.error('Error updating cart item:', updateError);
+        console.error('Update payload:', updatePayload);
         return false;
       }
       
@@ -189,15 +215,18 @@ export const addItemToCart = async (productId: number, quantity: number): Promis
         quantity,
         added_at: new Date().toISOString()
       };
-      console.log('Cart item insert payload:', insertPayload);
+      console.log('Cart item insert payload:', JSON.stringify(insertPayload, null, 2));
       
-      const { data, error: insertError } = await supabase
+      const { data, error: insertError, status } = await supabase
         .from('cart_items')
         .insert(insertPayload)
         .select();
       
+      console.log('Insert status:', status);
+      
       if (insertError) {
         console.error('Error adding item to cart:', insertError);
+        console.error('Insert payload:', insertPayload);
         return false;
       }
       

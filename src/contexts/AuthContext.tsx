@@ -165,7 +165,15 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         },
       });
 
-      console.log('Sign up response:', { data, error });
+      console.log('Sign up response:', { 
+        user: data?.user ? {
+          id: data.user.id,
+          email: data.user.email,
+          created_at: data.user.created_at
+        } : null,
+        session: data?.session ? 'Session exists' : 'No session',
+        error: error || 'No error'
+      });
 
       if (error) {
         toast({
@@ -185,8 +193,16 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       if (data.user) {
         try {
           console.log('Creating cart for new user with ID:', data.user.id);
+          console.log('User object exists:', !!data.user);
+          console.log('User ID exists:', !!data.user.id);
           
-          const { data: cartData, error: cartError } = await supabase
+          const insertPayload = { 
+            user_id: data.user.id 
+          };
+          
+          console.log('Cart creation payload:', JSON.stringify(insertPayload, null, 2));
+          
+          const { data: cartData, error: cartError, status } = await supabase
             .from('carts')
             .upsert({ 
               user_id: data.user.id 
@@ -196,14 +212,21 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             })
             .select('id');
           
+          console.log('Cart creation response status:', status);
+          console.log('Cart creation response data:', cartData);
+          
           if (cartError) {
             console.error('Error creating cart for new user:', cartError);
+            console.error('Payload sent:', insertPayload);
           } else {
             console.log('Successfully created cart for new user:', cartData);
           }
         } catch (cartError) {
           console.error('Exception creating cart:', cartError);
+          console.error('Payload that caused exception:', { user_id: data.user?.id });
         }
+      } else {
+        console.error('Cannot create cart: User object is null or undefined');
       }
       
       // Auto login if email verification is not required
