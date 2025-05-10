@@ -1,8 +1,8 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { ShoppingCart, CreditCard, Check } from "lucide-react";
 import { loadStripe } from "@stripe/stripe-js";
-import { Elements, CardElement, useStripe, useElements } from "@stripe/react-stripe-js";
+import { Elements, CardElement, useStripe, useElements } from "@stripe/react-stripe";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -12,6 +12,7 @@ import { useCart } from "../contexts/CartContext";
 import { useOrders } from "../contexts/OrdersContext";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
+import { getCurrentCart } from "@/services/cartService";
 
 // Load Stripe outside of component render
 const stripePromise = loadStripe("pk_test_51QH16MGg3EsGOCa6DOaYICHrsdQJr6VjqjNjocnCeQPgP1psHxsNI8w4p5uX9pybw6CNhxFK453IMfDSiFYHckXQ00Iznw9kcz");
@@ -35,23 +36,25 @@ const cardElementOptions = {
   },
 };
 
-// Helper function to generate order ID
-const generateOrderId = () => {
-  return `ord_${Math.random().toString(36).substring(2, 10)}`;
-};
-
 // Payment Form Component
 const PaymentForm = () => {
   const stripe = useStripe();
   const elements = useElements();
-  const { getCartTotal, clearCart, cartItems } = useCart();
+  const { clearCart, getCartTotal, refreshCart } = useCart();
   const { addOrder } = useOrders();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [email, setEmail] = useState("");
   const [name, setName] = useState("");
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState(null);
   const [success, setSuccess] = useState(false);
+  const [address, setAddress] = useState({
+    street: "",
+    city: "",
+    state: "",
+    postal_code: "",
+    country: "United States"
+  });
 
   // Calculate total amount
   const amount = getCartTotal();
@@ -59,7 +62,7 @@ const PaymentForm = () => {
   const shipping = amount > 0 ? (amount < 50 ? 10 : 0) : 0;
   const total = amount + shipping;
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (!stripe || !elements) {
@@ -71,8 +74,8 @@ const PaymentForm = () => {
     setError(null);
 
     // Validate form
-    if (!email || !name) {
-      setError("Please fill out all fields");
+    if (!email || !name || !address.street || !address.city || !address.state || !address.postal_code) {
+      setError("Please fill out all required fields");
       setLoading(false);
       return;
     }
@@ -86,10 +89,6 @@ const PaymentForm = () => {
     }
 
     try {
-      // Simulate payment processing
-      // In a real implementation, you would create a payment intent on your server
-      // and confirm it with the Stripe API
-      
       // Get token from Stripe (to test card validation)
       const { error: stripeError, token } = await stripe.createToken(cardElement);
 
@@ -98,47 +97,61 @@ const PaymentForm = () => {
         setLoading(false);
         return;
       }
-
-      // Generate an order ID
-      const orderId = generateOrderId();
-      const stripeSessionId = token ? token.id : `session_${Math.random().toString(36).substring(2, 10)}`;
-
-      // Create an order with status "unpaid" initially
-      const newOrder = {
-        id: orderId,
-        date: new Date().toISOString(),
-        total: total,
-        status: "unpaid" as const,
-        products: [...cartItems],
-        stripeSessionId: stripeSessionId
-      };
       
-      // Add order to OrdersContext
-      addOrder(newOrder);
+      // Create order in database
+      const orderId = await addOrder({
+        customer_name: name,
+        customer_email: email,
+        shipping_address: address,
+        total: total,
+        status: "unpaid",
+        products: [],
+        stripeSessionId: token ? token.id : undefined
+      });
+      
+      if (!orderId) {
+        setError("Failed to create order. Please try again.");
+        setLoading(false);
+        return;
+      }
 
       // Simulate payment processing delay
-      setTimeout(() => {
-        // Payment successful - update order status to paid
-        addOrder({
-          ...newOrder,
-          status: "paid" as const
-        });
-        
-        // Payment successful
-        setSuccess(true);
-        clearCart(); // Clear the cart after successful payment
-        
-        toast({
-          title: "Payment successful!",
-          description: `Thank you for your purchase of $${formattedAmount}`,
-        });
-        
-        // After 2 seconds, redirect to orders page
-        setTimeout(() => {
-          navigate('/orders');
-        }, 2000);
-        
-        setLoading(false);
+      setTimeout(async () => {
+        try {
+          // Update order status to paid
+          await addOrder({
+            id: orderId,
+            customer_name: name,
+            customer_email: email,
+            shipping_address: address,
+            total: total,
+            status: "paid",
+            products: [],
+            stripeSessionId: token ? token.id : undefined
+          });
+          
+          // Payment successful
+          setSuccess(true);
+          
+          // Clear the cart after successful payment
+          await clearCart();
+          await refreshCart();
+          
+          toast({
+            title: "Payment successful!",
+            description: `Thank you for your purchase of $${formattedAmount}`,
+          });
+          
+          // After 2 seconds, redirect to orders page
+          setTimeout(() => {
+            navigate('/orders');
+          }, 2000);
+        } catch (error) {
+          console.error("Error updating order:", error);
+          setError("Payment was processed but we encountered an issue updating your order.");
+        } finally {
+          setLoading(false);
+        }
       }, 1500);
       
     } catch (e) {
@@ -187,6 +200,69 @@ const PaymentForm = () => {
             required
           />
         </div>
+
+        <div className="space-y-2">
+          <Label htmlFor="street">Street Address</Label>
+          <Input 
+            id="street" 
+            type="text" 
+            placeholder="123 Main St" 
+            value={address.street}
+            onChange={(e) => setAddress({...address, street: e.target.value})}
+            required
+          />
+        </div>
+
+        <div className="grid grid-cols-2 gap-4">
+          <div className="space-y-2">
+            <Label htmlFor="city">City</Label>
+            <Input 
+              id="city" 
+              type="text" 
+              placeholder="New York" 
+              value={address.city}
+              onChange={(e) => setAddress({...address, city: e.target.value})}
+              required
+            />
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="state">State</Label>
+            <Input 
+              id="state" 
+              type="text" 
+              placeholder="NY" 
+              value={address.state}
+              onChange={(e) => setAddress({...address, state: e.target.value})}
+              required
+            />
+          </div>
+        </div>
+
+        <div className="grid grid-cols-2 gap-4">
+          <div className="space-y-2">
+            <Label htmlFor="postal_code">Postal Code</Label>
+            <Input 
+              id="postal_code" 
+              type="text" 
+              placeholder="10001" 
+              value={address.postal_code}
+              onChange={(e) => setAddress({...address, postal_code: e.target.value})}
+              required
+            />
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="country">Country</Label>
+            <Input 
+              id="country" 
+              type="text" 
+              value={address.country}
+              onChange={(e) => setAddress({...address, country: e.target.value})}
+              disabled
+            />
+          </div>
+        </div>
         
         <div className="space-y-2">
           <Label htmlFor="card">Card Details</Label>
@@ -226,15 +302,20 @@ const PaymentForm = () => {
 
 // Main Payment Page Component
 const Payment = () => {
-  const { getCartTotal, cartItems } = useCart();
+  const { getCartTotal, cartItems, loading, refreshCart } = useCart();
   const [searchTerm, setSearchTerm] = useState("");
   const navigate = useNavigate();
   
-  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  // Refresh cart on mount
+  useEffect(() => {
+    refreshCart();
+  }, [refreshCart]);
+  
+  const handleSearchChange = (e) => {
     setSearchTerm(e.target.value);
   };
   
-  const handleSearchKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+  const handleSearchKeyDown = (e) => {
     if (e.key === 'Enter' && searchTerm.trim()) {
       navigate('/?search=' + searchTerm.trim());
     }
@@ -243,6 +324,20 @@ const Payment = () => {
   const subtotal = getCartTotal();
   const shipping = subtotal > 0 ? (subtotal < 50 ? 10 : 0) : 0;
   const total = subtotal + shipping;
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex flex-col">
+        <Header searchTerm={searchTerm} onSearchChange={handleSearchChange} onSearchKeyDown={handleSearchKeyDown} />
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full flex-grow pb-12 pt-6">
+          <div className="flex justify-center items-center h-96">
+            <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-floral-lavender"></div>
+          </div>
+        </div>
+        <Footer />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen flex flex-col">

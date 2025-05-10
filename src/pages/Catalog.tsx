@@ -1,15 +1,16 @@
-
 import { useEffect, useState } from "react";
+import { useLocation } from "react-router-dom";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 import FlowerCard from "../components/FlowerCard";
 import Sidebar from "../components/Sidebar";
-import { flowers } from "../data/flowers";
+import { searchProducts } from "@/services/productService";
 import { Button } from "@/components/ui/button";
 
 const Catalog = () => {
+  const location = useLocation();
   const [searchTerm, setSearchTerm] = useState("");
-  const [filteredFlowers, setFilteredFlowers] = useState(flowers);
+  const [filteredFlowers, setFilteredFlowers] = useState([]);
   const [activeFilters, setActiveFilters] = useState({
     colors: [],
     occasions: [],
@@ -19,77 +20,46 @@ const Catalog = () => {
   const [sortOption, setSortOption] = useState("featured");
   const [isLoading, setIsLoading] = useState(true);
   
+  // Parse query params on page load
   useEffect(() => {
-    // Simulate loading delay
-    const timer = setTimeout(() => {
-      setIsLoading(false);
-    }, 800);
+    const queryParams = new URLSearchParams(location.search);
+    const search = queryParams.get('search');
+    const category = queryParams.get('category');
     
-    return () => clearTimeout(timer);
-  }, []);
+    if (search) {
+      setSearchTerm(search);
+    }
+    
+    if (category) {
+      setActiveFilters(prev => ({
+        ...prev,
+        types: [category]
+      }));
+    }
+  }, [location.search]);
   
+  // Fetch products when filters or search term change
   useEffect(() => {
-    let results = [...flowers];
+    const fetchProducts = async () => {
+      setIsLoading(true);
+      try {
+        const products = await searchProducts(searchTerm, {
+          colors: activeFilters.colors,
+          occasions: activeFilters.occasions,
+          types: activeFilters.types,
+          priceRange: activeFilters.priceRange
+        }, sortOption);
+        
+        setFilteredFlowers(products);
+      } catch (error) {
+        console.error("Error fetching products:", error);
+        setFilteredFlowers([]);
+      } finally {
+        setIsLoading(false);
+      }
+    };
     
-    // Apply search filter
-    if (searchTerm) {
-      results = results.filter(flower => 
-        flower.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
-        flower.description.toLowerCase().includes(searchTerm.toLowerCase())
-      );
-    }
-    
-    // Apply color filters
-    if (activeFilters.colors.length > 0) {
-      results = results.filter(flower => 
-        activeFilters.colors.some(color => flower.colors.includes(color))
-      );
-    }
-    
-    // Apply occasion filters
-    if (activeFilters.occasions.length > 0) {
-      results = results.filter(flower => 
-        activeFilters.occasions.some(occasion => flower.occasions.includes(occasion))
-      );
-    }
-    
-    // Apply type filters
-    if (activeFilters.types.length > 0) {
-      results = results.filter(flower => 
-        activeFilters.types.includes(flower.type)
-      );
-    }
-    
-    // Apply price range filter
-    results = results.filter(flower => 
-      flower.price >= activeFilters.priceRange[0] && 
-      flower.price <= activeFilters.priceRange[1]
-    );
-    
-    // Apply sorting
-    switch(sortOption) {
-      case "price-low-high":
-        results.sort((a, b) => a.price - b.price);
-        break;
-      case "price-high-low":
-        results.sort((a, b) => b.price - a.price);
-        break;
-      case "name-a-z":
-        results.sort((a, b) => a.name.localeCompare(b.name));
-        break;
-      case "name-z-a":
-        results.sort((a, b) => b.name.localeCompare(a.name));
-        break;
-      case "newest":
-        results.sort((a, b) => new Date(b.dateAdded).getTime() - new Date(a.dateAdded).getTime());
-        break;
-      case "featured":
-      default:
-        results.sort((a, b) => b.featured - a.featured);
-        break;
-    }
-    
-    setFilteredFlowers(results);
+    fetchProducts();
   }, [searchTerm, activeFilters, sortOption]);
   
   const handleFilterChange = (filterType, value) => {

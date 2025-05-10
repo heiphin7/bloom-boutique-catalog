@@ -4,15 +4,15 @@ import { Link } from 'react-router-dom';
 import { useCart } from '../contexts/CartContext';
 
 const FlowerCard = ({ flower }) => {
-  const badgeClass = flower.isNew ? 'badge-new' : flower.onSale ? 'badge-sale' : flower.isBestseller ? 'badge-bestseller' : '';
-  const badgeText = flower.isNew ? 'New' : flower.onSale ? 'Sale' : flower.isBestseller ? 'Bestseller' : '';
+  const badgeClass = flower.is_new ? 'badge-new' : flower.on_sale ? 'badge-sale' : flower.is_bestseller ? 'badge-bestseller' : '';
+  const badgeText = flower.is_new ? 'New' : flower.on_sale ? 'Sale' : flower.is_bestseller ? 'Bestseller' : '';
   const { addToCart } = useCart();
   
   const handleAddToCart = (e) => {
     e.preventDefault();
     e.stopPropagation();
     addToCart({
-      id: flower.id,
+      product_id: flower.id,
       name: flower.name,
       price: flower.price,
       image: flower.image,
@@ -59,7 +59,7 @@ const FlowerCard = ({ flower }) => {
       
       <Link to={`/product/${flower.id}`} className="block p-4">
         <div className="flex items-center mb-1">
-          {flower.colors.map((color, index) => (
+          {flower.colors && Array.isArray(flower.colors) && flower.colors.map((color, index) => (
             <span 
               key={index} 
               className="w-3 h-3 rounded-full mr-1 border border-gray-200" 
@@ -75,9 +75,9 @@ const FlowerCard = ({ flower }) => {
         
         <div className="flex items-center justify-between">
           <div className="flex items-center">
-            {flower.onSale ? (
+            {flower.on_sale ? (
               <>
-                <span className="text-gray-400 line-through mr-2">${flower.originalPrice.toFixed(2)}</span>
+                <span className="text-gray-400 line-through mr-2">${flower.original_price?.toFixed(2)}</span>
                 <span className="text-floral-peach font-semibold">${flower.price.toFixed(2)}</span>
               </>
             ) : (
@@ -90,11 +90,11 @@ const FlowerCard = ({ flower }) => {
               <i 
                 key={index} 
                 className={`fa-solid fa-star text-xs ${
-                  index < flower.rating ? 'text-yellow-400' : 'text-gray-300'
+                  index < (flower.rating || 0) ? 'text-yellow-400' : 'text-gray-300'
                 }`}
               ></i>
             ))}
-            <span className="text-xs text-gray-500 ml-1">({flower.reviewCount})</span>
+            <span className="text-xs text-gray-500 ml-1">({flower.review_count || 0})</span>
           </div>
         </div>
       </Link>

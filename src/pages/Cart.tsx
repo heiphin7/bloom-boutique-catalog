@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Trash2, ChevronLeft, ShoppingCart } from "lucide-react";
 import Header from "../components/Header";
@@ -18,21 +18,26 @@ import {
 const Cart = () => {
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState("");
-  const { cartItems, updateQuantity, removeFromCart, clearCart, getCartTotal } = useCart();
+  const { cartItems, updateQuantity, removeFromCart, clearCart, getCartTotal, loading, refreshCart } = useCart();
 
   // Handle search
-  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleSearchChange = (e) => {
     setSearchTerm(e.target.value);
   };
 
-  const handleSearchKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+  const handleSearchKeyDown = (e) => {
     if (e.key === 'Enter' && searchTerm.trim()) {
       navigate('/?search=' + searchTerm.trim());
     }
   };
 
+  // Refresh cart on page load
+  useEffect(() => {
+    refreshCart();
+  }, [refreshCart]);
+
   // Handle quantity change
-  const handleQuantityChange = (id: number, currentQuantity: number, change: number) => {
+  const handleQuantityChange = (id, currentQuantity, change) => {
     const newQuantity = Math.max(1, Math.min(10, currentQuantity + change));
     updateQuantity(id, newQuantity);
   };
@@ -46,6 +51,20 @@ const Cart = () => {
   const handleCheckout = () => {
     navigate('/payment');
   };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex flex-col">
+        <Header searchTerm={searchTerm} onSearchChange={handleSearchChange} onSearchKeyDown={handleSearchKeyDown} />
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full flex-grow pb-12 pt-6">
+          <div className="flex justify-center items-center h-96">
+            <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-floral-lavender"></div>
+          </div>
+        </div>
+        <Footer />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen flex flex-col">

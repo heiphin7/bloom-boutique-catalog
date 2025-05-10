@@ -8,9 +8,9 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import FlowerCard from "../components/FlowerCard";
-import { flowers } from "../data/flowers";
 import { useCart } from "../contexts/CartContext";
 import { toast } from "@/components/ui/use-toast";
+import { getProductById, getRelatedProducts } from "@/services/productService";
 
 const ProductDetail = () => {
   const { id } = useParams();
@@ -19,23 +19,58 @@ const ProductDetail = () => {
   const [quantity, setQuantity] = useState(1);
   const [addedToWishlist, setAddedToWishlist] = useState(false);
   const { addToCart } = useCart();
+  const [flower, setFlower] = useState(null);
+  const [relatedProducts, setRelatedProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  // Find the flower by ID
-  const flower = flowers.find(f => f.id === Number(id));
+  // Load product and related products data
+  useEffect(() => {
+    const loadProduct = async () => {
+      setLoading(true);
+      try {
+        // Parse ID to number
+        const productId = parseInt(id || '0');
+        if (!productId) {
+          navigate('/404');
+          return;
+        }
+        
+        const product = await getProductById(productId);
+        
+        if (!product) {
+          navigate('/404');
+          return;
+        }
+        
+        setFlower(product);
+        
+        // Load related products
+        const related = await getRelatedProducts(productId, product.type);
+        setRelatedProducts(related);
+      } catch (error) {
+        console.error("Error loading product:", error);
+        navigate('/404');
+      } finally {
+        setLoading(false);
+      }
+    };
+    
+    loadProduct();
+  }, [id, navigate]);
   
   // Handle search
-  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleSearchChange = (e) => {
     setSearchTerm(e.target.value);
   };
 
-  const handleSearchKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+  const handleSearchKeyDown = (e) => {
     if (e.key === 'Enter' && searchTerm.trim()) {
       navigate('/?search=' + searchTerm.trim());
     }
   };
   
   // Handle quantity change
-  const handleQuantityChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleQuantityChange = (e) => {
     const value = parseInt(e.target.value);
     if (!isNaN(value) && value > 0 && value <= 10) {
       setQuantity(value);
@@ -46,7 +81,7 @@ const ProductDetail = () => {
   const handleAddToCart = () => {
     if (flower) {
       addToCart({
-        id: flower.id,
+        product_id: flower.id,
         name: flower.name,
         price: flower.price,
         image: flower.image,
@@ -63,19 +98,20 @@ const ProductDetail = () => {
       description: flower ? `${flower.name} has been added to your wishlist` : "Item added to wishlist",
     });
   };
-  
-  // Filter related products (excluding the current one)
-  const relatedProducts = flowers
-    .filter(f => f.id !== Number(id))
-    .filter(f => flower ? f.type === flower.type : true)
-    .slice(0, 4);
-  
-  // Redirect to 404 if flower not found
-  useEffect(() => {
-    if (!flower && id) {
-      navigate('/404');
-    }
-  }, [flower, id, navigate]);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex flex-col">
+        <Header searchTerm={searchTerm} onSearchChange={handleSearchChange} onSearchKeyDown={handleSearchKeyDown} />
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full flex-grow pb-12 pt-6">
+          <div className="flex justify-center items-center h-96">
+            <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-floral-lavender"></div>
+          </div>
+        </div>
+        <Footer />
+      </div>
+    );
+  }
   
   if (!flower) {
     return null;

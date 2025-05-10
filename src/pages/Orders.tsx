@@ -13,22 +13,21 @@ import Footer from "../components/Footer";
 import { useOrders } from "../contexts/OrdersContext";
 
 const Orders = () => {
-  const { getOrders } = useOrders();
-  const [orders, setOrders] = useState(getOrders());
+  const { orders, loading, refreshOrders } = useOrders();
   const [searchTerm, setSearchTerm] = useState("");
   const [filterStatus, setFilterStatus] = useState("all");
   const navigate = useNavigate();
   
-  // Update orders when they change in context
+  // Update orders when component mounts
   useEffect(() => {
-    setOrders(getOrders());
-  }, [getOrders]);
+    refreshOrders();
+  }, [refreshOrders]);
   
-  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleSearchChange = (e) => {
     setSearchTerm(e.target.value);
   };
   
-  const handleSearchKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+  const handleSearchKeyDown = (e) => {
     if (e.key === 'Enter' && searchTerm.trim()) {
       navigate('/?search=' + searchTerm.trim());
     }
@@ -46,22 +45,41 @@ const Orders = () => {
       const productsMatch = order.products.some(product => 
         product.name.toLowerCase().includes(term)
       );
-      return productsMatch || order.id.toLowerCase().includes(term);
+      return productsMatch || order.id.toLowerCase().includes(term) || 
+             order.customer_name.toLowerCase().includes(term);
     }
     
     return true;
   });
   
-  const handlePayment = (orderId: string, stripeSessionId: string) => {
+  const handlePayment = (orderId, stripeSessionId) => {
     // In a real app, this would redirect to an existing Stripe session or create a new one
     toast({
       title: "Redirecting to payment",
-      description: `Processing order ${orderId}...`,
+      description: `Processing order ${orderId.slice(0, 8)}...`,
     });
     
     // Navigate to payment page
     navigate('/payment');
   };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex flex-col">
+        <Header 
+          searchTerm={searchTerm} 
+          onSearchChange={handleSearchChange} 
+          onSearchKeyDown={handleSearchKeyDown}
+        />
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full flex-grow pb-12 pt-6">
+          <div className="flex justify-center items-center h-96">
+            <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-floral-lavender"></div>
+          </div>
+        </div>
+        <Footer />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen flex flex-col">

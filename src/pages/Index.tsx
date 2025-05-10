@@ -6,11 +6,12 @@ import Footer from "../components/Footer";
 import FlowerCard from "../components/FlowerCard";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Award, Gift, Heart, ShieldCheck, Truck } from "lucide-react";
-import { flowers } from "../data/flowers";
+import { getFeaturedProducts } from "@/services/productService";
 
 const Index = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [isLoading, setIsLoading] = useState(true);
+  const [featuredFlowers, setFeaturedFlowers] = useState([]);
   
   const handleSearchChange = (e) => {
     setSearchTerm(e.target.value);
@@ -26,19 +27,20 @@ const Index = () => {
   };
   
   useEffect(() => {
-    // Simulate loading delay
-    const timer = setTimeout(() => {
-      setIsLoading(false);
-    }, 800);
+    const loadFeaturedProducts = async () => {
+      setIsLoading(true);
+      try {
+        const products = await getFeaturedProducts(3);
+        setFeaturedFlowers(products);
+      } catch (error) {
+        console.error("Error loading featured products:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
     
-    return () => clearTimeout(timer);
+    loadFeaturedProducts();
   }, []);
-
-  // Featured products for the landing page
-  const featuredFlowers = flowers
-    .filter(flower => flower.featured)
-    .sort((a, b) => b.featured - a.featured)
-    .slice(0, 3);
 
   return (
     <div className="min-h-screen flex flex-col">
