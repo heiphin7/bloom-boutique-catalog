@@ -8,14 +8,14 @@ export const getOrCreateCart = async (): Promise<string> => {
     const { data: userResult, error: userError } = await supabase.auth.getUser();
 
     if (userError || !userResult?.user?.id) {
-      console.error("❌ Ошибка получения пользователя или пользователь не авторизован:", userError);
+      console.error("❌ Error getting user or user not authenticated:", userError);
       throw new Error("User must be authenticated to access or create cart.");
     }
 
     const userId = userResult.user.id;
-    console.log("👤 Текущий user_id:", userId);
+    console.log("👤 Current user_id:", userId);
 
-    // Проверяем наличие уже существующей корзины
+    // Check for existing cart
     const { data: existingCart, error: fetchError } = await supabase
       .from("carts")
       .select("id")
@@ -23,43 +23,57 @@ export const getOrCreateCart = async (): Promise<string> => {
       .maybeSingle();
 
     if (fetchError) {
-      console.error("❌ Ошибка при получении корзины:", fetchError);
+      console.error("❌ Error fetching cart:", fetchError);
+      console.error("Error code:", fetchError.code);
+      console.error("Error message:", fetchError.message);
+      console.error("Error details:", fetchError.details);
       throw new Error("Failed to fetch cart.");
     }
 
     if (existingCart?.id) {
-      console.log("✅ Найдена существующая корзина:", existingCart.id);
+      console.log("✅ Found existing cart:", existingCart.id);
       return existingCart.id;
     }
 
-    // Вставляем новую корзину
-    const insertPayload = { user_id: userId };
-    console.log("🛒 Создание новой корзины с payload:", JSON.stringify(insertPayload, null, 2));
+    // Validate user ID before inserting
+    if (!userId) {
+      const errorMsg = "User ID is undefined before cart insert";
+      console.error("❌ " + errorMsg);
+      throw new Error(errorMsg);
+    }
 
+    // Insert new cart
+    const insertPayload = { user_id: userId };
+    console.log("🛒 Creating new cart with payload:", JSON.stringify(insertPayload, null, 2));
+
+    // Use simplified insert format
     const { data: newCart, error: insertError, status } = await supabase
       .from("carts")
       .insert(insertPayload)
       .select("id")
       .single();
     
-    console.log("🛒 Статус создания корзины:", status);
+    console.log("🛒 Cart creation status:", status);
 
     if (insertError) {
-      console.error("❌ Ошибка при создании корзины:", insertError);
-      console.error("❌ Отправленные данные:", insertPayload);
+      console.error("❌ Error creating cart:", insertError);
+      console.error("❌ Error code:", insertError.code);
+      console.error("❌ Error message:", insertError.message);
+      console.error("❌ Error details:", insertError.details);
+      console.error("❌ Sent payload:", insertPayload);
       throw new Error("Failed to insert new cart.");
     }
 
     if (!newCart?.id) {
-      console.error("❌ Корзина создана, но ID не вернулся.");
+      console.error("❌ Cart created but ID not returned.");
       throw new Error("Cart created but no ID returned.");
     }
 
-    console.log("✅ Корзина успешно создана:", newCart.id);
+    console.log("✅ Cart successfully created:", newCart.id);
     return newCart.id;
 
   } catch (error) {
-    console.error("❌ Ошибка в getOrCreateCart:", error);
+    console.error("❌ Error in getOrCreateCart:", error);
     throw error;
   }
 };
@@ -91,6 +105,9 @@ export const getCurrentCart = async (): Promise<CartWithItems | null> => {
     
     if (cartError) {
       console.error('Error fetching cart:', cartError);
+      console.error('Error code:', cartError.code);
+      console.error('Error message:', cartError.message);
+      console.error('Error details:', cartError.details);
       return null;
     }
     
@@ -180,6 +197,7 @@ export const addItemToCart = async (productId: number, quantity: number): Promis
     
     if (checkError) {
       console.error('Error checking existing cart item:', checkError);
+      console.error('Error details:', checkError.details);
       return false;
     }
     
@@ -201,6 +219,7 @@ export const addItemToCart = async (productId: number, quantity: number): Promis
       
       if (updateError) {
         console.error('Error updating cart item:', updateError);
+        console.error('Error details:', updateError.details);
         console.error('Update payload:', updatePayload);
         return false;
       }
@@ -226,6 +245,7 @@ export const addItemToCart = async (productId: number, quantity: number): Promis
       
       if (insertError) {
         console.error('Error adding item to cart:', insertError);
+        console.error('Error details:', insertError.details);
         console.error('Insert payload:', insertPayload);
         return false;
       }
@@ -258,6 +278,7 @@ export const updateCartItemQuantity = async (itemId: string, quantity: number): 
     
     if (error) {
       console.error('Error updating cart item quantity:', error);
+      console.error('Error details:', error.details);
       return false;
     }
     
@@ -282,6 +303,7 @@ export const removeCartItem = async (itemId: string): Promise<boolean> => {
     
     if (error) {
       console.error('Error removing cart item:', error);
+      console.error('Error details:', error.details);
       return false;
     }
     
@@ -307,6 +329,7 @@ export const clearCart = async (): Promise<boolean> => {
     
     if (error) {
       console.error('Error clearing cart:', error);
+      console.error('Error details:', error.details);
       return false;
     }
     

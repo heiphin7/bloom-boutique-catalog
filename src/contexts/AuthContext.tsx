@@ -196,28 +196,35 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           console.log('User object exists:', !!data.user);
           console.log('User ID exists:', !!data.user.id);
           
+          // Validate user ID before inserting
+          if (!data.user.id) {
+            const errorMsg = "User ID is undefined before cart insert";
+            console.error(errorMsg);
+            throw new Error(errorMsg);
+          }
+          
           const insertPayload = { 
             user_id: data.user.id 
           };
           
           console.log('Cart creation payload:', JSON.stringify(insertPayload, null, 2));
           
+          // Simplified insert using recommended format
           const { data: cartData, error: cartError, status } = await supabase
             .from('carts')
-            .upsert({ 
-              user_id: data.user.id 
-            }, {
-              onConflict: 'user_id',
-              ignoreDuplicates: false
-            })
-            .select('id');
+            .insert(insertPayload)
+            .select('id')
+            .single();
           
           console.log('Cart creation response status:', status);
           console.log('Cart creation response data:', cartData);
           
           if (cartError) {
             console.error('Error creating cart for new user:', cartError);
-            console.error('Payload sent:', insertPayload);
+            console.error('Error status code:', cartError.code);
+            console.error('Error message:', cartError.message);
+            console.error('Error details:', cartError.details);
+            console.error('Payload that caused error:', insertPayload);
           } else {
             console.log('Successfully created cart for new user:', cartData);
           }
