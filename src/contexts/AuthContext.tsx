@@ -131,6 +131,25 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       
       console.log('Starting sign up process with:', { email, name });
       
+      // Validate input
+      if (!email || !password || !name) {
+        toast({
+          title: 'Validation error',
+          description: 'Please fill in all required fields',
+          variant: 'destructive',
+        });
+        return;
+      }
+      
+      if (password.length < 6) {
+        toast({
+          title: 'Password too short',
+          description: 'Password must be at least 6 characters',
+          variant: 'destructive',
+        });
+        return;
+      }
+      
       const { data, error } = await supabase.auth.signUp({
         email,
         password,

@@ -4,13 +4,14 @@ import { Navigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { AlertCircle } from "lucide-react";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 
 // Login form schema
 const loginSchema = z.object({
@@ -35,6 +36,7 @@ type RegisterFormValues = z.infer<typeof registerSchema>;
 const Auth = () => {
   const { user, signIn, signUp, isLoading } = useAuth();
   const [activeTab, setActiveTab] = useState<string>("login");
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   // Forms
   const loginForm = useForm<LoginFormValues>({
@@ -61,11 +63,21 @@ const Auth = () => {
   }
 
   const handleLogin = async (values: LoginFormValues) => {
-    await signIn(values.email, values.password);
+    setErrorMessage(null);
+    try {
+      await signIn(values.email, values.password);
+    } catch (error: any) {
+      setErrorMessage(error?.message || "An error occurred during sign in");
+    }
   };
 
   const handleRegister = async (values: RegisterFormValues) => {
-    await signUp(values.email, values.password, values.name);
+    setErrorMessage(null);
+    try {
+      await signUp(values.email, values.password, values.name);
+    } catch (error: any) {
+      setErrorMessage(error?.message || "An error occurred during registration");
+    }
   };
 
   return (
@@ -82,6 +94,15 @@ const Auth = () => {
               <TabsTrigger value="login">Login</TabsTrigger>
               <TabsTrigger value="register">Register</TabsTrigger>
             </TabsList>
+            
+            {errorMessage && (
+              <div className="px-4 pt-4">
+                <Alert variant="destructive" className="mb-4">
+                  <AlertCircle className="h-4 w-4" />
+                  <AlertDescription>{errorMessage}</AlertDescription>
+                </Alert>
+              </div>
+            )}
             
             <TabsContent value="login">
               <CardHeader>
@@ -101,7 +122,7 @@ const Auth = () => {
                         <FormItem>
                           <FormLabel>Email</FormLabel>
                           <FormControl>
-                            <Input placeholder="email@example.com" {...field} />
+                            <Input placeholder="email@example.com" type="email" autoComplete="email" {...field} />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -115,7 +136,7 @@ const Auth = () => {
                         <FormItem>
                           <FormLabel>Password</FormLabel>
                           <FormControl>
-                            <Input type="password" {...field} />
+                            <Input type="password" autoComplete="current-password" {...field} />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -148,7 +169,7 @@ const Auth = () => {
                         <FormItem>
                           <FormLabel>Name</FormLabel>
                           <FormControl>
-                            <Input placeholder="John Doe" {...field} />
+                            <Input placeholder="John Doe" autoComplete="name" {...field} />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -162,7 +183,7 @@ const Auth = () => {
                         <FormItem>
                           <FormLabel>Email</FormLabel>
                           <FormControl>
-                            <Input placeholder="email@example.com" {...field} />
+                            <Input placeholder="email@example.com" type="email" autoComplete="email" {...field} />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -176,7 +197,7 @@ const Auth = () => {
                         <FormItem>
                           <FormLabel>Password</FormLabel>
                           <FormControl>
-                            <Input type="password" {...field} />
+                            <Input type="password" autoComplete="new-password" {...field} />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -190,7 +211,7 @@ const Auth = () => {
                         <FormItem>
                           <FormLabel>Confirm Password</FormLabel>
                           <FormControl>
-                            <Input type="password" {...field} />
+                            <Input type="password" autoComplete="new-password" {...field} />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
