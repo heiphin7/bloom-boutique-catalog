@@ -15,6 +15,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
 
 type HeaderProps = {
   searchTerm?: string;
@@ -146,38 +147,41 @@ const Header: React.FC<HeaderProps> = ({
               </Button>
             </form>
             
-            {/* User dropdown */}
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
+            {/* User dropdown - Using Popover instead of DropdownMenu */}
+            <Popover>
+              <PopoverTrigger asChild>
                 <Button variant="ghost" size="icon">
                   <User className="h-5 w-5" />
                   <span className="sr-only">Account</span>
                 </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                {user ? (
-                  <>
-                    <DropdownMenuLabel>
-                      {profile?.name || user.email}
-                    </DropdownMenuLabel>
-                    <DropdownMenuSeparator />
-                    <DropdownMenuItem asChild>
-                      <Link to="/orders" className="w-full cursor-pointer">My Orders</Link>
-                    </DropdownMenuItem>
-                    <DropdownMenuItem asChild>
-                      <Link to="/wishlist" className="w-full cursor-pointer">My Wishlist</Link>
-                    </DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => signOut()} className="text-red-600 cursor-pointer">
-                      <LogOut className="mr-2 h-4 w-4" /> Sign Out
-                    </DropdownMenuItem>
-                  </>
-                ) : (
-                  <DropdownMenuItem asChild>
-                    <Link to="/auth" className="w-full cursor-pointer">Sign In</Link>
-                  </DropdownMenuItem>
-                )}
-              </DropdownMenuContent>
-            </DropdownMenu>
+              </PopoverTrigger>
+              <PopoverContent align="end" className="w-56 p-0">
+                <div className="p-2">
+                  {user ? (
+                    <>
+                      <div className="px-2 py-1.5 text-sm font-medium">
+                        {profile?.name || user.email}
+                      </div>
+                      <div className="h-px bg-muted my-1" />
+                      <Link to="/orders" className="flex items-center px-2 py-1.5 text-sm hover:bg-muted hover:text-accent-foreground rounded-sm w-full cursor-pointer">
+                        My Orders
+                      </Link>
+                      <Link to="/wishlist" className="flex items-center px-2 py-1.5 text-sm hover:bg-muted hover:text-accent-foreground rounded-sm w-full cursor-pointer">
+                        My Wishlist
+                      </Link>
+                      <div className="h-px bg-muted my-1" />
+                      <button onClick={() => signOut()} className="flex items-center px-2 py-1.5 text-sm text-red-600 hover:bg-muted hover:text-red-600 rounded-sm w-full cursor-pointer">
+                        <LogOut className="mr-2 h-4 w-4" /> Sign Out
+                      </button>
+                    </>
+                  ) : (
+                    <Link to="/auth" className="flex items-center px-2 py-1.5 text-sm hover:bg-muted hover:text-accent-foreground rounded-sm w-full cursor-pointer">
+                      Sign In
+                    </Link>
+                  )}
+                </div>
+              </PopoverContent>
+            </Popover>
             
             {/* Wishlist button */}
             {user && (
