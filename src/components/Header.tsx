@@ -81,7 +81,7 @@ const Header: React.FC<HeaderProps> = ({
             <Link 
               to="/catalog" 
               className={cn(
-                "text-base font-semibold transition-colors hover:text-floral-lavender",
+                "text-base font-normal font-manrope transition-colors hover:text-floral-lavender",
                 location.pathname === "/catalog" ? "text-floral-lavender" : "text-foreground"
               )}
             >
