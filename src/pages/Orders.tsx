@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { ShoppingBag, CreditCard, Filter, Check, X, AlertCircle } from "lucide-react";
@@ -11,6 +12,8 @@ import Footer from "../components/Footer";
 import { useOrders } from "../contexts/OrdersContext";
 import { supabase } from "@/integrations/supabase/client";
 import { formatKztPrice } from "@/utils/currency";
+import OrderModal from "@/components/OrderModal";
+import type { Order } from "@/contexts/OrdersContext";
 
 const Orders = () => {
   const { orders, loading, refreshOrders } = useOrders();
@@ -19,6 +22,8 @@ const Orders = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const [verifyingPayment, setVerifyingPayment] = useState(false);
+  const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   
   // Check for URL parameters when component mounts
   useEffect(() => {
@@ -127,6 +132,11 @@ const Orders = () => {
       });
       setVerifyingPayment(false);
     }
+  };
+  
+  const openOrderDetails = (order: Order) => {
+    setSelectedOrder(order);
+    setIsModalOpen(true);
   };
 
   if (loading || verifyingPayment) {
@@ -305,13 +315,25 @@ const Orders = () => {
                   )}
                   
                   {order.status === "paid" && (
-                    <Button variant="outline">View Details</Button>
+                    <Button 
+                      variant="outline"
+                      onClick={() => openOrderDetails(order)}
+                    >
+                      View Details
+                    </Button>
                   )}
                 </CardFooter>
               </Card>
             ))}
           </div>
         )}
+        
+        {/* Order Details Modal */}
+        <OrderModal 
+          order={selectedOrder} 
+          isOpen={isModalOpen} 
+          onClose={() => setIsModalOpen(false)} 
+        />
       </div>
       
       <Footer />
