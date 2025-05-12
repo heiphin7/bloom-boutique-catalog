@@ -4,9 +4,9 @@ import { CartContext } from './CartContext';
 import { CartItem } from '@/types/cart';
 import { toast } from "@/components/ui/use-toast";
 import { 
-  addToCart as addToCartService, 
-  getCart, 
-  removeFromCart as removeFromCartService,
+  addItemToCart as addToCartService, 
+  getCurrentCart as getCart, 
+  removeCartItem as removeFromCartService,
   updateCartItemQuantity,
   clearCart as clearCartService 
 } from '@/services/cartService';
@@ -26,7 +26,14 @@ export const CartProvider: React.FC<{children: React.ReactNode}> = ({ children }
     setLoading(true);
     try {
       const items = await getCart();
-      setCartItems(items || []);
+      setCartItems(items?.items?.map(item => ({
+        id: item.id,
+        product_id: item.product_id,
+        name: item.product.name,
+        price: item.product.price,
+        image: item.product.image,
+        quantity: item.quantity
+      })) || []);
     } catch (error) {
       console.error('Error loading cart:', error);
       toast({
@@ -57,12 +64,16 @@ export const CartProvider: React.FC<{children: React.ReactNode}> = ({ children }
         });
       } else {
         // Add new item
-        await addToCartService(item);
-        await refreshCart();
-        toast({
-          title: "Added to Cart",
-          description: `${item.name} - ${formatKztPrice(item.price)}`,
-        });
+        const success = await addToCartService(item.product_id, item.quantity);
+        if (success) {
+          await refreshCart();
+          toast({
+            title: "Added to Cart",
+            description: `${item.name} - ${formatKztPrice(item.price)}`,
+          });
+        } else {
+          throw new Error("Failed to add item to cart");
+        }
       }
     } catch (error) {
       console.error('Error adding to cart:', error);
