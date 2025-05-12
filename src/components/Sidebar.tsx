@@ -1,9 +1,10 @@
+
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
-import { colors, occasions, types } from "@/data/filters";
+import { flowerColors, flowerOccasions, flowerTypes } from "@/data/filters";
 import { formatKztPrice } from "@/utils/currency";
 
 const Sidebar = ({ activeFilters, onFilterChange, onClearAllFilters }) => {
@@ -50,15 +51,16 @@ const Sidebar = ({ activeFilters, onFilterChange, onClearAllFilters }) => {
       <div>
         <h3 className="font-medium mb-3">Colors</h3>
         <div className="space-y-2">
-          {colors.map((color) => (
-            <div key={color} className="flex items-center">
+          {flowerColors.map((color) => (
+            <div key={color.value} className="flex items-center">
               <Checkbox
-                id={`color-${color}`}
-                checked={activeFilters.colors.includes(color)}
-                onCheckedChange={() => handleCheckboxChange("colors", color)}
+                id={`color-${color.value}`}
+                checked={activeFilters.colors.includes(color.label)}
+                onCheckedChange={() => handleCheckboxChange("colors", color.label)}
               />
-              <Label htmlFor={`color-${color}`} className="ml-2 text-sm cursor-pointer">
-                {color}
+              <Label htmlFor={`color-${color.value}`} className="ml-2 text-sm cursor-pointer flex items-center">
+                <span className="h-4 w-4 mr-2 rounded-full" style={{ backgroundColor: color.value }}></span>
+                {color.label}
               </Label>
             </div>
           ))}
@@ -69,7 +71,7 @@ const Sidebar = ({ activeFilters, onFilterChange, onClearAllFilters }) => {
       <div>
         <h3 className="font-medium mb-3">Occasions</h3>
         <div className="space-y-2">
-          {occasions.map((occasion) => (
+          {flowerOccasions.map((occasion) => (
             <div key={occasion} className="flex items-center">
               <Checkbox
                 id={`occasion-${occasion}`}
@@ -88,7 +90,7 @@ const Sidebar = ({ activeFilters, onFilterChange, onClearAllFilters }) => {
       <div>
         <h3 className="font-medium mb-3">Types</h3>
         <div className="space-y-2">
-          {types.map((type) => (
+          {flowerTypes.map((type) => (
             <div key={type} className="flex items-center">
               <Checkbox
                 id={`type-${type}`}
