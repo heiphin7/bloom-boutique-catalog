@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { ShoppingCart, Heart, Check, ChevronLeft } from "lucide-react";
@@ -13,6 +12,7 @@ import { useWishlist } from "../contexts/WishlistContext";
 import { toast } from "@/components/ui/use-toast";
 import { getProductById, getRelatedProducts } from "@/services/productService";
 import { cn } from "@/lib/utils";
+import { AspectRatio } from "@/components/ui/aspect-ratio";
 
 const ProductDetail = () => {
   const { id } = useParams();
@@ -136,13 +136,15 @@ const ProductDetail = () => {
         
         {/* Product Details */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          {/* Product Image */}
-          <div>
-            <img 
-              src={flower.image} 
-              alt={flower.name} 
-              className="w-full h-auto rounded-lg shadow-md" 
-            />
+          {/* Product Image with AspectRatio */}
+          <div className="rounded-lg shadow-md overflow-hidden">
+            <AspectRatio ratio={4/3} className="bg-gray-100">
+              <img 
+                src={flower.image} 
+                alt={flower.name} 
+                className="w-full h-full object-cover" 
+              />
+            </AspectRatio>
           </div>
           
           {/* Product Info */}
