@@ -4,6 +4,7 @@ import { toast } from "@/components/ui/use-toast";
 import { getSessionOrders, updateOrderStatus as updateOrderStatusService, createOrder } from '@/services/orderService';
 import type { CartItem } from '@/types/cart';
 import { useAuth } from './AuthContext';
+import { formatKztPrice } from '@/utils/currency';
 
 // Define order types
 export type Order = {

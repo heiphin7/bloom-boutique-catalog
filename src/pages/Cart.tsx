@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Trash2, ChevronLeft, ShoppingCart } from "lucide-react";
@@ -13,6 +14,7 @@ import {
   TableHeader, 
   TableRow 
 } from "@/components/ui/table";
+import { formatKztPrice } from "@/utils/currency";
 
 const Cart = () => {
   const navigate = useNavigate();
@@ -127,7 +129,7 @@ const Cart = () => {
                           {item.name}
                         </Link>
                       </TableCell>
-                      <TableCell className="text-right">${item.price.toFixed(2)}</TableCell>
+                      <TableCell className="text-right">{formatKztPrice(item.price)}</TableCell>
                       <TableCell>
                         <div className="flex items-center justify-center space-x-1">
                           <Button
@@ -152,7 +154,7 @@ const Cart = () => {
                         </div>
                       </TableCell>
                       <TableCell className="text-right font-medium">
-                        ${(item.price * item.quantity).toFixed(2)}
+                        {formatKztPrice(item.price * item.quantity)}
                       </TableCell>
                       <TableCell>
                         <Button 
@@ -197,20 +199,20 @@ const Cart = () => {
                 <div className="space-y-3 mb-6">
                   <div className="flex justify-between text-gray-600">
                     <span>Subtotal</span>
-                    <span>${subtotal.toFixed(2)}</span>
+                    <span>{formatKztPrice(subtotal)}</span>
                   </div>
                   <div className="flex justify-between text-gray-600">
                     <span>Shipping</span>
-                    <span>{shipping > 0 ? `$${shipping.toFixed(2)}` : 'Free'}</span>
+                    <span>{shipping > 0 ? formatKztPrice(shipping) : 'Free'}</span>
                   </div>
                   {shipping > 0 && (
                     <div className="text-xs text-gray-500">
-                      Free shipping on orders over $50
+                      Free shipping on orders over {formatKztPrice(22500)} {/* 50 USD * 450 */}
                     </div>
                   )}
                   <div className="border-t border-gray-200 pt-3 flex justify-between text-lg font-semibold">
                     <span>Total</span>
-                    <span className="text-floral-peach">${total.toFixed(2)}</span>
+                    <span className="text-floral-peach">{formatKztPrice(total)}</span>
                   </div>
                 </div>
                 

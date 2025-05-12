@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { ShoppingCart } from "lucide-react";
@@ -12,6 +11,7 @@ import { useOrders } from "../contexts/OrdersContext";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 import { supabase } from "@/integrations/supabase/client";
+import { formatKztPrice } from "@/utils/currency";
 
 const OrderDetails = () => {
   const { cartItems, getCartTotal, refreshCart } = useCart();
@@ -193,7 +193,7 @@ const OrderDetails = () => {
                           <p className="text-xs text-gray-500">Qty: {item.quantity}</p>
                         </div>
                       </div>
-                      <p className="font-medium">${(item.price * item.quantity).toFixed(2)}</p>
+                      <p className="font-medium">{formatKztPrice(item.price * item.quantity)}</p>
                     </div>
                   ))}
                 </div>
@@ -201,20 +201,20 @@ const OrderDetails = () => {
                 <div className="border-t pt-4 space-y-2">
                   <div className="flex justify-between text-sm">
                     <span className="text-gray-600">Subtotal</span>
-                    <span>${subtotal.toFixed(2)}</span>
+                    <span>{formatKztPrice(subtotal)}</span>
                   </div>
                   <div className="flex justify-between text-sm">
                     <span className="text-gray-600">Shipping</span>
-                    <span>{shipping > 0 ? `$${shipping.toFixed(2)}` : 'Free'}</span>
+                    <span>{shipping > 0 ? formatKztPrice(shipping) : 'Free'}</span>
                   </div>
                   {shipping > 0 && (
                     <div className="text-xs text-gray-500">
-                      Free shipping on orders over $50
+                      Free shipping on orders over {formatKztPrice(22500)} {/* 50 USD * 450 */}
                     </div>
                   )}
                   <div className="flex justify-between font-medium text-base pt-2 border-t">
                     <span>Total</span>
-                    <span className="text-floral-peach">${total.toFixed(2)}</span>
+                    <span className="text-floral-peach">{formatKztPrice(total)}</span>
                   </div>
                 </div>
               </CardContent>
@@ -346,7 +346,7 @@ const OrderDetails = () => {
                         Processing...
                       </div>
                     ) : (
-                      <>Proceed to Checkout • ${total.toFixed(2)}</>
+                      <>Proceed to Checkout • {formatKztPrice(total)}</>
                     )}
                   </Button>
                 </form>

@@ -31,13 +31,13 @@ serve(async (req) => {
     // Create line items for Stripe checkout
     const lineItems = cartItems.map(item => ({
       price_data: {
-        currency: 'usd',
+        currency: 'kzt', // Change currency to KZT
         product_data: {
           name: item.name,
           images: item.image ? [item.image] : [],
           description: `Quantity: ${item.quantity}`,
         },
-        unit_amount: Math.round(item.price * 100), // Convert to cents
+        unit_amount: Math.round(item.price * 100), // KZT amount in tiyn (smallest currency unit)
       },
       quantity: item.quantity,
     }));
@@ -55,6 +55,7 @@ serve(async (req) => {
         orderId: orderId,
       },
       customer_email: customerInfo.email,
+      currency: 'kzt', // Set currency to KZT
     });
 
     // Return the session ID and URL
