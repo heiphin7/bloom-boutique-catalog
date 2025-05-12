@@ -20,9 +20,9 @@ serve(async (req) => {
     });
 
     // Get request body
-    const { cartItems, customerInfo, orderId } = await req.json();
+    const { orderId, cartItems, customerInfo } = await req.json();
     
-    if (!cartItems || !cartItems.length || !customerInfo || !orderId) {
+    if (!orderId || !cartItems || !cartItems.length || !customerInfo) {
       throw new Error("Missing required information");
     }
 
@@ -42,12 +42,15 @@ serve(async (req) => {
       quantity: item.quantity,
     }));
 
+    // Get origin for success and cancel URLs
+    const origin = req.headers.get("origin") || "http://localhost:3000";
+
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ['card'],
       line_items: lineItems,
       mode: 'payment',
-      success_url: `${req.headers.get("origin")}/orders?success=true&session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${req.headers.get("origin")}/cart?canceled=true`,
+      success_url: `${origin}/payment/${orderId}?session_id={CHECKOUT_SESSION_ID}&success=true`,
+      cancel_url: `${origin}/orders?canceled=true`,
       metadata: {
         orderId: orderId,
       },

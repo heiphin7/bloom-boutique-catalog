@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Trash2, ChevronLeft, ShoppingCart } from "lucide-react";
@@ -51,7 +50,7 @@ const Cart = () => {
 
   // Handle checkout
   const handleCheckout = () => {
-    navigate('/payment');
+    navigate('/order-details');
   };
 
   if (loading) {

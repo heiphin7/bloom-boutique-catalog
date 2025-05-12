@@ -19,59 +19,24 @@ const Orders = () => {
   const [searchParams] = useSearchParams();
   const [verifyingPayment, setVerifyingPayment] = useState(false);
   
-  // Check for success and session_id in URL params when component mounts
+  // Check for URL parameters when component mounts
   useEffect(() => {
-    const success = searchParams.get('success');
-    const sessionId = searchParams.get('session_id');
+    // Check for canceled parameter
+    const canceled = searchParams.get('canceled');
+    if (canceled === 'true') {
+      toast({
+        title: "Checkout Canceled",
+        description: "Your payment process was canceled. You can continue shopping or try again.",
+        variant: "destructive"
+      });
+      // Clean up URL
+      navigate('/orders', { replace: true });
+    }
     
-    const verifyPayment = async () => {
-      if (success === 'true' && sessionId) {
-        setVerifyingPayment(true);
-        try {
-          // Call Stripe verification endpoint
-          const { data, error } = await supabase.functions.invoke('verify-payment', {
-            body: { sessionId }
-          });
-          
-          if (error) {
-            console.error("Payment verification error:", error);
-            toast({
-              title: "Payment Verification Failed",
-              description: "We couldn't verify your payment status. Please contact support.",
-              variant: "destructive"
-            });
-          } else if (data?.paid) {
-            toast({
-              title: "Payment Successful",
-              description: "Your order has been confirmed and paid successfully!",
-              variant: "default"
-            });
-            // Clean up URL
-            navigate('/orders', { replace: true });
-            // Refresh orders to show updated status
-            refreshOrders();
-          }
-        } catch (error) {
-          console.error("Payment verification error:", error);
-          toast({
-            title: "Error",
-            description: "An unexpected error occurred. Please contact support.",
-            variant: "destructive"
-          });
-        } finally {
-          setVerifyingPayment(false);
-        }
-      }
-    };
-    
-    verifyPayment();
-  }, [searchParams, navigate, refreshOrders]);
-  
-  // Update orders when component mounts
-  useEffect(() => {
+    // Refresh orders on page load
     refreshOrders();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [searchParams, navigate]);
   
   const handleSearchChange = (e) => {
     setSearchTerm(e.target.value);
@@ -102,36 +67,9 @@ const Orders = () => {
     return true;
   });
   
-  const handlePayment = async (orderId, stripeSessionId) => {
+  const handlePayment = async (orderId) => {
     try {
-      if (stripeSessionId) {
-        // If there's already a Stripe session, verify its status
-        setVerifyingPayment(true);
-        const { data, error } = await supabase.functions.invoke('verify-payment', {
-          body: { sessionId: stripeSessionId }
-        });
-        
-        if (error) {
-          console.error("Payment verification error:", error);
-          toast({
-            title: "Error",
-            description: "Failed to verify payment status.",
-            variant: "destructive"
-          });
-          setVerifyingPayment(false);
-          return;
-        }
-        
-        if (data?.paid) {
-          toast({
-            title: "Order Paid",
-            description: "This order has already been paid.",
-          });
-          refreshOrders();
-          setVerifyingPayment(false);
-          return;
-        }
-      }
+      setVerifyingPayment(true);
       
       // Get order details
       const orderToProcess = orders.find(o => o.id === orderId);
@@ -141,18 +79,19 @@ const Orders = () => {
           description: "Order not found",
           variant: "destructive"
         });
+        setVerifyingPayment(false);
         return;
       }
       
       // Create a new checkout session
       const { data, error } = await supabase.functions.invoke('create-checkout', {
         body: {
+          orderId,
           cartItems: orderToProcess.products,
           customerInfo: { 
             name: orderToProcess.customer_name,
             email: orderToProcess.customer_email
-          },
-          orderId: orderId
+          }
         }
       });
       
@@ -163,6 +102,7 @@ const Orders = () => {
           description: "Failed to create checkout session.",
           variant: "destructive"
         });
+        setVerifyingPayment(false);
         return;
       }
       
@@ -175,8 +115,8 @@ const Orders = () => {
           description: "Invalid response from checkout service",
           variant: "destructive"
         });
+        setVerifyingPayment(false);
       }
-      
     } catch (error) {
       console.error("Payment error:", error);
       toast({
@@ -184,7 +124,6 @@ const Orders = () => {
         description: "An unexpected error occurred",
         variant: "destructive"
       });
-    } finally {
       setVerifyingPayment(false);
     }
   };
@@ -355,7 +294,7 @@ const Orders = () => {
                   
                   {order.status === "unpaid" && (
                     <Button 
-                      onClick={() => handlePayment(order.id, order.stripeSessionId || "")}
+                      onClick={() => handlePayment(order.id)}
                       className="bg-floral-lavender hover:bg-floral-lavender/90"
                       disabled={verifyingPayment}
                     >

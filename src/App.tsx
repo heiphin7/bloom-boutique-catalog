@@ -13,7 +13,8 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import Index from "./pages/Index";
 import ProductDetail from "./pages/ProductDetail";
 import Cart from "./pages/Cart";
-import Payment from "./pages/Payment";
+import OrderDetails from "./pages/OrderDetails";
+import PaymentConfirmation from "./pages/PaymentConfirmation";
 import Orders from "./pages/Orders";
 import NotFound from "./pages/NotFound";
 import Catalog from "./pages/Catalog";
@@ -40,7 +41,8 @@ const App = () => {
                   <Route path="/catalog" element={<ProtectedRoute><Catalog /></ProtectedRoute>} />
                   <Route path="/product/:id" element={<ProtectedRoute><ProductDetail /></ProtectedRoute>} />
                   <Route path="/cart" element={<ProtectedRoute><Cart /></ProtectedRoute>} />
-                  <Route path="/payment" element={<ProtectedRoute><Payment /></ProtectedRoute>} />
+                  <Route path="/order-details" element={<ProtectedRoute><OrderDetails /></ProtectedRoute>} />
+                  <Route path="/payment/:orderId" element={<ProtectedRoute><PaymentConfirmation /></ProtectedRoute>} />
                   <Route path="/orders" element={<ProtectedRoute><Orders /></ProtectedRoute>} />
                   
                   {/* Catch-all route */}
