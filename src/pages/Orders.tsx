@@ -10,6 +10,7 @@ import Header from "../components/Header";
 import Footer from "../components/Footer";
 import { useOrders } from "../contexts/OrdersContext";
 import { supabase } from "@/integrations/supabase/client";
+import { formatKztPrice } from "@/utils/currency";
 
 const Orders = () => {
   const { orders, loading, refreshOrders } = useOrders();
@@ -252,7 +253,7 @@ const Orders = () => {
                           <><X className="w-3 h-3 mr-1" /> Unpaid</>
                         )}
                       </Badge>
-                      <span className="font-medium">${order.total.toFixed(2)}</span>
+                      <span className="font-medium">{formatKztPrice(order.total)}</span>
                     </div>
                   </div>
                 </CardHeader>
@@ -280,7 +281,7 @@ const Orders = () => {
                             </div>
                           </TableCell>
                           <TableCell className="text-right">{product.quantity}</TableCell>
-                          <TableCell className="text-right">${product.price.toFixed(2)}</TableCell>
+                          <TableCell className="text-right">{formatKztPrice(product.price)}</TableCell>
                         </TableRow>
                       ))}
                     </TableBody>
@@ -289,7 +290,7 @@ const Orders = () => {
                 
                 <CardFooter className="bg-gray-50 flex justify-between">
                   <div className="text-sm text-gray-600">
-                    Total: <span className="font-medium">${order.total.toFixed(2)}</span>
+                    Total: <span className="font-medium">{formatKztPrice(order.total)}</span>
                   </div>
                   
                   {order.status === "unpaid" && (
