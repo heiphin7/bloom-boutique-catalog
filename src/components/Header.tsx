@@ -72,7 +72,7 @@ const Header: React.FC<HeaderProps> = ({
             <Link 
               to="/" 
               className={cn(
-                "text-sm font-medium transition-colors hover:text-floral-lavender",
+                "text-base font-semibold transition-colors hover:text-floral-lavender",
                 location.pathname === "/" ? "text-floral-lavender" : "text-foreground"
               )}
             >
@@ -81,7 +81,7 @@ const Header: React.FC<HeaderProps> = ({
             <Link 
               to="/catalog" 
               className={cn(
-                "text-sm font-medium transition-colors hover:text-floral-lavender",
+                "text-base font-semibold transition-colors hover:text-floral-lavender",
                 location.pathname === "/catalog" ? "text-floral-lavender" : "text-foreground"
               )}
             >
@@ -90,7 +90,7 @@ const Header: React.FC<HeaderProps> = ({
             <Link 
               to="/about" 
               className={cn(
-                "text-sm font-medium transition-colors hover:text-floral-lavender",
+                "text-base font-semibold transition-colors hover:text-floral-lavender",
                 location.pathname === "/about" ? "text-floral-lavender" : "text-foreground"
               )}
             >
@@ -99,7 +99,7 @@ const Header: React.FC<HeaderProps> = ({
             <Link 
               to="/contact" 
               className={cn(
-                "text-sm font-medium transition-colors hover:text-floral-lavender",
+                "text-base font-semibold transition-colors hover:text-floral-lavender",
                 location.pathname === "/contact" ? "text-floral-lavender" : "text-foreground"
               )}
             >
@@ -108,7 +108,7 @@ const Header: React.FC<HeaderProps> = ({
             <Link 
               to="/payment" 
               className={cn(
-                "text-sm font-medium transition-colors hover:text-floral-lavender",
+                "text-base font-semibold transition-colors hover:text-floral-lavender",
                 location.pathname === "/payment" ? "text-floral-lavender" : "text-foreground"
               )}
             >
@@ -117,7 +117,7 @@ const Header: React.FC<HeaderProps> = ({
             <Link 
               to="/orders" 
               className={cn(
-                "text-sm font-medium transition-colors hover:text-floral-lavender",
+                "text-base font-semibold transition-colors hover:text-floral-lavender",
                 location.pathname === "/orders" ? "text-floral-lavender" : "text-foreground"
               )}
             >
@@ -278,7 +278,7 @@ const Header: React.FC<HeaderProps> = ({
             <Link 
               to="/" 
               className={cn(
-                "block px-2 py-1.5 text-base font-medium hover:bg-gray-100 rounded-md",
+                "block px-2 py-1.5 text-base font-semibold hover:bg-gray-100 rounded-md",
                 location.pathname === "/" ? "text-floral-lavender" : "text-foreground"
               )}
               onClick={() => setMobileMenuOpen(false)}
@@ -288,7 +288,7 @@ const Header: React.FC<HeaderProps> = ({
             <Link 
               to="/catalog" 
               className={cn(
-                "block px-2 py-1.5 text-base font-medium hover:bg-gray-100 rounded-md",
+                "block px-2 py-1.5 text-base font-semibold hover:bg-gray-100 rounded-md",
                 location.pathname === "/catalog" ? "text-floral-lavender" : "text-foreground"
               )}
               onClick={() => setMobileMenuOpen(false)}
@@ -298,7 +298,7 @@ const Header: React.FC<HeaderProps> = ({
             <Link 
               to="/about" 
               className={cn(
-                "block px-2 py-1.5 text-base font-medium hover:bg-gray-100 rounded-md",
+                "block px-2 py-1.5 text-base font-semibold hover:bg-gray-100 rounded-md",
                 location.pathname === "/about" ? "text-floral-lavender" : "text-foreground"
               )}
               onClick={() => setMobileMenuOpen(false)}
@@ -308,7 +308,7 @@ const Header: React.FC<HeaderProps> = ({
             <Link 
               to="/contact" 
               className={cn(
-                "block px-2 py-1.5 text-base font-medium hover:bg-gray-100 rounded-md",
+                "block px-2 py-1.5 text-base font-semibold hover:bg-gray-100 rounded-md",
                 location.pathname === "/contact" ? "text-floral-lavender" : "text-foreground"
               )}
               onClick={() => setMobileMenuOpen(false)}
@@ -318,7 +318,7 @@ const Header: React.FC<HeaderProps> = ({
             <Link 
               to="/payment" 
               className={cn(
-                "block px-2 py-1.5 text-base font-medium hover:bg-gray-100 rounded-md",
+                "block px-2 py-1.5 text-base font-semibold hover:bg-gray-100 rounded-md",
                 location.pathname === "/payment" ? "text-floral-lavender" : "text-foreground"
               )}
               onClick={() => setMobileMenuOpen(false)}
@@ -328,7 +328,7 @@ const Header: React.FC<HeaderProps> = ({
             <Link 
               to="/orders" 
               className={cn(
-                "block px-2 py-1.5 text-base font-medium hover:bg-gray-100 rounded-md",
+                "block px-2 py-1.5 text-base font-semibold hover:bg-gray-100 rounded-md",
                 location.pathname === "/orders" ? "text-floral-lavender" : "text-foreground"
               )}
               onClick={() => setMobileMenuOpen(false)}
@@ -338,7 +338,7 @@ const Header: React.FC<HeaderProps> = ({
             <Link 
               to="/wishlist" 
               className={cn(
-                "block px-2 py-1.5 text-base font-medium hover:bg-gray-100 rounded-md",
+                "block px-2 py-1.5 text-base font-semibold hover:bg-gray-100 rounded-md",
                 location.pathname === "/wishlist" ? "text-floral-lavender" : "text-foreground"
               )}
               onClick={() => setMobileMenuOpen(false)}
