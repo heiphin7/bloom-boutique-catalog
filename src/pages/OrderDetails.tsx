@@ -86,11 +86,21 @@ const OrderDetails = () => {
       
       console.log("Order created successfully:", orderId);
       
+      // Prepare cart items for Stripe with proper formatting
+      const stripeCartItems = cartItems.map(item => ({
+        id: item.id,
+        product_id: item.product_id,
+        name: item.name,
+        price: item.price,  // Price will be handled as USD in the function
+        image: item.image,
+        quantity: item.quantity
+      }));
+      
       // Create Stripe checkout session
       const { data, error: checkoutError } = await supabase.functions.invoke('create-checkout', {
         body: {
           orderId,
-          cartItems,
+          cartItems: stripeCartItems,
           customerInfo: { name, email }
         }
       });
