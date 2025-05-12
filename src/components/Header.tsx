@@ -76,7 +76,7 @@ const Header: React.FC<HeaderProps> = ({
                 location.pathname === "/" ? "text-floral-lavender" : "text-foreground"
               )}
             >
-              Home
+              Главная
             </Link>
             <Link 
               to="/catalog" 
@@ -85,7 +85,7 @@ const Header: React.FC<HeaderProps> = ({
                 location.pathname === "/catalog" ? "text-floral-lavender" : "text-foreground"
               )}
             >
-              Catalog
+              Каталог
             </Link>
             <Link 
               to="/about" 
@@ -94,7 +94,7 @@ const Header: React.FC<HeaderProps> = ({
                 location.pathname === "/about" ? "text-floral-lavender" : "text-foreground"
               )}
             >
-              About
+              О нас
             </Link>
             <Link 
               to="/contact" 
@@ -103,7 +103,7 @@ const Header: React.FC<HeaderProps> = ({
                 location.pathname === "/contact" ? "text-floral-lavender" : "text-foreground"
               )}
             >
-              Contact
+              Контакты
             </Link>
             <Link 
               to="/payment" 
@@ -112,7 +112,7 @@ const Header: React.FC<HeaderProps> = ({
                 location.pathname === "/payment" ? "text-floral-lavender" : "text-foreground"
               )}
             >
-              Payment
+              Оплата
             </Link>
             <Link 
               to="/orders" 
@@ -121,7 +121,7 @@ const Header: React.FC<HeaderProps> = ({
                 location.pathname === "/orders" ? "text-floral-lavender" : "text-foreground"
               )}
             >
-              Orders
+              Заказы
             </Link>
           </nav>
           
@@ -130,7 +130,7 @@ const Header: React.FC<HeaderProps> = ({
             <form onSubmit={handleSearch} className="relative w-full max-w-sm">
               <Input
                 type="search"
-                placeholder="Search..."
+                placeholder="Поиск..."
                 className="w-full pl-3 pr-10"
                 value={searchTerm}
                 onChange={onSearchChange}
@@ -143,7 +143,7 @@ const Header: React.FC<HeaderProps> = ({
                 className="absolute right-0 top-0 h-full"
               >
                 <Search className="h-4 w-4" />
-                <span className="sr-only">Search</span>
+                <span className="sr-only">Поиск</span>
               </Button>
             </form>
             
@@ -152,10 +152,10 @@ const Header: React.FC<HeaderProps> = ({
               <PopoverTrigger asChild>
                 <Button variant="ghost" size="icon">
                   <User className="h-5 w-5" />
-                  <span className="sr-only">Account</span>
+                  <span className="sr-only">Аккаунт</span>
                 </Button>
               </PopoverTrigger>
-              <PopoverContent align="end" className="w-56 p-0">
+              <PopoverContent align="end" className="w-56 p-0" style={{ position: "fixed" }}>
                 <div className="p-2">
                   {user ? (
                     <>
@@ -164,19 +164,19 @@ const Header: React.FC<HeaderProps> = ({
                       </div>
                       <div className="h-px bg-muted my-1" />
                       <Link to="/orders" className="flex items-center px-2 py-1.5 text-sm hover:bg-muted hover:text-accent-foreground rounded-sm w-full cursor-pointer">
-                        My Orders
+                        Мои заказы
                       </Link>
                       <Link to="/wishlist" className="flex items-center px-2 py-1.5 text-sm hover:bg-muted hover:text-accent-foreground rounded-sm w-full cursor-pointer">
-                        My Wishlist
+                        Мой список желаний
                       </Link>
                       <div className="h-px bg-muted my-1" />
                       <button onClick={() => signOut()} className="flex items-center px-2 py-1.5 text-sm text-red-600 hover:bg-muted hover:text-red-600 rounded-sm w-full cursor-pointer">
-                        <LogOut className="mr-2 h-4 w-4" /> Sign Out
+                        <LogOut className="mr-2 h-4 w-4" /> Выйти
                       </button>
                     </>
                   ) : (
                     <Link to="/auth" className="flex items-center px-2 py-1.5 text-sm hover:bg-muted hover:text-accent-foreground rounded-sm w-full cursor-pointer">
-                      Sign In
+                      Войти
                     </Link>
                   )}
                 </div>
@@ -188,7 +188,7 @@ const Header: React.FC<HeaderProps> = ({
               <Link to="/wishlist">
                 <Button variant="ghost" size="icon">
                   <Heart className="h-5 w-5" />
-                  <span className="sr-only">Wishlist</span>
+                  <span className="sr-only">Список желаний</span>
                 </Button>
               </Link>
             )}
@@ -197,7 +197,7 @@ const Header: React.FC<HeaderProps> = ({
             <Link to="/cart" className="relative">
               <Button variant="ghost" size="icon">
                 <ShoppingCart className="h-5 w-5" />
-                <span className="sr-only">Cart</span>
+                <span className="sr-only">Корзина</span>
                 {cartItemCount > 0 && (
                   <span className="absolute -top-1 -right-1 bg-floral-lavender text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
                     {cartItemCount}
@@ -216,7 +216,7 @@ const Header: React.FC<HeaderProps> = ({
               className={cn(searchOpen && "bg-gray-100")}
             >
               <Search className="h-5 w-5" />
-              <span className="sr-only">Search</span>
+              <span className="sr-only">Поиск</span>
             </Button>
             
             {/* Mobile Wishlist button */}
@@ -224,7 +224,7 @@ const Header: React.FC<HeaderProps> = ({
               <Link to="/wishlist">
                 <Button variant="ghost" size="icon">
                   <Heart className="h-5 w-5" />
-                  <span className="sr-only">Wishlist</span>
+                  <span className="sr-only">Список желаний</span>
                 </Button>
               </Link>
             )}
@@ -232,7 +232,7 @@ const Header: React.FC<HeaderProps> = ({
             <Link to="/cart" className="relative">
               <Button variant="ghost" size="icon">
                 <ShoppingCart className="h-5 w-5" />
-                <span className="sr-only">Cart</span>
+                <span className="sr-only">Корзина</span>
                 {cartItemCount > 0 && (
                   <span className="absolute -top-1 -right-1 bg-floral-lavender text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
                     {cartItemCount}
@@ -242,7 +242,7 @@ const Header: React.FC<HeaderProps> = ({
             </Link>
             <Button variant="ghost" size="icon" onClick={toggleMobileMenu}>
               {mobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
-              <span className="sr-only">Menu</span>
+              <span className="sr-only">Меню</span>
             </Button>
           </div>
         </div>
@@ -253,7 +253,7 @@ const Header: React.FC<HeaderProps> = ({
             <form onSubmit={handleSearch} className="relative">
               <Input
                 type="search"
-                placeholder="Search..."
+                placeholder="Поиск..."
                 className="w-full pl-3 pr-10"
                 value={searchTerm}
                 onChange={onSearchChange}
@@ -266,7 +266,7 @@ const Header: React.FC<HeaderProps> = ({
                 className="absolute right-0 top-0 h-full"
               >
                 <Search className="h-4 w-4" />
-                <span className="sr-only">Search</span>
+                <span className="sr-only">Поиск</span>
               </Button>
             </form>
           </div>
@@ -283,7 +283,7 @@ const Header: React.FC<HeaderProps> = ({
               )}
               onClick={() => setMobileMenuOpen(false)}
             >
-              Home
+              Главная
             </Link>
             <Link 
               to="/catalog" 
@@ -293,7 +293,7 @@ const Header: React.FC<HeaderProps> = ({
               )}
               onClick={() => setMobileMenuOpen(false)}
             >
-              Catalog
+              Каталог
             </Link>
             <Link 
               to="/about" 
@@ -303,7 +303,7 @@ const Header: React.FC<HeaderProps> = ({
               )}
               onClick={() => setMobileMenuOpen(false)}
             >
-              About
+              О нас
             </Link>
             <Link 
               to="/contact" 
@@ -313,7 +313,7 @@ const Header: React.FC<HeaderProps> = ({
               )}
               onClick={() => setMobileMenuOpen(false)}
             >
-              Contact
+              Контакты
             </Link>
             <Link 
               to="/payment" 
@@ -323,7 +323,7 @@ const Header: React.FC<HeaderProps> = ({
               )}
               onClick={() => setMobileMenuOpen(false)}
             >
-              Payment
+              Оплата
             </Link>
             <Link 
               to="/orders" 
@@ -333,7 +333,7 @@ const Header: React.FC<HeaderProps> = ({
               )}
               onClick={() => setMobileMenuOpen(false)}
             >
-              Orders
+              Заказы
             </Link>
             <Link 
               to="/wishlist" 
@@ -343,7 +343,7 @@ const Header: React.FC<HeaderProps> = ({
               )}
               onClick={() => setMobileMenuOpen(false)}
             >
-              My Wishlist
+              Список желаний
             </Link>
 
             {user ? (
@@ -359,7 +359,7 @@ const Header: React.FC<HeaderProps> = ({
                     setMobileMenuOpen(false);
                   }}
                 >
-                  <LogOut className="mr-2 h-4 w-4" /> Sign Out
+                  <LogOut className="mr-2 h-4 w-4" /> Выйти
                 </Button>
               </>
             ) : (
@@ -368,7 +368,7 @@ const Header: React.FC<HeaderProps> = ({
                 className="block px-2 py-1.5 text-base font-medium hover:bg-gray-100 rounded-md text-floral-lavender"
                 onClick={() => setMobileMenuOpen(false)}
               >
-                Sign In
+                Войти
               </Link>
             )}
           </nav>

@@ -12,7 +12,7 @@ const Footer = () => {
               <span className="font-playfair font-bold text-xl">Bloom & Petal</span>
             </div>
             <p className="text-gray-600 mb-4">
-              Bringing nature's beauty to your doorstep. Premium fresh flowers for all occasions.
+              Доставляем природную красоту к вашему порогу. Премиальные свежие цветы для всех случаев.
             </p>
             <div className="flex space-x-4 mb-6">
               <a href="#" className="text-gray-500 hover:text-floral-lavender transition-colors">
@@ -30,68 +30,68 @@ const Footer = () => {
             </div>
             <div className="flex items-center">
               <i className="fa-solid fa-phone text-floral-lavender mr-2"></i>
-              <span className="text-gray-700">+1 (555) 123-4567</span>
+              <span className="text-gray-700">+7 (999) 123-4567</span>
             </div>
           </div>
           
           <div className="col-span-1">
-            <h4 className="font-medium text-lg mb-4">Shop</h4>
+            <h4 className="font-medium text-lg mb-4">Магазин</h4>
             <ul className="space-y-2">
               <li>
-                <a href="#" className="text-gray-600 hover:text-floral-lavender transition-colors">All Flowers</a>
+                <a href="#" className="text-gray-600 hover:text-floral-lavender transition-colors">Все цветы</a>
               </li>
               <li>
-                <a href="#" className="text-gray-600 hover:text-floral-lavender transition-colors">Bouquets</a>
+                <a href="#" className="text-gray-600 hover:text-floral-lavender transition-colors">Букеты</a>
               </li>
               <li>
-                <a href="#" className="text-gray-600 hover:text-floral-lavender transition-colors">Arrangements</a>
+                <a href="#" className="text-gray-600 hover:text-floral-lavender transition-colors">Композиции</a>
               </li>
               <li>
-                <a href="#" className="text-gray-600 hover:text-floral-lavender transition-colors">Plants</a>
+                <a href="#" className="text-gray-600 hover:text-floral-lavender transition-colors">Растения</a>
               </li>
               <li>
-                <a href="#" className="text-gray-600 hover:text-floral-lavender transition-colors">Gifts</a>
+                <a href="#" className="text-gray-600 hover:text-floral-lavender transition-colors">Подарки</a>
               </li>
               <li>
-                <a href="#" className="text-gray-600 hover:text-floral-lavender transition-colors">Seasonal</a>
+                <a href="#" className="text-gray-600 hover:text-floral-lavender transition-colors">Сезонные</a>
               </li>
             </ul>
           </div>
           
           <div className="col-span-1">
-            <h4 className="font-medium text-lg mb-4">Company</h4>
+            <h4 className="font-medium text-lg mb-4">Компания</h4>
             <ul className="space-y-2">
               <li>
-                <a href="#" className="text-gray-600 hover:text-floral-lavender transition-colors">About Us</a>
+                <a href="#" className="text-gray-600 hover:text-floral-lavender transition-colors">О нас</a>
               </li>
               <li>
-                <a href="#" className="text-gray-600 hover:text-floral-lavender transition-colors">Careers</a>
+                <a href="#" className="text-gray-600 hover:text-floral-lavender transition-colors">Карьера</a>
               </li>
               <li>
-                <a href="#" className="text-gray-600 hover:text-floral-lavender transition-colors">Blog</a>
+                <a href="#" className="text-gray-600 hover:text-floral-lavender transition-colors">Блог</a>
               </li>
               <li>
-                <a href="#" className="text-gray-600 hover:text-floral-lavender transition-colors">Sustainability</a>
+                <a href="#" className="text-gray-600 hover:text-floral-lavender transition-colors">Экологичность</a>
               </li>
               <li>
-                <a href="#" className="text-gray-600 hover:text-floral-lavender transition-colors">Store Locations</a>
+                <a href="#" className="text-gray-600 hover:text-floral-lavender transition-colors">Магазины</a>
               </li>
               <li>
-                <a href="#" className="text-gray-600 hover:text-floral-lavender transition-colors">Contact Us</a>
+                <a href="#" className="text-gray-600 hover:text-floral-lavender transition-colors">Связаться с нами</a>
               </li>
             </ul>
           </div>
           
           <div className="col-span-1">
-            <h4 className="font-medium text-lg mb-4">Newsletter</h4>
+            <h4 className="font-medium text-lg mb-4">Рассылка</h4>
             <p className="text-gray-600 mb-4">
-              Subscribe to receive updates, access to exclusive deals, and more.
+              Подпишитесь, чтобы получать обновления, доступ к эксклюзивным предложениям и многое другое.
             </p>
             <form className="mb-4">
               <div className="relative">
                 <input 
                   type="email" 
-                  placeholder="Your email address" 
+                  placeholder="Ваш email адрес" 
                   className="w-full border border-gray-200 rounded-full py-2 pl-4 pr-12 focus:border-floral-lavender focus:ring-1 focus:ring-floral-lavender focus:outline-none"
                 />
                 <button 
@@ -113,12 +113,12 @@ const Footer = () => {
         
         <div className="border-t border-gray-100 mt-8 pt-8 flex flex-col md:flex-row justify-between items-center">
           <p className="text-sm text-gray-500 mb-4 md:mb-0">
-            &copy; {new Date().getFullYear()} Bloom & Petal. All rights reserved.
+            &copy; {new Date().getFullYear()} Bloom & Petal. Все права защищены.
           </p>
           <div className="flex space-x-6">
-            <a href="#" className="text-sm text-gray-500 hover:text-floral-lavender transition-colors">Privacy Policy</a>
-            <a href="#" className="text-sm text-gray-500 hover:text-floral-lavender transition-colors">Terms of Service</a>
-            <a href="#" className="text-sm text-gray-500 hover:text-floral-lavender transition-colors">Shipping Policy</a>
+            <a href="#" className="text-sm text-gray-500 hover:text-floral-lavender transition-colors">Политика конфиденциальности</a>
+            <a href="#" className="text-sm text-gray-500 hover:text-floral-lavender transition-colors">Условия использования</a>
+            <a href="#" className="text-sm text-gray-500 hover:text-floral-lavender transition-colors">Политика доставки</a>
           </div>
         </div>
       </div>
