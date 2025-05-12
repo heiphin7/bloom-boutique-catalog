@@ -83,8 +83,10 @@ export const searchProducts = async (
   
   // Apply occasion filters
   if (filters.occasions && filters.occasions.length > 0) {
-    // For proper array containment in JSONB
-    query = query.containsAny('occasions', filters.occasions);
+    // Use contains for each occasion (compatible with Supabase)
+    filters.occasions.forEach(occasion => {
+      query = query.contains('occasions', [occasion]);
+    });
   }
   
   // Apply type filters
