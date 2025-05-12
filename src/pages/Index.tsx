@@ -86,7 +86,7 @@ const Index = () => {
                 <div className="absolute -top-10 -right-10 w-72 h-72 bg-floral-pink rounded-full opacity-20 blur-3xl"></div>
                 <div className="absolute -bottom-10 -left-10 w-72 h-72 bg-floral-sage rounded-full opacity-20 blur-3xl"></div>
                 <img 
-                  src="https://images.unsplash.com/photo-1513378782605-4000af6a22a5?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1974&q=80" 
+                  src="https://rosepng.com/wp-content/uploads/2024/03/s11728_flower_bouquet_isolated_on_white_background_-stylize__43aa6cfc-3c7c-4ecb-9c7b-ff75ffb77c8c_0-photoroom-png-photoroom_11zon.png" 
                   alt="Colorful flower bouquet" 
                   className="relative z-10 rounded-lg shadow-xl animate-slide-up object-cover h-[450px] w-full"
                 />
