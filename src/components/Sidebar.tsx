@@ -17,7 +17,7 @@ const Sidebar = ({ activeFilters, onFilterChange, onClearAllFilters }) => {
   const maxPrice = 90000; // Assuming max price is 200 USD * 450 KZT = 90,000 KZT
 
   return (
-    <div className="space-y-8 sticky top-28">
+    <div className="space-y-8 sticky top-28 bg-white p-6 rounded-lg shadow-sm">
       <div className="flex justify-between items-center">
         <h2 className="text-2xl font-semibold mb-2">Filters</h2>
         <Button 
