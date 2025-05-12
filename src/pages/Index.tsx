@@ -57,10 +57,10 @@ const Index = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
               <div className="space-y-6 animate-fade-in">
                 <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-800 leading-tight">
-                  Exquisite Flowers for Every <span className="text-floral-lavender">Occasion</span>
+                  Изысканные цветы для каждого <span className="text-floral-lavender">случая</span>
                 </h1>
                 <p className="text-lg md:text-xl text-gray-600 max-w-md">
-                  Discover our handpicked selection of premium flowers, delivered fresh to your doorstep for moments that matter.
+                  Откройте для себя наш тщательно отобранный ассортимент высококачественных цветов, доставляемых свежими к вашему порогу для важных моментов.
                 </p>
                 <div className="flex flex-wrap gap-4">
                   <Button 
@@ -69,7 +69,7 @@ const Index = () => {
                     asChild
                   >
                     <Link to="/catalog">
-                      Browse Collection <ArrowRight className="ml-2 h-5 w-5" />
+                      Просмотреть коллекцию <ArrowRight className="ml-2 h-5 w-5" />
                     </Link>
                   </Button>
                   <Button 
@@ -78,7 +78,7 @@ const Index = () => {
                     className="border-floral-lavender text-floral-lavender hover:bg-floral-lavender/10"
                     asChild
                   >
-                    <Link to="/about">Learn More</Link>
+                    <Link to="/about">Узнать больше</Link>
                   </Button>
                 </div>
               </div>
@@ -87,7 +87,7 @@ const Index = () => {
                 <div className="absolute -bottom-10 -left-10 w-72 h-72 bg-floral-sage rounded-full opacity-20 blur-3xl"></div>
                 <img 
                   src="https://rosepng.com/wp-content/uploads/2024/03/s11728_flower_bouquet_isolated_on_white_background_-stylize__43aa6cfc-3c7c-4ecb-9c7b-ff75ffb77c8c_0-photoroom-png-photoroom_11zon.png" 
-                  alt="Colorful flower bouquet" 
+                  alt="Красочный букет цветов" 
                   className="relative z-10 rounded-lg shadow-xl animate-slide-up object-cover h-[450px] w-full"
                 />
               </div>
@@ -99,9 +99,9 @@ const Index = () => {
         <section className="py-16 bg-white">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center mb-12">
-              <h2 className="text-3xl md:text-4xl font-bold text-gray-800 mb-4">Why Choose Our Flowers</h2>
+              <h2 className="text-3xl md:text-4xl font-bold text-gray-800 mb-4">Почему выбирают наши цветы</h2>
               <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-                We pride ourselves on quality, sustainability, and exceptional service
+                Мы гордимся качеством, устойчивостью и исключительным сервисом
               </p>
             </div>
             
@@ -110,32 +110,32 @@ const Index = () => {
                 <div className="w-16 h-16 bg-floral-lavender/10 rounded-full flex items-center justify-center mx-auto mb-4">
                   <Award className="h-8 w-8 text-floral-lavender" />
                 </div>
-                <h3 className="text-xl font-semibold mb-2">Premium Quality</h3>
-                <p className="text-gray-600">Handpicked flowers sourced from the finest gardens around the world.</p>
+                <h3 className="text-xl font-semibold mb-2">Премиум качество</h3>
+                <p className="text-gray-600">Отборные цветы, полученные из лучших садов по всему миру.</p>
               </div>
               
               <div className="bg-floral-cream p-6 rounded-lg text-center hover:shadow-md transition-shadow">
                 <div className="w-16 h-16 bg-floral-lavender/10 rounded-full flex items-center justify-center mx-auto mb-4">
                   <Truck className="h-8 w-8 text-floral-lavender" />
                 </div>
-                <h3 className="text-xl font-semibold mb-2">Fast Delivery</h3>
-                <p className="text-gray-600">Same-day delivery available for orders placed before 2PM local time.</p>
+                <h3 className="text-xl font-semibold mb-2">Быстрая доставка</h3>
+                <p className="text-gray-600">Доставка в тот же день доступна для заказов, размещенных до 14:00 по местному времени.</p>
               </div>
               
               <div className="bg-floral-cream p-6 rounded-lg text-center hover:shadow-md transition-shadow">
                 <div className="w-16 h-16 bg-floral-lavender/10 rounded-full flex items-center justify-center mx-auto mb-4">
                   <ShieldCheck className="h-8 w-8 text-floral-lavender" />
                 </div>
-                <h3 className="text-xl font-semibold mb-2">Freshness Guarantee</h3>
-                <p className="text-gray-600">Our flowers stay fresh for at least 7 days or your money back.</p>
+                <h3 className="text-xl font-semibold mb-2">Гарантия свежести</h3>
+                <p className="text-gray-600">Наши цветы остаются свежими не менее 7 дней или мы вернем вам деньги.</p>
               </div>
               
               <div className="bg-floral-cream p-6 rounded-lg text-center hover:shadow-md transition-shadow">
                 <div className="w-16 h-16 bg-floral-lavender/10 rounded-full flex items-center justify-center mx-auto mb-4">
                   <Heart className="h-8 w-8 text-floral-lavender" />
                 </div>
-                <h3 className="text-xl font-semibold mb-2">Made With Love</h3>
-                <p className="text-gray-600">Each arrangement is carefully crafted by our expert florists.</p>
+                <h3 className="text-xl font-semibold mb-2">Сделано с любовью</h3>
+                <p className="text-gray-600">Каждая композиция тщательно создана нашими опытными флористами.</p>
               </div>
             </div>
           </div>
@@ -145,9 +145,9 @@ const Index = () => {
         <section className="py-16 bg-gradient-to-b from-white to-floral-cream">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center mb-12">
-              <h2 className="text-3xl md:text-4xl font-bold text-gray-800 mb-4">Featured Arrangements</h2>
+              <h2 className="text-3xl md:text-4xl font-bold text-gray-800 mb-4">Популярные композиции</h2>
               <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-                Popular choices loved by our customers
+                Популярный выбор, полюбившийся нашим клиентам
               </p>
             </div>
             
@@ -164,7 +164,7 @@ const Index = () => {
                 asChild
               >
                 <Link to="/catalog">
-                  View All Collections <ArrowRight className="ml-2 h-5 w-5" />
+                  Просмотреть все коллекции <ArrowRight className="ml-2 h-5 w-5" />
                 </Link>
               </Button>
             </div>
@@ -179,11 +179,11 @@ const Index = () => {
                 <div className="p-8 md:p-12 flex flex-col justify-center">
                   <div className="inline-flex items-center mb-4 bg-floral-cream px-3 py-1 rounded-full">
                     <Gift className="h-4 w-4 text-floral-lavender mr-2" />
-                    <span className="text-sm font-medium text-floral-lavender">Special Offer</span>
+                    <span className="text-sm font-medium text-floral-lavender">Специальное предложение</span>
                   </div>
-                  <h2 className="text-3xl font-bold text-gray-800 mb-4">15% Off Your First Order</h2>
+                  <h2 className="text-3xl font-bold text-gray-800 mb-4">15% скидка на первый заказ</h2>
                   <p className="text-lg text-gray-600 mb-6">
-                    Join our floral family today and receive a special discount on your first purchase. The perfect way to brighten someone's day.
+                    Присоединяйтесь к нашей цветочной семье сегодня и получите специальную скидку на первую покупку. Идеальный способ порадовать кого-то.
                   </p>
                   <div className="flex flex-wrap gap-4">
                     <Button 
@@ -192,7 +192,7 @@ const Index = () => {
                       asChild
                     >
                       <Link to="/catalog">
-                        Shop Now <ArrowRight className="ml-2 h-5 w-5" />
+                        Купить сейчас <ArrowRight className="ml-2 h-5 w-5" />
                       </Link>
                     </Button>
                   </div>
@@ -200,7 +200,7 @@ const Index = () => {
                 <div className="hidden md:block">
                   <img 
                     src="https://images.unsplash.com/photo-1593546109964-ef22572ad1a8?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1974&q=80" 
-                    alt="Flower gift box" 
+                    alt="Цветочная подарочная коробка" 
                     className="h-full w-full object-cover"
                   />
                 </div>
