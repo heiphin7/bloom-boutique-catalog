@@ -32,6 +32,14 @@ export type Order = Database['public']['Tables']['orders']['Row'];
 // OrderItem type definition
 export type OrderItem = Database['public']['Tables']['order_items']['Row'];
 
+// Wishlist type definition
+export type Wishlist = Database['public']['Tables']['wishlists']['Row'];
+
+// WishlistItem type definition
+export type WishlistItem = Database['public']['Tables']['wishlist_items']['Row'] & {
+  product?: Product;
+};
+
 // Extended types with additional information
 export type CartWithItems = Cart & {
   items: (CartItem & { product: Product })[];
@@ -39,6 +47,10 @@ export type CartWithItems = Cart & {
 
 export type OrderWithItems = Order & {
   items: (OrderItem & { product?: Product })[];
+};
+
+export type WishlistWithItems = Wishlist & {
+  items: (WishlistItem & { product: Product })[];
 };
 
 // Auth related types

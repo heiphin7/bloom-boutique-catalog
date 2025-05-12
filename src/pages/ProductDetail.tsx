@@ -9,19 +9,22 @@ import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import FlowerCard from "../components/FlowerCard";
 import { useCart } from "../contexts/CartContext";
+import { useWishlist } from "../contexts/WishlistContext";
 import { toast } from "@/components/ui/use-toast";
 import { getProductById, getRelatedProducts } from "@/services/productService";
+import { cn } from "@/lib/utils";
 
 const ProductDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState("");
   const [quantity, setQuantity] = useState(1);
-  const [addedToWishlist, setAddedToWishlist] = useState(false);
   const { addToCart } = useCart();
+  const { checkIsInWishlist, toggleItem } = useWishlist();
   const [flower, setFlower] = useState(null);
   const [relatedProducts, setRelatedProducts] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [isInWishlist, setIsInWishlist] = useState(false);
 
   // Load product and related products data
   useEffect(() => {
@@ -43,6 +46,7 @@ const ProductDetail = () => {
         }
         
         setFlower(product);
+        setIsInWishlist(checkIsInWishlist(productId));
         
         // Load related products
         const related = await getRelatedProducts(productId, product.type);
@@ -56,7 +60,7 @@ const ProductDetail = () => {
     };
     
     loadProduct();
-  }, [id, navigate]);
+  }, [id, navigate, checkIsInWishlist]);
   
   // Handle search
   const handleSearchChange = (e) => {
@@ -90,13 +94,12 @@ const ProductDetail = () => {
     }
   };
   
-  // Handle add to wishlist
-  const handleAddToWishlist = () => {
-    setAddedToWishlist(true);
-    toast({
-      title: "Added to wishlist",
-      description: flower ? `${flower.name} has been added to your wishlist` : "Item added to wishlist",
-    });
+  // Handle toggle wishlist
+  const handleToggleWishlist = async () => {
+    if (flower) {
+      await toggleItem(flower);
+      setIsInWishlist(checkIsInWishlist(flower.id));
+    }
   };
 
   if (loading) {
@@ -191,19 +194,21 @@ const ProductDetail = () => {
               </Button>
               <Button 
                 variant="outline" 
-                className="border-floral-lavender text-floral-lavender hover:bg-floral-lavender/10"
-                onClick={handleAddToWishlist}
-                disabled={addedToWishlist}
+                className={cn(
+                  "border-floral-lavender hover:bg-floral-lavender/10",
+                  isInWishlist ? "text-red-500 border-red-500 hover:bg-red-50" : "text-floral-lavender"
+                )}
+                onClick={handleToggleWishlist}
               >
-                {addedToWishlist ? (
+                {isInWishlist ? (
                   <>
-                    <Check size={18} className="mr-2" />
-                    Added
+                    <Heart size={18} className="mr-2 fill-current" />
+                    In Wishlist
                   </>
                 ) : (
                   <>
                     <Heart size={18} className="mr-2" />
-                    Wishlist
+                    Add to Wishlist
                   </>
                 )}
               </Button>

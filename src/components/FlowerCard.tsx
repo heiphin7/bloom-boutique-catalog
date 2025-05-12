@@ -1,12 +1,21 @@
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useCart } from '../contexts/CartContext';
+import { useWishlist } from '../contexts/WishlistContext';
+import { Heart } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 const FlowerCard = ({ flower }) => {
   const badgeClass = flower.is_new ? 'badge-new' : flower.on_sale ? 'badge-sale' : flower.is_bestseller ? 'badge-bestseller' : '';
   const badgeText = flower.is_new ? 'New' : flower.on_sale ? 'Sale' : flower.is_bestseller ? 'Bestseller' : '';
   const { addToCart } = useCart();
+  const { checkIsInWishlist, toggleItem } = useWishlist();
+  const [isInWishlist, setIsInWishlist] = useState(false);
+  
+  useEffect(() => {
+    setIsInWishlist(checkIsInWishlist(flower.id));
+  }, [checkIsInWishlist, flower.id]);
   
   const handleAddToCart = (e) => {
     e.preventDefault();
@@ -20,10 +29,11 @@ const FlowerCard = ({ flower }) => {
     });
   };
   
-  const handleAddToWishlist = (e) => {
+  const handleToggleWishlist = async (e) => {
     e.preventDefault();
     e.stopPropagation();
-    // Wishlist functionality would go here
+    await toggleItem(flower);
+    setIsInWishlist(checkIsInWishlist(flower.id));
   };
   
   return (
@@ -42,10 +52,15 @@ const FlowerCard = ({ flower }) => {
               <i className="fa-solid fa-eye"></i>
             </Link>
             <button 
-              className="bg-white text-gray-800 rounded-full p-3 mx-1 hover:bg-floral-lavender hover:text-white transition-colors"
-              onClick={handleAddToWishlist}
+              className={cn(
+                "bg-white rounded-full p-3 mx-1 transition-colors",
+                isInWishlist 
+                  ? "text-red-500 hover:bg-red-500 hover:text-white" 
+                  : "text-gray-800 hover:bg-floral-lavender hover:text-white"
+              )}
+              onClick={handleToggleWishlist}
             >
-              <i className="fa-solid fa-heart"></i>
+              <i className={`fa-${isInWishlist ? 'solid' : 'regular'} fa-heart`}></i>
             </button>
             <button 
               className="bg-white text-gray-800 rounded-full p-3 mx-1 hover:bg-floral-lavender hover:text-white transition-colors"

@@ -1,7 +1,7 @@
 
 import React, { useState } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
-import { ShoppingCart, User, Menu, Search, X, LogOut } from "lucide-react";
+import { ShoppingCart, User, Menu, Search, X, LogOut, Heart } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -164,6 +164,9 @@ const Header: React.FC<HeaderProps> = ({
                     <DropdownMenuItem asChild>
                       <Link to="/orders" className="w-full cursor-pointer">My Orders</Link>
                     </DropdownMenuItem>
+                    <DropdownMenuItem asChild>
+                      <Link to="/wishlist" className="w-full cursor-pointer">My Wishlist</Link>
+                    </DropdownMenuItem>
                     <DropdownMenuItem onClick={() => signOut()} className="text-red-600 cursor-pointer">
                       <LogOut className="mr-2 h-4 w-4" /> Sign Out
                     </DropdownMenuItem>
@@ -176,6 +179,17 @@ const Header: React.FC<HeaderProps> = ({
               </DropdownMenuContent>
             </DropdownMenu>
             
+            {/* Wishlist button */}
+            {user && (
+              <Link to="/wishlist">
+                <Button variant="ghost" size="icon">
+                  <Heart className="h-5 w-5" />
+                  <span className="sr-only">Wishlist</span>
+                </Button>
+              </Link>
+            )}
+            
+            {/* Cart button */}
             <Link to="/cart" className="relative">
               <Button variant="ghost" size="icon">
                 <ShoppingCart className="h-5 w-5" />
@@ -200,6 +214,17 @@ const Header: React.FC<HeaderProps> = ({
               <Search className="h-5 w-5" />
               <span className="sr-only">Search</span>
             </Button>
+            
+            {/* Mobile Wishlist button */}
+            {user && (
+              <Link to="/wishlist">
+                <Button variant="ghost" size="icon">
+                  <Heart className="h-5 w-5" />
+                  <span className="sr-only">Wishlist</span>
+                </Button>
+              </Link>
+            )}
+            
             <Link to="/cart" className="relative">
               <Button variant="ghost" size="icon">
                 <ShoppingCart className="h-5 w-5" />
@@ -305,6 +330,16 @@ const Header: React.FC<HeaderProps> = ({
               onClick={() => setMobileMenuOpen(false)}
             >
               Orders
+            </Link>
+            <Link 
+              to="/wishlist" 
+              className={cn(
+                "block px-2 py-1.5 text-base font-medium hover:bg-gray-100 rounded-md",
+                location.pathname === "/wishlist" ? "text-floral-lavender" : "text-foreground"
+              )}
+              onClick={() => setMobileMenuOpen(false)}
+            >
+              My Wishlist
             </Link>
 
             {user ? (
