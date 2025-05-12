@@ -47,7 +47,7 @@ const Cart = () => {
 
   // Calculate subtotal, shipping and total
   const subtotal = getCartTotal();
-  const shipping = subtotal > 0 ? (subtotal < 50 ? 10 : 0) : 0;
+  const shipping = subtotal > 0 ? (subtotal < 22500 ? 1000 : 0) : 0;
   const total = subtotal + shipping;
 
   // Handle checkout
@@ -207,7 +207,7 @@ const Cart = () => {
                   </div>
                   {shipping > 0 && (
                     <div className="text-xs text-gray-500">
-                      Free shipping on orders over {formatKztPrice(22500)} {/* 50 USD * 450 */}
+                      Free shipping on orders over {formatKztPrice(22500)}
                     </div>
                   )}
                   <div className="border-t border-gray-200 pt-3 flex justify-between text-lg font-semibold">

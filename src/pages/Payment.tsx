@@ -32,7 +32,7 @@ const PaymentForm = () => {
 
   // Calculate total amount
   const amount = getCartTotal();
-  const shipping = amount > 0 ? (amount < 50 ? 10 : 0) : 0;
+  const shipping = amount > 0 ? (amount < 22500 ? 1000 : 0) : 0;
   const total = amount + shipping;
 
   const handleSubmit = async (e) => {
@@ -252,7 +252,7 @@ const Payment = () => {
   };
   
   const subtotal = getCartTotal();
-  const shipping = subtotal > 0 ? (subtotal < 50 ? 10 : 0) : 0;
+  const shipping = subtotal > 0 ? (subtotal < 22500 ? 1000 : 0) : 0;
   const total = subtotal + shipping;
 
   if (loading) {
@@ -336,7 +336,7 @@ const Payment = () => {
                     </div>
                     {shipping > 0 && (
                       <div className="text-xs text-gray-500">
-                        Free shipping on orders over {formatKztPrice(22500)} {/* 50 USD * 450 */}
+                        Free shipping on orders over {formatKztPrice(22500)}
                       </div>
                     )}
                     <div className="flex justify-between font-medium text-base pt-2 border-t">

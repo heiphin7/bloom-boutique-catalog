@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
@@ -12,9 +11,9 @@ const Sidebar = ({ activeFilters, onFilterChange, onClearAllFilters }) => {
     onFilterChange(filterType, value);
   };
 
-  // Updated price range to use KZT
+  // Price range is now directly in KZT
   const minPrice = 0;
-  const maxPrice = 90000; // Assuming max price is 200 USD * 450 KZT = 90,000 KZT
+  const maxPrice = 90000; // Max price in KZT
 
   return (
     <div className="space-y-8 sticky top-28 bg-white p-6 rounded-lg shadow-sm">

@@ -1,11 +1,10 @@
-
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useCart } from '../contexts/CartContext';
 import { useWishlist } from '../contexts/WishlistContext';
 import { Heart } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { formatKztPrice, convertUsdToKzt } from '@/utils/currency';
+import { formatKztPrice } from '@/utils/currency';
 
 const FlowerCard = ({ flower }) => {
   const badgeClass = flower.is_new ? 'badge-new' : flower.on_sale ? 'badge-sale' : flower.is_bestseller ? 'badge-bestseller' : '';
@@ -21,12 +20,10 @@ const FlowerCard = ({ flower }) => {
   const handleAddToCart = (e) => {
     e.preventDefault();
     e.stopPropagation();
-    // Convert USD price to KZT
-    const kztPrice = convertUsdToKzt(flower.price);
     addToCart({
       product_id: flower.id,
       name: flower.name,
-      price: kztPrice,
+      price: flower.price,
       image: flower.image,
       quantity: 1
     });
@@ -38,10 +35,6 @@ const FlowerCard = ({ flower }) => {
     await toggleItem(flower);
     setIsInWishlist(checkIsInWishlist(flower.id));
   };
-
-  // Convert prices to KZT
-  const kztPrice = convertUsdToKzt(flower.price);
-  const kztOriginalPrice = flower.original_price ? convertUsdToKzt(flower.original_price) : null;
   
   return (
     <div className="catalog-card group animate-slide-up">
@@ -99,11 +92,11 @@ const FlowerCard = ({ flower }) => {
           <div className="flex items-center">
             {flower.on_sale ? (
               <>
-                <span className="text-gray-400 line-through mr-2">{formatKztPrice(kztOriginalPrice)}</span>
-                <span className="text-floral-peach font-semibold">{formatKztPrice(kztPrice)}</span>
+                <span className="text-gray-400 line-through mr-2">{formatKztPrice(flower.original_price)}</span>
+                <span className="text-floral-peach font-semibold">{formatKztPrice(flower.price)}</span>
               </>
             ) : (
-              <span className="font-semibold">{formatKztPrice(kztPrice)}</span>
+              <span className="font-semibold">{formatKztPrice(flower.price)}</span>
             )}
           </div>
           

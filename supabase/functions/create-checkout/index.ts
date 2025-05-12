@@ -31,7 +31,7 @@ serve(async (req) => {
     // Create line items for Stripe checkout
     const lineItems = cartItems.map(item => ({
       price_data: {
-        currency: 'kzt', // Change currency to KZT
+        currency: 'kzt',
         product_data: {
           name: item.name,
           images: item.image ? [item.image] : [],
@@ -55,7 +55,7 @@ serve(async (req) => {
         orderId: orderId,
       },
       customer_email: customerInfo.email,
-      currency: 'kzt', // Set currency to KZT
+      currency: 'kzt',
     });
 
     // Return the session ID and URL

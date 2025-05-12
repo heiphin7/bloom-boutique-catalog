@@ -4,7 +4,7 @@ import { CartContext } from './CartContext';
 import { CartItem } from '@/types/cart';
 import { toast } from "@/components/ui/use-toast";
 import { 
-  addItemToCart as addToCartService, 
+  addToCartService as addToCartService, 
   getCurrentCart as getCart, 
   removeCartItem as removeFromCartService,
   updateCartItemQuantity,

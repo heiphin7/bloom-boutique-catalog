@@ -13,7 +13,7 @@ import { toast } from "@/components/ui/use-toast";
 import { getProductById, getRelatedProducts } from "@/services/productService";
 import { cn } from "@/lib/utils";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
-import { formatKztPrice, convertUsdToKzt } from "@/utils/currency";
+import { formatKztPrice } from "@/utils/currency";
 
 const ProductDetail = () => {
   const { id } = useParams();
@@ -85,12 +85,10 @@ const ProductDetail = () => {
   // Handle add to cart
   const handleAddToCart = () => {
     if (flower) {
-      // Convert the price to KZT when adding to cart
-      const kztPrice = convertUsdToKzt(flower.price);
       addToCart({
         product_id: flower.id,
         name: flower.name,
-        price: kztPrice,
+        price: flower.price,
         image: flower.image,
         quantity
       });
@@ -122,10 +120,6 @@ const ProductDetail = () => {
   if (!flower) {
     return null;
   }
-
-  // Convert the USD prices to KZT
-  const kztPrice = convertUsdToKzt(flower.price);
-  const kztOriginalPrice = flower.original_price ? convertUsdToKzt(flower.original_price) : null;
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -160,7 +154,7 @@ const ProductDetail = () => {
             <p className="text-gray-600 mb-6">{flower.description}</p>
             
             <div className="flex items-center justify-between mb-4">
-              <span className="text-2xl font-bold text-floral-peach">{formatKztPrice(kztPrice)}</span>
+              <span className="text-2xl font-bold text-floral-peach">{formatKztPrice(flower.price)}</span>
               <div className="flex items-center space-x-2">
                 <div className="flex items-center border rounded-md overflow-hidden">
                   <Button
