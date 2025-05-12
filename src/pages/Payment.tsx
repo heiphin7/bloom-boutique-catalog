@@ -1,54 +1,27 @@
 
 import { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { ShoppingCart, CreditCard, Check } from "lucide-react";
-import { loadStripe } from "@stripe/stripe-js";
-import { Elements, CardElement, useStripe, useElements } from "@stripe/react-stripe-js";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
+import { ShoppingCart, CreditCard } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "@/components/ui/use-toast";
 import { useCart } from "../contexts/CartContext";
-import { useOrders, OrderInput } from "../contexts/OrdersContext";
+import { useOrders } from "../contexts/OrdersContext";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
-import { getCurrentCart } from "@/services/cartService";
-
-// Load Stripe outside of component render
-const stripePromise = loadStripe("pk_test_51QH16MGg3EsGOCa6DOaYICHrsdQJr6VjqjNjocnCeQPgP1psHxsNI8w4p5uX9pybw6CNhxFK453IMfDSiFYHckXQ00Iznw9kcz");
-
-// Styling for Stripe Card Element
-const cardElementOptions = {
-  style: {
-    base: {
-      fontSize: '16px',
-      color: '#32325d',
-      fontFamily: 'Poppins, sans-serif',
-      fontSmoothing: 'antialiased',
-      '::placeholder': {
-        color: '#aab7c4',
-      },
-    },
-    invalid: {
-      color: '#fa755a',
-      iconColor: '#fa755a',
-    },
-  },
-};
+import { supabase } from "@/integrations/supabase/client";
 
 // Payment Form Component
 const PaymentForm = () => {
-  const stripe = useStripe();
-  const elements = useElements();
-  const { clearCart, getCartTotal, refreshCart } = useCart();
+  const { cartItems, clearCart, getCartTotal, refreshCart } = useCart();
   const { addOrder } = useOrders();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
   const [email, setEmail] = useState("");
   const [name, setName] = useState("");
-  const [error, setError] = useState(null);
-  const [success, setSuccess] = useState(false);
   const [address, setAddress] = useState({
     street: "",
     city: "",
@@ -59,17 +32,11 @@ const PaymentForm = () => {
 
   // Calculate total amount
   const amount = getCartTotal();
-  const formattedAmount = (amount).toFixed(2);
   const shipping = amount > 0 ? (amount < 50 ? 10 : 0) : 0;
   const total = amount + shipping;
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    if (!stripe || !elements) {
-      // Stripe.js has not yet loaded
-      return;
-    }
 
     setLoading(true);
     setError(null);
@@ -81,35 +48,18 @@ const PaymentForm = () => {
       return;
     }
 
-    const cardElement = elements.getElement(CardElement);
-
-    if (!cardElement) {
-      setError("Card information is required");
-      setLoading(false);
-      return;
-    }
-
     try {
-      // Get token from Stripe (to test card validation)
-      const { error: stripeError, token } = await stripe.createToken(cardElement);
-
-      if (stripeError) {
-        setError(stripeError.message || "Payment failed. Please try again.");
-        setLoading(false);
-        return;
-      }
-      
-      // Create order in database
-      const orderData: OrderInput = {
+      // Create order in database (initially with unpaid status)
+      const orderData = {
         customer_name: name,
         customer_email: email,
         shipping_address: address,
         total: total,
         status: "unpaid",
-        products: [],
-        stripeSessionId: token ? token.id : undefined
+        products: cartItems
       };
       
+      console.log("Creating order with data:", orderData);
       const orderId = await addOrder(orderData);
       
       if (!orderId) {
@@ -117,65 +67,51 @@ const PaymentForm = () => {
         setLoading(false);
         return;
       }
-
-      // Simulate payment processing delay
-      setTimeout(async () => {
-        try {
-          // Update order status to paid
-          await addOrder({
-            id: orderId, // Include orderId for update
-            customer_name: name,
-            customer_email: email,
-            shipping_address: address,
-            total: total,
-            status: "paid",
-            products: [],
-            stripeSessionId: token ? token.id : undefined
-          });
-          
-          // Payment successful
-          setSuccess(true);
-          
-          // Clear the cart after successful payment
-          await clearCart();
-          await refreshCart();
-          
-          toast({
-            title: "Payment successful!",
-            description: `Thank you for your purchase of $${formattedAmount}`,
-          });
-          
-          // After 2 seconds, redirect to orders page
-          setTimeout(() => {
-            navigate('/orders');
-          }, 2000);
-        } catch (error) {
-          console.error("Error updating order:", error);
-          setError("Payment was processed but we encountered an issue updating your order.");
-        } finally {
-          setLoading(false);
+      
+      console.log("Order created successfully:", orderId);
+      
+      // Create Stripe checkout session
+      const { data, error: checkoutError } = await supabase.functions.invoke('create-checkout', {
+        body: {
+          cartItems,
+          customerInfo: { name, email },
+          orderId
         }
-      }, 1500);
+      });
+      
+      if (checkoutError) {
+        console.error("Checkout error:", checkoutError);
+        toast({
+          title: "Error",
+          description: "Failed to create checkout session. Please try again.",
+          variant: "destructive"
+        });
+        setLoading(false);
+        return;
+      }
+      
+      if (!data || !data.url) {
+        setError("Invalid response from checkout service");
+        setLoading(false);
+        return;
+      }
+      
+      console.log("Checkout session created:", data);
+      
+      // Clear the cart after order creation
+      await clearCart();
+      await refreshCart();
+      
+      // Redirect to Stripe checkout
+      window.location.href = data.url;
       
     } catch (e) {
+      console.error("Payment error:", e);
       const errorMessage = e instanceof Error ? e.message : "An unknown error occurred";
       setError(errorMessage);
       setLoading(false);
     }
   };
-
-  if (success) {
-    return (
-      <div className="flex flex-col items-center justify-center p-6">
-        <div className="w-16 h-16 bg-floral-sage rounded-full flex items-center justify-center mb-4">
-          <Check className="h-8 w-8 text-white" />
-        </div>
-        <h2 className="text-2xl font-semibold mb-2">Payment Successful!</h2>
-        <p className="text-gray-600 mb-4">Thank you for your purchase.</p>
-        <p className="text-gray-600">Redirecting you to your orders...</p>
-      </div>
-    );
-  }
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
@@ -266,16 +202,6 @@ const PaymentForm = () => {
             />
           </div>
         </div>
-        
-        <div className="space-y-2">
-          <Label htmlFor="card">Card Details</Label>
-          <div className="border rounded-md p-3 bg-white">
-            <CardElement id="card" options={cardElementOptions} />
-          </div>
-          <p className="text-xs text-gray-500 mt-2">
-            Test card: 4242 4242 4242 4242 • Exp: Any future date • CVC: Any 3 digits
-          </p>
-        </div>
       </div>
       
       {error && (
@@ -285,7 +211,7 @@ const PaymentForm = () => {
       <Button 
         type="submit" 
         className="w-full bg-floral-lavender hover:bg-floral-lavender/90" 
-        disabled={!stripe || loading}
+        disabled={loading}
       >
         {loading ? (
           <div className="flex items-center">
@@ -296,7 +222,7 @@ const PaymentForm = () => {
             Processing...
           </div>
         ) : (
-          <>Pay ${total.toFixed(2)}</>
+          <>Proceed to Checkout • ${total.toFixed(2)}</>
         )}
       </Button>
     </form>
@@ -310,7 +236,6 @@ const Payment = () => {
   const navigate = useNavigate();
   
   // Refresh cart on mount
-  // only once on component mount
   useEffect(() => {
     refreshCart();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -436,16 +361,14 @@ const Payment = () => {
                 <CardHeader>
                   <CardTitle className="flex items-center">
                     <CreditCard className="mr-2 h-5 w-5" />
-                    Payment Details
+                    Payment Information
                   </CardTitle>
                   <CardDescription>
-                    Enter your payment information securely
+                    Enter your shipping details to proceed to Stripe secure checkout
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <Elements stripe={stripePromise}>
-                    <PaymentForm />
-                  </Elements>
+                  <PaymentForm />
                 </CardContent>
               </Card>
             </div>
