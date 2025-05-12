@@ -12,11 +12,13 @@ const Sidebar = ({ activeFilters, onFilterChange, onClearAllFilters }) => {
   // Local state for the input fields
   const [minPriceInput, setMinPriceInput] = useState(activeFilters.priceRange[0].toString());
   const [maxPriceInput, setMaxPriceInput] = useState(activeFilters.priceRange[1].toString());
+  const [localPriceRange, setLocalPriceRange] = useState(activeFilters.priceRange);
 
   // Update local inputs when activeFilters change from outside
   useEffect(() => {
     setMinPriceInput(activeFilters.priceRange[0].toString());
     setMaxPriceInput(activeFilters.priceRange[1].toString());
+    setLocalPriceRange(activeFilters.priceRange);
   }, [activeFilters.priceRange]);
 
   const handleCheckboxChange = (filterType, value) => {
@@ -26,6 +28,14 @@ const Sidebar = ({ activeFilters, onFilterChange, onClearAllFilters }) => {
   // Price range is now directly in KZT
   const minPrice = 0;
   const maxPrice = 90000; // Max price in KZT
+
+  // Handle slider change
+  const handleSliderChange = (value) => {
+    setLocalPriceRange(value);
+    setMinPriceInput(value[0].toString());
+    setMaxPriceInput(value[1].toString());
+    onFilterChange("priceRange", value);
+  };
 
   // Handle input changes
   const handleMinPriceChange = (e) => {
@@ -47,7 +57,9 @@ const Sidebar = ({ activeFilters, onFilterChange, onClearAllFilters }) => {
     const validMin = Math.min(min, max);
     const validMax = Math.max(min, max);
     
-    onFilterChange("priceRange", [validMin, validMax]);
+    const newRange = [validMin, validMax];
+    setLocalPriceRange(newRange);
+    onFilterChange("priceRange", newRange);
   };
 
   // Handle input blur to apply changes
@@ -81,12 +93,12 @@ const Sidebar = ({ activeFilters, onFilterChange, onClearAllFilters }) => {
       <div>
         <h3 className="font-medium mb-3">Price Range</h3>
         <Slider
-          value={activeFilters.priceRange}
+          value={localPriceRange}
           min={minPrice}
           max={maxPrice}
           step={1000}
           className="my-6"
-          onValueChange={(value) => onFilterChange("priceRange", value)}
+          onValueChange={handleSliderChange}
         />
         
         {/* Added labeled input fields for price range */}
@@ -122,8 +134,8 @@ const Sidebar = ({ activeFilters, onFilterChange, onClearAllFilters }) => {
         </div>
         
         <div className="flex justify-between text-sm text-gray-600 mt-2">
-          <span>{formatKztPrice(activeFilters.priceRange[0])}</span>
-          <span>{formatKztPrice(activeFilters.priceRange[1])}</span>
+          <span>{formatKztPrice(localPriceRange[0])}</span>
+          <span>{formatKztPrice(localPriceRange[1])}</span>
         </div>
       </div>
       

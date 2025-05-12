@@ -71,13 +71,20 @@ export const searchProducts = async (
   
   // Apply color filters
   if (filters.colors && filters.colors.length > 0) {
-    // This is a simplification - would need to handle JSONB array containment
-    // For actual implementation, may need a more complex query
+    // Using a better approach for color filtering
+    const colorConditions = filters.colors.map(color => 
+      `colors->>'name' = '${color}'`
+    ).join(' OR ');
+    
+    if (colorConditions) {
+      query = query.or(colorConditions);
+    }
   }
   
   // Apply occasion filters
   if (filters.occasions && filters.occasions.length > 0) {
-    query = query.contains('occasions', filters.occasions);
+    // For proper array containment in JSONB
+    query = query.containsAny('occasions', filters.occasions);
   }
   
   // Apply type filters
@@ -85,11 +92,14 @@ export const searchProducts = async (
     query = query.in('type', filters.types);
   }
   
-  // Apply price range filter
-  if (filters.priceRange) {
+  // Apply price range filter - ensure it's applied correctly
+  if (filters.priceRange && filters.priceRange.length === 2) {
+    const [min, max] = filters.priceRange;
+    console.log(`Applying price range filter: ${min} - ${max}`);
+    
     query = query
-      .gte('price', filters.priceRange[0])
-      .lte('price', filters.priceRange[1]);
+      .gte('price', min)
+      .lte('price', max);
   }
   
   // Apply sorting
@@ -121,6 +131,9 @@ export const searchProducts = async (
     console.error('Error searching products:', error);
     return [];
   }
+  
+  // Log the result count
+  console.log(`Found ${data?.length || 0} products matching filters`);
   
   return data || [];
 };
