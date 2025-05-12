@@ -77,7 +77,7 @@ const PaymentConfirmation = () => {
     };
     
     verifyPayment();
-  }, [orderId, sessionId, success, refreshOrders]);
+  }, []);
 
   return (
     <div className="min-h-screen flex flex-col">
