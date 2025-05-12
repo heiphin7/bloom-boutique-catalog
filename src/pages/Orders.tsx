@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { ShoppingBag, CreditCard, Filter, Check, X, AlertCircle } from "lucide-react";
@@ -297,7 +296,7 @@ const Orders = () => {
                   <div className="flex flex-wrap items-center justify-between gap-4">
                     <div>
                       <CardTitle className="text-lg">Order #{order.id.slice(0, 8)}</CardTitle>
-                      <CardDescription>Placed on {new Date(order.date || order.created_at).toLocaleDateString()}</CardDescription>
+                      <CardDescription>Placed on {new Date(order.date || order.created_at || "").toLocaleDateString()}</CardDescription>
                     </div>
                     
                     <div className="flex items-center gap-3">

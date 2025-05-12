@@ -16,6 +16,7 @@ export type Order = {
   customer_name: string;
   customer_email: string;
   shipping_address: any;
+  created_at?: string;  // Added this property
 };
 
 // Define type for creating a new order

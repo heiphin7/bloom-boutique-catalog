@@ -55,7 +55,7 @@ const PaymentForm = () => {
         customer_email: email,
         shipping_address: address,
         total: total,
-        status: "unpaid",
+        status: "unpaid" as const,  // Use const assertion to match the union type
         products: cartItems
       };
       
