@@ -1,12 +1,24 @@
+
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input"; 
 import { flowerColors, flowerOccasions, flowerTypes } from "@/data/filters";
 import { formatKztPrice } from "@/utils/currency";
 
 const Sidebar = ({ activeFilters, onFilterChange, onClearAllFilters }) => {
+  // Local state for the input fields
+  const [minPriceInput, setMinPriceInput] = useState(activeFilters.priceRange[0].toString());
+  const [maxPriceInput, setMaxPriceInput] = useState(activeFilters.priceRange[1].toString());
+
+  // Update local inputs when activeFilters change from outside
+  useEffect(() => {
+    setMinPriceInput(activeFilters.priceRange[0].toString());
+    setMaxPriceInput(activeFilters.priceRange[1].toString());
+  }, [activeFilters.priceRange]);
+
   const handleCheckboxChange = (filterType, value) => {
     onFilterChange(filterType, value);
   };
@@ -14,6 +26,42 @@ const Sidebar = ({ activeFilters, onFilterChange, onClearAllFilters }) => {
   // Price range is now directly in KZT
   const minPrice = 0;
   const maxPrice = 90000; // Max price in KZT
+
+  // Handle input changes
+  const handleMinPriceChange = (e) => {
+    const value = e.target.value.replace(/\D/g, '');
+    setMinPriceInput(value);
+  };
+
+  const handleMaxPriceChange = (e) => {
+    const value = e.target.value.replace(/\D/g, '');
+    setMaxPriceInput(value);
+  };
+
+  // Apply price range from input fields
+  const applyPriceRange = () => {
+    const min = Math.max(minPrice, Number(minPriceInput) || 0);
+    const max = Math.min(maxPrice, Number(maxPriceInput) || maxPrice);
+    
+    // Make sure min doesn't exceed max
+    const validMin = Math.min(min, max);
+    const validMax = Math.max(min, max);
+    
+    onFilterChange("priceRange", [validMin, validMax]);
+  };
+
+  // Handle input blur to apply changes
+  const handleInputBlur = () => {
+    applyPriceRange();
+  };
+
+  // Handle key press for Enter key
+  const handleKeyPress = (e) => {
+    if (e.key === 'Enter') {
+      applyPriceRange();
+      e.target.blur();
+    }
+  };
 
   return (
     <div className="space-y-8 sticky top-28 bg-white p-6 rounded-lg shadow-sm">
@@ -40,7 +88,40 @@ const Sidebar = ({ activeFilters, onFilterChange, onClearAllFilters }) => {
           className="my-6"
           onValueChange={(value) => onFilterChange("priceRange", value)}
         />
-        <div className="flex justify-between text-sm text-gray-600">
+        
+        {/* Added labeled input fields for price range */}
+        <div className="flex items-center gap-4 mt-4">
+          <div className="flex-1">
+            <Label htmlFor="min-price" className="text-xs text-gray-500 mb-1 block">Min Price</Label>
+            <div className="relative">
+              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">₸</span>
+              <Input
+                id="min-price"
+                value={minPriceInput}
+                onChange={handleMinPriceChange}
+                onBlur={handleInputBlur}
+                onKeyPress={handleKeyPress}
+                className="pl-7"
+              />
+            </div>
+          </div>
+          <div className="flex-1">
+            <Label htmlFor="max-price" className="text-xs text-gray-500 mb-1 block">Max Price</Label>
+            <div className="relative">
+              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">₸</span>
+              <Input
+                id="max-price"
+                value={maxPriceInput}
+                onChange={handleMaxPriceChange}
+                onBlur={handleInputBlur}
+                onKeyPress={handleKeyPress}
+                className="pl-7"
+              />
+            </div>
+          </div>
+        </div>
+        
+        <div className="flex justify-between text-sm text-gray-600 mt-2">
           <span>{formatKztPrice(activeFilters.priceRange[0])}</span>
           <span>{formatKztPrice(activeFilters.priceRange[1])}</span>
         </div>
