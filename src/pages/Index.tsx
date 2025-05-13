@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import Header from "../components/Header";
@@ -6,12 +7,6 @@ import FlowerCard from "../components/FlowerCard";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Award, Gift, Heart, ShieldCheck, Truck } from "lucide-react";
 import { getRandomProducts } from "@/services/productService";
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion";
 
 const Index = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -172,69 +167,6 @@ const Index = () => {
                   Просмотреть все коллекции <ArrowRight className="ml-2 h-5 w-5" />
                 </Link>
               </Button>
-            </div>
-          </div>
-        </section>
-
-        {/* FAQ Section */}
-        <section className="py-16 bg-floral-cream">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="text-center mb-12">
-              <h2 className="text-3xl md:text-4xl font-bold text-gray-800 mb-4">
-                Часто задаваемые вопросы
-              </h2>
-              <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-                Ответы на популярные вопросы о наших цветах и услугах
-              </p>
-            </div>
-            
-            <div className="max-w-3xl mx-auto">
-              <Accordion type="single" collapsible className="bg-white rounded-lg shadow-sm p-6">
-                <AccordionItem value="item-1">
-                  <AccordionTrigger className="text-lg font-medium text-gray-800">
-                    Как долго сохраняются ваши цветы?
-                  </AccordionTrigger>
-                  <AccordionContent className="text-gray-600">
-                    Наши цветы сохраняют свежесть не менее 7 дней при правильном уходе. Мы рекомендуем менять воду каждые 2 дня, обрезать стебли под углом и хранить букеты вдали от прямых солнечных лучей и источников тепла.
-                  </AccordionContent>
-                </AccordionItem>
-
-                <AccordionItem value="item-2">
-                  <AccordionTrigger className="text-lg font-medium text-gray-800">
-                    Доставляете ли вы в день заказа?
-                  </AccordionTrigger>
-                  <AccordionContent className="text-gray-600">
-                    Да, мы предлагаем доставку в тот же день для заказов, размещенных до 14:00 по местному времени. Для заказов после этого времени доставка будет осуществлена на следующий день.
-                  </AccordionContent>
-                </AccordionItem>
-
-                <AccordionItem value="item-3">
-                  <AccordionTrigger className="text-lg font-medium text-gray-800">
-                    Можно ли изменить состав букета?
-                  </AccordionTrigger>
-                  <AccordionContent className="text-gray-600">
-                    Да, мы готовы адаптировать наши букеты под ваши предпочтения. Пожалуйста, укажите ваши пожелания в комментариях к заказу или свяжитесь с нами напрямую для индивидуального оформления.
-                  </AccordionContent>
-                </AccordionItem>
-
-                <AccordionItem value="item-4">
-                  <AccordionTrigger className="text-lg font-medium text-gray-800">
-                    Есть ли у вас система скидок для постоянных клиентов?
-                  </AccordionTrigger>
-                  <AccordionContent className="text-gray-600">
-                    Да, у нас есть программа лояльности для постоянных клиентов. После пятого заказа вы автоматически получаете 10% скидку на все последующие покупки. Кроме того, мы регулярно проводим сезонные акции и специальные предложения.
-                  </AccordionContent>
-                </AccordionItem>
-
-                <AccordionItem value="item-5">
-                  <AccordionTrigger className="text-lg font-medium text-gray-800">
-                    Что делать, если я получил поврежденные цветы?
-                  </AccordionTrigger>
-                  <AccordionContent className="text-gray-600">
-                    Мы гарантируем качество наших цветов. Если вы получили поврежденные цветы, пожалуйста, сфотографируйте их и свяжитесь с нами в течение 24 часов. Мы заменим букет или вернем деньги в зависимости от ваших предпочтений.
-                  </AccordionContent>
-                </AccordionItem>
-              </Accordion>
             </div>
           </div>
         </section>
