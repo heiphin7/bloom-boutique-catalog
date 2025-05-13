@@ -76,24 +76,24 @@ const Cart = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full flex-grow pb-12 pt-6 animate-fade-in">
         {/* Breadcrumbs */}
         <nav className="flex mb-8 text-sm">
-          <Link to="/" className="text-gray-500 hover:text-floral-lavender">Home</Link>
+          <Link to="/" className="text-gray-500 hover:text-floral-lavender">Главная</Link>
           <span className="mx-2 text-gray-400">/</span>
-          <span className="text-gray-800">Shopping Cart</span>
+          <span className="text-gray-800">Корзина</span>
         </nav>
         
-        <h1 className="text-3xl font-bold mb-8">Shopping Cart</h1>
+        <h1 className="text-3xl font-bold mb-8">Корзина</h1>
         
         {cartItems.length === 0 ? (
           <div className="text-center py-16">
             <div className="mb-6 text-gray-400">
               <ShoppingCart size={64} className="mx-auto" />
             </div>
-            <h2 className="text-2xl font-semibold mb-4">Your cart is empty</h2>
-            <p className="text-gray-600 mb-8">Looks like you haven't added any flowers to your cart yet.</p>
+            <h2 className="text-2xl font-semibold mb-4">Ваша корзина пуста</h2>
+            <p className="text-gray-600 mb-8">Похоже, вы еще не добавили никаких цветов в корзину.</p>
             <Link to="/">
               <Button className="bg-floral-lavender hover:bg-floral-lavender/90">
                 <ChevronLeft size={18} className="mr-2" />
-                Continue Shopping
+                Продолжить покупки
               </Button>
             </Link>
           </div>
@@ -104,11 +104,11 @@ const Cart = () => {
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead className="w-[100px]">Product</TableHead>
-                    <TableHead>Description</TableHead>
-                    <TableHead className="text-right">Price</TableHead>
-                    <TableHead className="text-center">Quantity</TableHead>
-                    <TableHead className="text-right">Subtotal</TableHead>
+                    <TableHead className="w-[100px]">Товар</TableHead>
+                    <TableHead>Описание</TableHead>
+                    <TableHead className="text-right">Цена</TableHead>
+                    <TableHead className="text-center">Количество</TableHead>
+                    <TableHead className="text-right">Сумма</TableHead>
                     <TableHead className="w-[50px]"></TableHead>
                   </TableRow>
                 </TableHeader>
@@ -178,7 +178,7 @@ const Cart = () => {
                   onClick={() => navigate('/')}
                 >
                   <ChevronLeft size={18} className="mr-2" />
-                  Continue Shopping
+                  Продолжить покупки
                 </Button>
                 
                 <Button 
@@ -186,7 +186,7 @@ const Cart = () => {
                   className="border-gray-300 text-gray-600 hover:bg-gray-100"
                   onClick={clearCart}
                 >
-                  Clear Cart
+                  Очистить корзину
                 </Button>
               </div>
             </div>
@@ -194,24 +194,24 @@ const Cart = () => {
             {/* Order summary */}
             <div className="lg:col-span-1">
               <div className="bg-white rounded-lg shadow-md p-6">
-                <h2 className="text-xl font-semibold mb-4">Order Summary</h2>
+                <h2 className="text-xl font-semibold mb-4">Сводка заказа</h2>
                 
                 <div className="space-y-3 mb-6">
                   <div className="flex justify-between text-gray-600">
-                    <span>Subtotal</span>
+                    <span>Подытог</span>
                     <span>{formatKztPrice(subtotal)}</span>
                   </div>
                   <div className="flex justify-between text-gray-600">
-                    <span>Shipping</span>
-                    <span>{shipping > 0 ? formatKztPrice(shipping) : 'Free'}</span>
+                    <span>Доставка</span>
+                    <span>{shipping > 0 ? formatKztPrice(shipping) : 'Бесплатно'}</span>
                   </div>
                   {shipping > 0 && (
                     <div className="text-xs text-gray-500">
-                      Free shipping on orders over {formatKztPrice(22500)}
+                      Бесплатная доставка при заказе от {formatKztPrice(22500)}
                     </div>
                   )}
                   <div className="border-t border-gray-200 pt-3 flex justify-between text-lg font-semibold">
-                    <span>Total</span>
+                    <span>Итого</span>
                     <span className="text-floral-peach">{formatKztPrice(total)}</span>
                   </div>
                 </div>
@@ -220,7 +220,7 @@ const Cart = () => {
                   className="w-full bg-floral-lavender hover:bg-floral-lavender/90" 
                   onClick={handleCheckout}
                 >
-                  Proceed to Checkout
+                  Перейти к оформлению
                 </Button>
               </div>
             </div>
