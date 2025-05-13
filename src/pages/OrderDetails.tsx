@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { ShoppingCart } from "lucide-react";
@@ -26,7 +27,7 @@ const OrderDetails = () => {
     city: "",
     state: "",
     postal_code: "",
-    country: "United States"
+    country: "Россия"
   });
   const [searchTerm, setSearchTerm] = useState("");
 
@@ -59,7 +60,7 @@ const OrderDetails = () => {
 
     // Validate form
     if (!email || !name || !address.street || !address.city || !address.state || !address.postal_code) {
-      setError("Please fill out all required fields");
+      setError("Пожалуйста, заполните все обязательные поля");
       setLoading(false);
       return;
     }
@@ -79,7 +80,7 @@ const OrderDetails = () => {
       const orderId = await addOrder(orderData);
       
       if (!orderId) {
-        setError("Failed to create order. Please try again.");
+        setError("Не удалось создать заказ. Пожалуйста, попробуйте снова.");
         setLoading(false);
         return;
       }
@@ -98,8 +99,8 @@ const OrderDetails = () => {
       if (checkoutError) {
         console.error("Checkout error:", checkoutError);
         toast({
-          title: "Error",
-          description: "Failed to create checkout session. Please try again.",
+          title: "Ошибка",
+          description: "Не удалось создать сессию оплаты. Пожалуйста, попробуйте снова.",
           variant: "destructive"
         });
         setLoading(false);
@@ -107,7 +108,7 @@ const OrderDetails = () => {
       }
       
       if (!data || !data.url) {
-        setError("Invalid response from checkout service");
+        setError("Недопустимый ответ от сервиса оплаты");
         setLoading(false);
         return;
       }
@@ -119,7 +120,7 @@ const OrderDetails = () => {
       
     } catch (e) {
       console.error("Checkout error:", e);
-      const errorMessage = e instanceof Error ? e.message : "An unknown error occurred";
+      const errorMessage = e instanceof Error ? e.message : "Произошла неизвестная ошибка";
       setError(errorMessage);
       setLoading(false);
     }
@@ -139,11 +140,11 @@ const OrderDetails = () => {
             <div className="mb-6 text-gray-400">
               <ShoppingCart size={64} className="mx-auto" />
             </div>
-            <h2 className="text-2xl font-semibold mb-4">Your cart is empty</h2>
-            <p className="text-gray-600 mb-8">Add some items to your cart before proceeding to checkout.</p>
+            <h2 className="text-2xl font-semibold mb-4">Ваша корзина пуста</h2>
+            <p className="text-gray-600 mb-8">Добавьте товары в корзину перед оформлением заказа.</p>
             <Link to="/">
               <Button className="bg-floral-lavender hover:bg-floral-lavender/90">
-                Shop Now
+                Начать покупки
               </Button>
             </Link>
           </div>
@@ -165,22 +166,22 @@ const OrderDetails = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full flex-grow pb-12 pt-6 animate-fade-in">
         {/* Breadcrumbs */}
         <nav className="flex mb-8 text-sm">
-          <Link to="/" className="text-gray-500 hover:text-floral-lavender">Home</Link>
+          <Link to="/" className="text-gray-500 hover:text-floral-lavender">Главная</Link>
           <span className="mx-2 text-gray-400">/</span>
-          <Link to="/cart" className="text-gray-500 hover:text-floral-lavender">Cart</Link>
+          <Link to="/cart" className="text-gray-500 hover:text-floral-lavender">Корзина</Link>
           <span className="mx-2 text-gray-400">/</span>
-          <span className="text-gray-800">Order Details</span>
+          <span className="text-gray-800">Оформление заказа</span>
         </nav>
         
-        <h1 className="text-3xl font-bold mb-8">Order Details</h1>
+        <h1 className="text-3xl font-bold mb-8">Оформление заказа</h1>
         
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {/* Order summary */}
           <div className="md:col-span-1">
             <Card>
               <CardHeader>
-                <CardTitle>Order Summary</CardTitle>
-                <CardDescription>Review your order before checkout</CardDescription>
+                <CardTitle>Сводка заказа</CardTitle>
+                <CardDescription>Проверьте ваш заказ перед оформлением</CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="space-y-2">
@@ -190,7 +191,7 @@ const OrderDetails = () => {
                         <img src={item.image} alt={item.name} className="w-10 h-10 object-cover rounded-md mr-2" />
                         <div>
                           <p className="text-sm font-medium">{item.name}</p>
-                          <p className="text-xs text-gray-500">Qty: {item.quantity}</p>
+                          <p className="text-xs text-gray-500">Кол-во: {item.quantity}</p>
                         </div>
                       </div>
                       <p className="font-medium">{formatKztPrice(item.price * item.quantity)}</p>
@@ -200,20 +201,20 @@ const OrderDetails = () => {
                 
                 <div className="border-t pt-4 space-y-2">
                   <div className="flex justify-between text-sm">
-                    <span className="text-gray-600">Subtotal</span>
+                    <span className="text-gray-600">Подытог</span>
                     <span>{formatKztPrice(subtotal)}</span>
                   </div>
                   <div className="flex justify-between text-sm">
-                    <span className="text-gray-600">Shipping</span>
-                    <span>{shipping > 0 ? formatKztPrice(shipping) : 'Free'}</span>
+                    <span className="text-gray-600">Доставка</span>
+                    <span>{shipping > 0 ? formatKztPrice(shipping) : 'Бесплатно'}</span>
                   </div>
                   {shipping > 0 && (
                     <div className="text-xs text-gray-500">
-                      Free shipping on orders over {formatKztPrice(22500)}
+                      Бесплатная доставка при заказе от {formatKztPrice(22500)}
                     </div>
                   )}
                   <div className="flex justify-between font-medium text-base pt-2 border-t">
-                    <span>Total</span>
+                    <span>Итого</span>
                     <span className="text-floral-peach">{formatKztPrice(total)}</span>
                   </div>
                 </div>
@@ -221,7 +222,7 @@ const OrderDetails = () => {
               <CardFooter className="flex justify-center">
                 <Link to="/cart" className="w-full">
                   <Button variant="outline" className="w-full border-floral-lavender text-floral-lavender hover:bg-floral-lavender/10">
-                    Edit Cart
+                    Редактировать корзину
                   </Button>
                 </Link>
               </CardFooter>
@@ -232,20 +233,20 @@ const OrderDetails = () => {
           <div className="md:col-span-2">
             <Card>
               <CardHeader>
-                <CardTitle>Customer Information</CardTitle>
+                <CardTitle>Информация о покупателе</CardTitle>
                 <CardDescription>
-                  Enter your details to proceed to checkout
+                  Введите ваши данные для оформления заказа
                 </CardDescription>
               </CardHeader>
               <CardContent>
                 <form onSubmit={handleProceedToCheckout} className="space-y-6">
                   <div className="space-y-4">
                     <div className="space-y-2">
-                      <Label htmlFor="name">Name</Label>
+                      <Label htmlFor="name">Имя</Label>
                       <Input 
                         id="name" 
                         type="text" 
-                        placeholder="Jane Doe" 
+                        placeholder="Иван Иванов" 
                         value={name}
                         onChange={(e) => setName(e.target.value)}
                         required
@@ -257,7 +258,7 @@ const OrderDetails = () => {
                       <Input 
                         id="email" 
                         type="email" 
-                        placeholder="jane@example.com" 
+                        placeholder="ivan@example.com" 
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
                         required
@@ -265,11 +266,11 @@ const OrderDetails = () => {
                     </div>
 
                     <div className="space-y-2">
-                      <Label htmlFor="street">Street Address</Label>
+                      <Label htmlFor="street">Адрес</Label>
                       <Input 
                         id="street" 
                         type="text" 
-                        placeholder="123 Main St" 
+                        placeholder="ул. Ленина, 123" 
                         value={address.street}
                         onChange={(e) => setAddress({...address, street: e.target.value})}
                         required
@@ -278,11 +279,11 @@ const OrderDetails = () => {
 
                     <div className="grid grid-cols-2 gap-4">
                       <div className="space-y-2">
-                        <Label htmlFor="city">City</Label>
+                        <Label htmlFor="city">Город</Label>
                         <Input 
                           id="city" 
                           type="text" 
-                          placeholder="New York" 
+                          placeholder="Москва" 
                           value={address.city}
                           onChange={(e) => setAddress({...address, city: e.target.value})}
                           required
@@ -290,11 +291,11 @@ const OrderDetails = () => {
                       </div>
 
                       <div className="space-y-2">
-                        <Label htmlFor="state">State</Label>
+                        <Label htmlFor="state">Область/Регион</Label>
                         <Input 
                           id="state" 
                           type="text" 
-                          placeholder="NY" 
+                          placeholder="Московская обл." 
                           value={address.state}
                           onChange={(e) => setAddress({...address, state: e.target.value})}
                           required
@@ -304,11 +305,11 @@ const OrderDetails = () => {
 
                     <div className="grid grid-cols-2 gap-4">
                       <div className="space-y-2">
-                        <Label htmlFor="postal_code">Postal Code</Label>
+                        <Label htmlFor="postal_code">Почтовый индекс</Label>
                         <Input 
                           id="postal_code" 
                           type="text" 
-                          placeholder="10001" 
+                          placeholder="123456" 
                           value={address.postal_code}
                           onChange={(e) => setAddress({...address, postal_code: e.target.value})}
                           required
@@ -316,7 +317,7 @@ const OrderDetails = () => {
                       </div>
 
                       <div className="space-y-2">
-                        <Label htmlFor="country">Country</Label>
+                        <Label htmlFor="country">Страна</Label>
                         <Input 
                           id="country" 
                           type="text" 
@@ -343,10 +344,10 @@ const OrderDetails = () => {
                           <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                           <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                         </svg>
-                        Processing...
+                        Обработка...
                       </div>
                     ) : (
-                      <>Proceed to Checkout • {formatKztPrice(total)}</>
+                      <>Перейти к оплате • {formatKztPrice(total)}</>
                     )}
                   </Button>
                 </form>

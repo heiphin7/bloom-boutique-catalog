@@ -31,8 +31,8 @@ const Orders = () => {
     const canceled = searchParams.get('canceled');
     if (canceled === 'true') {
       toast({
-        title: "Checkout Canceled",
-        description: "Your payment process was canceled. You can continue shopping or try again.",
+        title: "Оплата отменена",
+        description: "Процесс оплаты был отменен. Вы можете продолжить покупки или повторить попытку.",
         variant: "destructive"
       });
       // Clean up URL
@@ -81,8 +81,8 @@ const Orders = () => {
       const orderToProcess = orders.find(o => o.id === orderId);
       if (!orderToProcess) {
         toast({
-          title: "Error",
-          description: "Order not found",
+          title: "Ошибка",
+          description: "Заказ не найден",
           variant: "destructive"
         });
         setVerifyingPayment(false);
@@ -104,8 +104,8 @@ const Orders = () => {
       if (error) {
         console.error("Checkout error:", error);
         toast({
-          title: "Error",
-          description: "Failed to create checkout session.",
+          title: "Ошибка",
+          description: "Не удалось создать сессию оплаты.",
           variant: "destructive"
         });
         setVerifyingPayment(false);
@@ -117,8 +117,8 @@ const Orders = () => {
         window.location.href = data.url;
       } else {
         toast({
-          title: "Error",
-          description: "Invalid response from checkout service",
+          title: "Ошибка",
+          description: "Неверный ответ от сервиса оплаты",
           variant: "destructive"
         });
         setVerifyingPayment(false);
@@ -126,8 +126,8 @@ const Orders = () => {
     } catch (error) {
       console.error("Payment error:", error);
       toast({
-        title: "Error",
-        description: "An unexpected error occurred",
+        title: "Ошибка",
+        description: "Произошла непредвиденная ошибка",
         variant: "destructive"
       });
       setVerifyingPayment(false);
@@ -150,7 +150,7 @@ const Orders = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full flex-grow pb-12 pt-6">
           <div className="flex flex-col justify-center items-center h-96">
             <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-floral-lavender mb-4"></div>
-            {verifyingPayment && <p className="text-lg text-gray-600">Verifying payment status...</p>}
+            {verifyingPayment && <p className="text-lg text-gray-600">Проверка статуса оплаты...</p>}
           </div>
         </div>
         <Footer />
@@ -174,8 +174,8 @@ const Orders = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full flex-grow pb-12 pt-6">
           <div className="flex flex-col justify-center items-center h-96">
             <AlertCircle className="h-16 w-16 text-floral-lavender mb-4" />
-            <h2 className="text-2xl font-bold mb-2">Processing Payment</h2>
-            <p className="text-gray-600">We're confirming your payment with Stripe...</p>
+            <h2 className="text-2xl font-bold mb-2">Обработка платежа</h2>
+            <p className="text-gray-600">Мы подтверждаем вашу оплату через Stripe...</p>
           </div>
         </div>
         <Footer />
@@ -194,13 +194,13 @@ const Orders = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full flex-grow pb-12 pt-6 animate-fade-in">
         {/* Breadcrumbs */}
         <nav className="flex mb-8 text-sm">
-          <Link to="/" className="text-gray-500 hover:text-floral-lavender">Home</Link>
+          <Link to="/" className="text-gray-500 hover:text-floral-lavender">Главная</Link>
           <span className="mx-2 text-gray-400">/</span>
-          <span className="text-gray-800">Orders</span>
+          <span className="text-gray-800">Заказы</span>
         </nav>
         
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-8">
-          <h1 className="text-3xl font-bold mb-4 sm:mb-0">My Orders</h1>
+          <h1 className="text-3xl font-bold mb-4 sm:mb-0">Мои заказы</h1>
           
           <div className="flex flex-wrap gap-3">
             <div className="relative">
@@ -211,12 +211,12 @@ const Orders = () => {
                 onClick={() => setFilterStatus(filterStatus === "all" ? "paid" : filterStatus === "paid" ? "unpaid" : "all")}
               >
                 <Filter className="h-4 w-4" />
-                {filterStatus === "all" ? "All Orders" : filterStatus === "paid" ? "Paid Only" : "Unpaid Only"}
+                {filterStatus === "all" ? "Все заказы" : filterStatus === "paid" ? "Только оплаченные" : "Только неоплаченные"}
               </Button>
             </div>
             
             <Link to="/">
-              <Button variant="outline" size="sm">Continue Shopping</Button>
+              <Button variant="outline" size="sm">Продолжить покупки</Button>
             </Link>
           </div>
         </div>
@@ -226,15 +226,15 @@ const Orders = () => {
             <div className="mb-6 text-gray-400">
               <ShoppingBag size={64} className="mx-auto" />
             </div>
-            <h2 className="text-2xl font-semibold mb-4">No orders found</h2>
+            <h2 className="text-2xl font-semibold mb-4">Заказы не найдены</h2>
             <p className="text-gray-600 mb-8">
               {searchTerm || filterStatus !== "all" 
-                ? "Try changing your search or filter settings." 
-                : "You haven't placed any orders yet."}
+                ? "Попробуйте изменить параметры поиска или фильтра." 
+                : "Вы еще не разместили ни одного заказа."}
             </p>
             <Link to="/">
               <Button className="bg-floral-lavender hover:bg-floral-lavender/90">
-                Start Shopping
+                Начать покупки
               </Button>
             </Link>
           </div>
@@ -245,8 +245,8 @@ const Orders = () => {
                 <CardHeader className="bg-gray-50">
                   <div className="flex flex-wrap items-center justify-between gap-4">
                     <div>
-                      <CardTitle className="text-lg">Order #{order.id.slice(0, 8)}</CardTitle>
-                      <CardDescription>Placed on {new Date(order.date || order.created_at || "").toLocaleDateString()}</CardDescription>
+                      <CardTitle className="text-lg">Заказ #{order.id.slice(0, 8)}</CardTitle>
+                      <CardDescription>Размещен {new Date(order.date || order.created_at || "").toLocaleDateString()}</CardDescription>
                     </div>
                     
                     <div className="flex items-center gap-3">
@@ -258,9 +258,9 @@ const Orders = () => {
                         }
                       >
                         {order.status === "paid" ? (
-                          <><Check className="w-3 h-3 mr-1" /> Paid</>
+                          <><Check className="w-3 h-3 mr-1" /> Оплачен</>
                         ) : (
-                          <><X className="w-3 h-3 mr-1" /> Unpaid</>
+                          <><X className="w-3 h-3 mr-1" /> Не оплачен</>
                         )}
                       </Badge>
                       <span className="font-medium">{formatKztPrice(order.total)}</span>
@@ -272,9 +272,9 @@ const Orders = () => {
                   <Table>
                     <TableHeader>
                       <TableRow>
-                        <TableHead>Product</TableHead>
-                        <TableHead className="text-right">Quantity</TableHead>
-                        <TableHead className="text-right">Price</TableHead>
+                        <TableHead>Товар</TableHead>
+                        <TableHead className="text-right">Количество</TableHead>
+                        <TableHead className="text-right">Цена</TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -300,7 +300,7 @@ const Orders = () => {
                 
                 <CardFooter className="bg-gray-50 flex justify-between">
                   <div className="text-sm text-gray-600">
-                    Total: <span className="font-medium">{formatKztPrice(order.total)}</span>
+                    Итого: <span className="font-medium">{formatKztPrice(order.total)}</span>
                   </div>
                   
                   {order.status === "unpaid" && (
@@ -310,7 +310,7 @@ const Orders = () => {
                       disabled={verifyingPayment}
                     >
                       <CreditCard className="mr-2 h-4 w-4" />
-                      {verifyingPayment ? "Processing..." : "Pay Now"}
+                      {verifyingPayment ? "Обработка..." : "Оплатить сейчас"}
                     </Button>
                   )}
                   
@@ -319,7 +319,7 @@ const Orders = () => {
                       variant="outline"
                       onClick={() => openOrderDetails(order)}
                     >
-                      View Details
+                      Подробности
                     </Button>
                   )}
                 </CardFooter>
