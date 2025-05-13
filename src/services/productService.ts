@@ -69,20 +69,16 @@ export const searchProducts = async (
     query = query.or(`name.ilike.%${searchTerm}%,description.ilike.%${searchTerm}%`);
   }
   
-  // Apply color filters - FIXED IMPLEMENTATION
+  // Apply color filters - Fix the implementation
   if (filters.colors && filters.colors.length > 0) {
-    // Debug log to understand what colors we're filtering for
     console.log('Filtering for colors:', filters.colors);
     
-    // We'll collect all products that contain any of the selected colors
-    // This is a simpler approach that works better with JSON array data
-    const filterQuery = filters.colors.map(color => `colors::text ILIKE '%${color}%'`).join(' OR ');
-    
-    // Apply the color filter
-    if (filterQuery) {
-      query = query.or(filterQuery);
-      console.log('Applied color filter query:', filterQuery);
-    }
+    // Instead of using ILIKE with OR in the query string, which causes syntax issues,
+    // we'll filter for each color individually with separate contains() filters
+    filters.colors.forEach(color => {
+      // Use contains for a case-insensitive match of the color value in the JSON array
+      query = query.filter('colors', 'cs', `["${color}"]`);
+    });
   }
   
   // Apply occasion filters
