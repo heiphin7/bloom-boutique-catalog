@@ -27,7 +27,7 @@ const OrderDetails = () => {
     city: "",
     state: "",
     postal_code: "",
-    country: "Россия"
+    country: "Казахстан"
   });
   const [searchTerm, setSearchTerm] = useState("");
 
@@ -283,7 +283,7 @@ const OrderDetails = () => {
                         <Input 
                           id="city" 
                           type="text" 
-                          placeholder="Москва" 
+                          placeholder="Алматы" 
                           value={address.city}
                           onChange={(e) => setAddress({...address, city: e.target.value})}
                           required
@@ -295,7 +295,7 @@ const OrderDetails = () => {
                         <Input 
                           id="state" 
                           type="text" 
-                          placeholder="Московская обл." 
+                          placeholder="Алматинская обл." 
                           value={address.state}
                           onChange={(e) => setAddress({...address, state: e.target.value})}
                           required
@@ -309,7 +309,7 @@ const OrderDetails = () => {
                         <Input 
                           id="postal_code" 
                           type="text" 
-                          placeholder="123456" 
+                          placeholder="050000" 
                           value={address.postal_code}
                           onChange={(e) => setAddress({...address, postal_code: e.target.value})}
                           required

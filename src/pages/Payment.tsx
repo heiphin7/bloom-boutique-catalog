@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { ShoppingCart, CreditCard } from "lucide-react";
@@ -27,7 +28,7 @@ const PaymentForm = () => {
     city: "",
     state: "",
     postal_code: "",
-    country: "United States"
+    country: "Казахстан"
   });
 
   // Calculate total amount
