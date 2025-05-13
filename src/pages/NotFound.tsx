@@ -19,13 +19,13 @@ const NotFound = () => {
     <div className="min-h-screen flex items-center justify-center bg-gray-50">
       <div className="text-center p-8 max-w-md">
         <h1 className="text-6xl font-bold text-floral-lavender mb-4">404</h1>
-        <p className="text-2xl font-semibold text-gray-800 mb-6">Page Not Found</p>
+        <p className="text-2xl font-semibold text-gray-800 mb-6">Страница не найдена</p>
         <p className="text-lg text-gray-600 mb-8">
-          Sorry, the page you're looking for doesn't exist or has been moved.
+          Извините, страница, которую вы ищете, не существует или была перемещена.
         </p>
         <Button asChild className="bg-floral-lavender hover:bg-floral-lavender/90 text-white">
           <Link to={user ? "/" : "/auth"}>
-            Return to {user ? "Home" : "Login"}
+            Вернуться на {user ? "Главную" : "Страницу входа"}
           </Link>
         </Button>
       </div>
