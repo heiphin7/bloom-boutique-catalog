@@ -36,7 +36,7 @@ const PaymentConfirmation = () => {
   useEffect(() => {
     const verifyPayment = async () => {
       if (!sessionId || !orderId || success !== 'true') {
-        setError("Invalid payment information");
+        setError("Недействительная информация об оплате");
         setLoading(false);
         return;
       }
@@ -49,7 +49,7 @@ const PaymentConfirmation = () => {
         
         if (verifyError) {
           console.error("Payment verification error:", verifyError);
-          setError("We couldn't verify your payment status. Please contact support.");
+          setError("Мы не смогли проверить статус вашего платежа. Пожалуйста, обратитесь в службу поддержки.");
           setLoading(false);
           return;
         }
@@ -58,19 +58,19 @@ const PaymentConfirmation = () => {
         
         if (data?.paid) {
           toast({
-            title: "Payment Successful",
-            description: "Your order has been confirmed and paid successfully!",
+            title: "Оплата успешна",
+            description: "Ваш заказ был подтвержден и успешно оплачен!",
             variant: "default"
           });
           
           // Refresh orders to show updated status
           await refreshOrders();
         } else {
-          setError("Payment verification failed. Please contact customer support.");
+          setError("Проверка платежа не удалась. Пожалуйста, обратитесь в службу поддержки клиентов.");
         }
       } catch (err) {
         console.error("Payment verification error:", err);
-        setError("An unexpected error occurred. Please contact support.");
+        setError("Произошла непредвиденная ошибка. Пожалуйста, обратитесь в службу поддержки.");
       } finally {
         setLoading(false);
       }
@@ -90,47 +90,47 @@ const PaymentConfirmation = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full flex-grow pb-12 pt-6 animate-fade-in">
         {/* Breadcrumbs */}
         <nav className="flex mb-8 text-sm">
-          <Link to="/" className="text-gray-500 hover:text-floral-lavender">Home</Link>
+          <Link to="/" className="text-gray-500 hover:text-floral-lavender">Главная</Link>
           <span className="mx-2 text-gray-400">/</span>
-          <Link to="/orders" className="text-gray-500 hover:text-floral-lavender">Orders</Link>
+          <Link to="/orders" className="text-gray-500 hover:text-floral-lavender">Заказы</Link>
           <span className="mx-2 text-gray-400">/</span>
-          <span className="text-gray-800">Payment Confirmation</span>
+          <span className="text-gray-800">Подтверждение оплаты</span>
         </nav>
 
         {/* Payment verification status */}
         <div className="max-w-lg mx-auto">
           <Card>
             <CardHeader className="text-center">
-              <CardTitle className="text-2xl">Payment Confirmation</CardTitle>
-              <CardDescription>Order #{orderId?.slice(0, 8)}</CardDescription>
+              <CardTitle className="text-2xl">Подтверждение оплаты</CardTitle>
+              <CardDescription>Заказ #{orderId?.slice(0, 8)}</CardDescription>
             </CardHeader>
             
             <CardContent className="flex flex-col items-center justify-center py-8">
               {loading ? (
                 <>
                   <Loader2 className="h-16 w-16 text-floral-lavender animate-spin mb-4" />
-                  <p className="text-lg">Verifying your payment...</p>
+                  <p className="text-lg">Проверка вашего платежа...</p>
                 </>
               ) : error ? (
                 <>
                   <AlertCircle className="h-16 w-16 text-red-500 mb-4" />
-                  <h2 className="text-xl font-semibold mb-2">Payment Verification Failed</h2>
+                  <h2 className="text-xl font-semibold mb-2">Проверка платежа не удалась</h2>
                   <p className="text-gray-600 mb-4 text-center">{error}</p>
                 </>
               ) : verificationResult?.paid ? (
                 <>
                   <CheckCircle className="h-16 w-16 text-floral-sage mb-4" />
-                  <h2 className="text-xl font-semibold mb-2">Payment Successful!</h2>
+                  <h2 className="text-xl font-semibold mb-2">Оплата успешна!</h2>
                   <p className="text-gray-600 mb-4 text-center">
-                    Your order has been confirmed and paid successfully. A confirmation email will be sent shortly.
+                    Ваш заказ был подтвержден и успешно оплачен. Подтверждение будет отправлено на вашу электронную почту в ближайшее время.
                   </p>
                 </>
               ) : (
                 <>
                   <AlertCircle className="h-16 w-16 text-orange-500 mb-4" />
-                  <h2 className="text-xl font-semibold mb-2">Payment Pending</h2>
+                  <h2 className="text-xl font-semibold mb-2">Платеж в обработке</h2>
                   <p className="text-gray-600 mb-4 text-center">
-                    Your payment is being processed. We'll update your order status once confirmed.
+                    Ваш платеж обрабатывается. Мы обновим статус вашего заказа, как только он будет подтвержден.
                   </p>
                 </>
               )}
@@ -141,14 +141,14 @@ const PaymentConfirmation = () => {
                 onClick={() => navigate('/orders')} 
                 className="bg-floral-lavender hover:bg-floral-lavender/90"
               >
-                View Orders
+                Просмотр заказов
               </Button>
               
               <Button 
                 variant="outline" 
                 onClick={() => navigate('/')}
               >
-                Continue Shopping
+                Продолжить покупки
               </Button>
             </CardFooter>
           </Card>
