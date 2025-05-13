@@ -1,4 +1,3 @@
-
 import { supabase } from "@/integrations/supabase/client";
 import type { Product } from "@/types/supabase";
 
@@ -28,6 +27,30 @@ export const getFeaturedProducts = async (limit = 3): Promise<Product[]> => {
   if (error) {
     console.error('Error fetching featured products:', error);
     return [];
+  }
+  
+  return data || [];
+};
+
+// Get random products
+export const getRandomProducts = async (limit = 3): Promise<Product[]> => {
+  const { data, error } = await supabase
+    .from('products')
+    .select('*')
+    .order('id', { ascending: false, nullsFirst: false })
+    .limit(limit);
+  
+  if (error) {
+    console.error('Error fetching random products:', error);
+    return [];
+  }
+  
+  // Shuffle the data to get random products
+  if (data) {
+    for (let i = data.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [data[i], data[j]] = [data[j], data[i]];
+    }
   }
   
   return data || [];

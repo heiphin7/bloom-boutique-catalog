@@ -6,12 +6,12 @@ import Footer from "../components/Footer";
 import FlowerCard from "../components/FlowerCard";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Award, Gift, Heart, ShieldCheck, Truck } from "lucide-react";
-import { getFeaturedProducts } from "@/services/productService";
+import { getRandomProducts } from "@/services/productService";
 
 const Index = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [isLoading, setIsLoading] = useState(true);
-  const [featuredFlowers, setFeaturedFlowers] = useState([]);
+  const [randomFlowers, setRandomFlowers] = useState([]);
   
   const handleSearchChange = (e) => {
     setSearchTerm(e.target.value);
@@ -27,19 +27,19 @@ const Index = () => {
   };
   
   useEffect(() => {
-    const loadFeaturedProducts = async () => {
+    const loadRandomProducts = async () => {
       setIsLoading(true);
       try {
-        const products = await getFeaturedProducts(3);
-        setFeaturedFlowers(products);
+        const products = await getRandomProducts(3);
+        setRandomFlowers(products);
       } catch (error) {
-        console.error("Error loading featured products:", error);
+        console.error("Error loading random products:", error);
       } finally {
         setIsLoading(false);
       }
     };
     
-    loadFeaturedProducts();
+    loadRandomProducts();
   }, []);
 
   return (
@@ -152,7 +152,7 @@ const Index = () => {
             </div>
             
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              {featuredFlowers.map((flower) => (
+              {randomFlowers.map((flower) => (
                 <FlowerCard key={flower.id} flower={flower} />
               ))}
             </div>
