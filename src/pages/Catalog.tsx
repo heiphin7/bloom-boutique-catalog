@@ -62,6 +62,8 @@ const Catalog = () => {
     const fetchProducts = async () => {
       setIsLoading(true);
       try {
+        console.log("Fetching with filters:", activeFilters);
+        
         // Get all products matching filters without pagination
         const products = await searchProducts(searchTerm, {
           colors: activeFilters.colors,
@@ -69,6 +71,8 @@ const Catalog = () => {
           types: activeFilters.types,
           priceRange: activeFilters.priceRange
         }, sortOption);
+        
+        console.log(`Total products before pagination: ${products.length}`);
         
         // Calculate total pages
         setTotalPages(Math.max(1, Math.ceil(products.length / itemsPerPage)));
@@ -93,6 +97,8 @@ const Catalog = () => {
   }, [searchTerm, activeFilters, sortOption, currentPage]);
   
   const handleFilterChange = (filterType, value) => {
+    console.log(`Filter change: ${filterType} = ${value}`);
+    
     setActiveFilters(prev => {
       const newFilters = {...prev};
       

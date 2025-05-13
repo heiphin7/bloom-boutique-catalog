@@ -22,7 +22,17 @@ const Sidebar = ({ activeFilters, onFilterChange, onClearAllFilters }) => {
   }, [activeFilters.priceRange]);
 
   const handleCheckboxChange = (filterType, value) => {
-    onFilterChange(filterType, value);
+    // For colors, we need to send the value, not the label
+    if (filterType === "colors") {
+      // Find the color object by label to get its value
+      const colorObj = flowerColors.find(color => color.label === value);
+      if (colorObj) {
+        console.log(`Selected color: ${value}, value: ${colorObj.value}`);
+        onFilterChange(filterType, colorObj.value);
+      }
+    } else {
+      onFilterChange(filterType, value);
+    }
   };
 
   // Price range is now directly in KZT
@@ -147,7 +157,7 @@ const Sidebar = ({ activeFilters, onFilterChange, onClearAllFilters }) => {
             <div key={color.value} className="flex items-center">
               <Checkbox
                 id={`color-${color.value}`}
-                checked={activeFilters.colors.includes(color.label)}
+                checked={activeFilters.colors.includes(color.value)}
                 onCheckedChange={() => handleCheckboxChange("colors", color.label)}
               />
               <Label htmlFor={`color-${color.value}`} className="ml-2 text-sm cursor-pointer flex items-center">

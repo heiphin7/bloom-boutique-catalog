@@ -69,15 +69,19 @@ export const searchProducts = async (
     query = query.or(`name.ilike.%${searchTerm}%,description.ilike.%${searchTerm}%`);
   }
   
-  // Apply color filters
+  // Apply color filters - FIXED IMPLEMENTATION
   if (filters.colors && filters.colors.length > 0) {
-    // Using a better approach for color filtering
-    const colorConditions = filters.colors.map(color => 
-      `colors->>'name' = '${color}'`
-    ).join(' OR ');
+    // Debug log to understand what colors we're filtering for
+    console.log('Filtering for colors:', filters.colors);
     
-    if (colorConditions) {
-      query = query.or(colorConditions);
+    // We'll collect all products that contain any of the selected colors
+    // This is a simpler approach that works better with JSON array data
+    const filterQuery = filters.colors.map(color => `colors::text ILIKE '%${color}%'`).join(' OR ');
+    
+    // Apply the color filter
+    if (filterQuery) {
+      query = query.or(filterQuery);
+      console.log('Applied color filter query:', filterQuery);
     }
   }
   
@@ -127,7 +131,7 @@ export const searchProducts = async (
       break;
   }
   
-  // Explicitly remove any limit to ensure all products are returned
+  // Execute query
   const { data, error } = await query;
   
   if (error) {
@@ -135,8 +139,12 @@ export const searchProducts = async (
     return [];
   }
   
-  // Log the result count
-  console.log(`Found ${data?.length || 0} products matching filters`);
+  // Debug: Log what products were found with the color filter
+  if (filters.colors && filters.colors.length > 0) {
+    console.log(`Found ${data?.length || 0} products with selected colors:`, 
+      data?.map(product => ({ id: product.id, name: product.name, colors: product.colors }))
+    );
+  }
   
   return data || [];
 };
