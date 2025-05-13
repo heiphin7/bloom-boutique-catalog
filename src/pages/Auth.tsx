@@ -15,18 +15,18 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 
 // Login form schema
 const loginSchema = z.object({
-  email: z.string().email("Please enter a valid email address"),
-  password: z.string().min(6, "Password must be at least 6 characters"),
+  email: z.string().email("Пожалуйста, введите корректный email адрес"),
+  password: z.string().min(6, "Пароль должен содержать минимум 6 символов"),
 });
 
 // Registration form schema
 const registerSchema = z.object({
-  name: z.string().min(2, "Name must be at least 2 characters"),
-  email: z.string().email("Please enter a valid email address"),
-  password: z.string().min(6, "Password must be at least 6 characters"),
+  name: z.string().min(2, "Имя должно содержать минимум 2 символа"),
+  email: z.string().email("Пожалуйста, введите корректный email адрес"),
+  password: z.string().min(6, "Пароль должен содержать минимум 6 символов"),
   confirmPassword: z.string(),
 }).refine((data) => data.password === data.confirmPassword, {
-  message: "Passwords don't match",
+  message: "Пароли не совпадают",
   path: ["confirmPassword"],
 });
 
@@ -67,7 +67,7 @@ const Auth = () => {
     try {
       await signIn(values.email, values.password);
     } catch (error: any) {
-      setErrorMessage(error?.message || "An error occurred during sign in");
+      setErrorMessage(error?.message || "Произошла ошибка при входе");
     }
   };
 
@@ -76,7 +76,7 @@ const Auth = () => {
     try {
       await signUp(values.email, values.password, values.name);
     } catch (error: any) {
-      setErrorMessage(error?.message || "An error occurred during registration");
+      setErrorMessage(error?.message || "Произошла ошибка при регистрации");
     }
   };
 
@@ -85,14 +85,14 @@ const Auth = () => {
       <div className="max-w-md w-full space-y-8">
         <div className="text-center">
           <h2 className="mt-6 text-3xl font-extrabold text-gray-900">Blossom123 Boutique</h2>
-          <p className="mt-2 text-sm text-gray-600">Sign in to your account or create a new one</p>
+          <p className="mt-2 text-sm text-gray-600">Войдите в свой аккаунт или создайте новый</p>
         </div>
         
         <Card>
           <Tabs value={activeTab} onValueChange={setActiveTab}>
             <TabsList className="grid w-full grid-cols-2">
-              <TabsTrigger value="login">Login</TabsTrigger>
-              <TabsTrigger value="register">Register</TabsTrigger>
+              <TabsTrigger value="login">Вход</TabsTrigger>
+              <TabsTrigger value="register">Регистрация</TabsTrigger>
             </TabsList>
             
             {errorMessage && (
@@ -106,9 +106,9 @@ const Auth = () => {
             
             <TabsContent value="login">
               <CardHeader>
-                <CardTitle>Login</CardTitle>
+                <CardTitle>Вход</CardTitle>
                 <CardDescription>
-                  Enter your email and password to access your account
+                  Введите ваш email и пароль для входа в аккаунт
                 </CardDescription>
               </CardHeader>
               
@@ -134,7 +134,7 @@ const Auth = () => {
                       name="password"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Password</FormLabel>
+                          <FormLabel>Пароль</FormLabel>
                           <FormControl>
                             <Input type="password" autoComplete="current-password" {...field} />
                           </FormControl>
@@ -144,7 +144,7 @@ const Auth = () => {
                     />
                     
                     <Button type="submit" className="w-full bg-floral-lavender hover:bg-floral-lavender/90" disabled={isLoading}>
-                      {isLoading ? "Signing in..." : "Sign In"}
+                      {isLoading ? "Вход..." : "Войти"}
                     </Button>
                   </form>
                 </Form>
@@ -153,9 +153,9 @@ const Auth = () => {
             
             <TabsContent value="register">
               <CardHeader>
-                <CardTitle>Register</CardTitle>
+                <CardTitle>Регистрация</CardTitle>
                 <CardDescription>
-                  Create a new account to start shopping
+                  Создайте новый аккаунт для начала покупок
                 </CardDescription>
               </CardHeader>
               
@@ -167,9 +167,9 @@ const Auth = () => {
                       name="name"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Name</FormLabel>
+                          <FormLabel>Имя</FormLabel>
                           <FormControl>
-                            <Input placeholder="John Doe" autoComplete="name" {...field} />
+                            <Input placeholder="Иван Иванов" autoComplete="name" {...field} />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -195,7 +195,7 @@ const Auth = () => {
                       name="password"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Password</FormLabel>
+                          <FormLabel>Пароль</FormLabel>
                           <FormControl>
                             <Input type="password" autoComplete="new-password" {...field} />
                           </FormControl>
@@ -209,7 +209,7 @@ const Auth = () => {
                       name="confirmPassword"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Confirm Password</FormLabel>
+                          <FormLabel>Подтвердите пароль</FormLabel>
                           <FormControl>
                             <Input type="password" autoComplete="new-password" {...field} />
                           </FormControl>
@@ -219,7 +219,7 @@ const Auth = () => {
                     />
                     
                     <Button type="submit" className="w-full bg-floral-lavender hover:bg-floral-lavender/90" disabled={isLoading}>
-                      {isLoading ? "Registering..." : "Register"}
+                      {isLoading ? "Регистрация..." : "Зарегистрироваться"}
                     </Button>
                   </form>
                 </Form>
@@ -229,14 +229,14 @@ const Auth = () => {
           
           <CardFooter className="flex flex-col space-y-2 items-center">
             <div className="text-sm text-gray-500">
-              {activeTab === "login" ? "Don't have an account?" : "Already have an account?"}
+              {activeTab === "login" ? "Нет аккаунта?" : "Уже есть аккаунт?"}
             </div>
             <Button 
               variant="link" 
               onClick={() => setActiveTab(activeTab === "login" ? "register" : "login")}
               className="text-floral-lavender"
             >
-              {activeTab === "login" ? "Register here" : "Sign in here"}
+              {activeTab === "login" ? "Зарегистрироваться" : "Войти"}
             </Button>
           </CardFooter>
         </Card>

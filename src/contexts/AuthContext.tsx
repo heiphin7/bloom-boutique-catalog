@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { Session, User } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
@@ -109,7 +108,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
       if (error) {
         toast({
-          title: 'Sign in failed',
+          title: 'Ошибка входа',
           description: error.message,
           variant: 'destructive',
         });
@@ -117,13 +116,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       }
 
       toast({
-        title: 'Signed in successfully',
-        description: `Welcome back!`,
+        title: 'Вход выполнен',
+        description: `Добро пожаловать!`,
       });
       
       navigate('/');
     } catch (error) {
-      console.error('Error signing in:', error);
+      console.error('Ошибка при входе:', error);
     } finally {
       setIsLoading(false);
     }
@@ -134,13 +133,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     try {
       setIsLoading(true);
       
-      console.log('Starting sign up process with:', { email, name });
+      console.log('Начало процесса регистрации:', { email, name });
       
       // Validate input
       if (!email || !password || !name) {
         toast({
-          title: 'Validation error',
-          description: 'Please fill in all required fields',
+          title: 'Ошибка валидации',
+          description: 'Пожалуйста, заполните все обязательные поля',
           variant: 'destructive',
         });
         return;
@@ -148,8 +147,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       
       if (password.length < 6) {
         toast({
-          title: 'Password too short',
-          description: 'Password must be at least 6 characters',
+          title: 'Слишком короткий пароль',
+          description: 'Пароль должен содержать минимум 6 символов',
           variant: 'destructive',
         });
         return;
@@ -165,19 +164,19 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         },
       });
 
-      console.log('Sign up response:', { 
+      console.log('Ответ регистрации:', { 
         user: data?.user ? {
           id: data.user.id,
           email: data.user.email,
           created_at: data.user.created_at
         } : null,
-        session: data?.session ? 'Session exists' : 'No session',
-        error: error || 'No error'
+        session: data?.session ? 'Сессия существует' : 'Сессия отсутствует',
+        error: error || 'Нет ошибок'
       });
 
       if (error) {
         toast({
-          title: 'Sign up failed',
+          title: 'Ошибка регистрации',
           description: error.message,
           variant: 'destructive',
         });
@@ -185,8 +184,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       }
 
       toast({
-        title: 'Account created',
-        description: 'Your account has been created successfully.',
+        title: 'Аккаунт создан',
+        description: 'Ваш аккаунт успешно создан.',
       });
       
       // Create a cart for the new user
@@ -241,13 +240,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         navigate('/');
       } else {
         toast({
-          title: 'Verification required',
-          description: 'Please check your email for verification instructions.',
+          title: 'Требуется подтверждение',
+          description: 'Пожалуйста, проверьте свою почту для подтверждения.',
         });
         navigate('/auth');
       }
     } catch (error) {
-      console.error('Error signing up:', error);
+      console.error('Ошибка при регистрации:', error);
     } finally {
       setIsLoading(false);
     }
@@ -262,7 +261,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
       if (error) {
         toast({
-          title: 'Sign out failed',
+          title: 'Ошибка выхода',
           description: error.message,
           variant: 'destructive',
         });
@@ -270,12 +269,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       }
 
       toast({
-        title: 'Signed out successfully',
+        title: 'Выход выполнен успешно',
       });
       
       navigate('/auth');
     } catch (error) {
-      console.error('Error signing out:', error);
+      console.error('Ошибка при выходе:', error);
     } finally {
       setIsLoading(false);
     }
