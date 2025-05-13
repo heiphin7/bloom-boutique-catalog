@@ -88,24 +88,6 @@ const Header: React.FC<HeaderProps> = ({
               Каталог
             </Link>
             <Link 
-              to="/about" 
-              className={cn(
-                "text-base font-normal font-manrope transition-colors hover:text-floral-lavender",
-                location.pathname === "/about" ? "text-floral-lavender" : "text-foreground"
-              )}
-            >
-              О нас
-            </Link>
-            <Link 
-              to="/contact" 
-              className={cn(
-                "text-base font-normal font-manrope transition-colors hover:text-floral-lavender",
-                location.pathname === "/contact" ? "text-floral-lavender" : "text-foreground"
-              )}
-            >
-              Контакты
-            </Link>
-            <Link 
               to="/payment" 
               className={cn(
                 "text-base font-normal font-manrope transition-colors hover:text-floral-lavender",
