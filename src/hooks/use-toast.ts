@@ -1,3 +1,4 @@
+
 import * as React from "react"
 
 import type {
@@ -168,6 +169,30 @@ function toast({ ...props }: Toast) {
   }
 }
 
+// Translated toast variants for Russian
+const successToast = (message: string) => {
+  return toast({
+    title: "Успешно",
+    description: message,
+    variant: "default",
+  })
+}
+
+const errorToast = (message: string) => {
+  return toast({
+    title: "Ошибка",
+    description: message,
+    variant: "destructive",
+  })
+}
+
+const infoToast = (message: string) => {
+  return toast({
+    title: "Информация",
+    description: message,
+  })
+}
+
 function useToast() {
   const [state, setState] = React.useState<State>(memoryState)
 
@@ -185,6 +210,10 @@ function useToast() {
     ...state,
     toast,
     dismiss: (toastId?: string) => dispatch({ type: "DISMISS_TOAST", toastId }),
+    // Add translated variants
+    success: successToast,
+    error: errorToast,
+    info: infoToast,
   }
 }
 

@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { ShoppingCart, Heart, Check, ChevronLeft } from "lucide-react";
@@ -128,9 +129,9 @@ const ProductDetail = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full flex-grow pb-12 pt-6 animate-fade-in">
         {/* Breadcrumbs */}
         <nav className="flex mb-8 text-sm">
-          <Link to="/" className="text-gray-500 hover:text-floral-lavender">Home</Link>
+          <Link to="/" className="text-gray-500 hover:text-floral-lavender">Главная</Link>
           <span className="mx-2 text-gray-400">/</span>
-          <Link to="/shop" className="text-gray-500 hover:text-floral-lavender">Shop</Link>
+          <Link to="/shop" className="text-gray-500 hover:text-floral-lavender">Каталог</Link>
           <span className="mx-2 text-gray-400">/</span>
           <span className="text-gray-800">{flower.name}</span>
         </nav>
@@ -193,7 +194,7 @@ const ProductDetail = () => {
                 onClick={handleAddToCart}
               >
                 <ShoppingCart size={18} className="mr-2" />
-                Add to Cart
+                Добавить в корзину
               </Button>
               <Button 
                 variant="outline" 
@@ -206,19 +207,19 @@ const ProductDetail = () => {
                 {isInWishlist ? (
                   <>
                     <Heart size={18} className="mr-2 fill-current" />
-                    In Wishlist
+                    В избранном
                   </>
                 ) : (
                   <>
                     <Heart size={18} className="mr-2" />
-                    Add to Wishlist
+                    В избранное
                   </>
                 )}
               </Button>
             </div>
             
             <div className="text-sm text-gray-500">
-              Category: <Link to={`/?category=${flower.type}`} className="text-floral-lavender hover:underline">{flower.type}</Link>
+              Категория: <Link to={`/?category=${flower.type}`} className="text-floral-lavender hover:underline">{flower.type}</Link>
             </div>
           </div>
         </div>
@@ -226,7 +227,7 @@ const ProductDetail = () => {
         {/* Related Products */}
         {relatedProducts.length > 0 && (
           <div className="mt-12">
-            <h2 className="text-2xl font-semibold mb-6">Related Products</h2>
+            <h2 className="text-2xl font-semibold mb-6">Похожие товары</h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
               {relatedProducts.map(product => (
                 <FlowerCard key={product.id} flower={product} />
@@ -243,7 +244,7 @@ const ProductDetail = () => {
             onClick={() => navigate('/')}
           >
             <ChevronLeft size={18} className="mr-2" />
-            Back to Shop
+            Вернуться в каталог
           </Button>
         </div>
       </div>
