@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useCart } from '../contexts/CartContext';
@@ -8,7 +9,7 @@ import { formatKztPrice } from '@/utils/currency';
 
 const FlowerCard = ({ flower }) => {
   const badgeClass = flower.is_new ? 'badge-new' : flower.on_sale ? 'badge-sale' : flower.is_bestseller ? 'badge-bestseller' : '';
-  const badgeText = flower.is_new ? 'New' : flower.on_sale ? 'Sale' : flower.is_bestseller ? 'Bestseller' : '';
+  const badgeText = flower.is_new ? 'Новинка' : flower.on_sale ? 'Скидка' : flower.is_bestseller ? 'Бестселлер' : '';
   const { addToCart } = useCart();
   const { checkIsInWishlist, toggleItem } = useWishlist();
   const [isInWishlist, setIsInWishlist] = useState(false);

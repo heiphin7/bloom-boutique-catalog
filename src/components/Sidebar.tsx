@@ -78,20 +78,20 @@ const Sidebar = ({ activeFilters, onFilterChange, onClearAllFilters }) => {
   return (
     <div className="space-y-8 sticky top-28 bg-white p-6 rounded-lg shadow-sm">
       <div className="flex justify-between items-center">
-        <h2 className="text-2xl font-semibold mb-2">Filters</h2>
+        <h2 className="text-2xl font-semibold mb-2">Фильтры</h2>
         <Button 
           variant="ghost" 
           size="sm" 
           onClick={onClearAllFilters}
           className="text-sm text-gray-500 hover:text-gray-700"
         >
-          Clear All
+          Очистить все
         </Button>
       </div>
 
       {/* Price Range */}
       <div>
-        <h3 className="font-medium mb-3">Price Range</h3>
+        <h3 className="font-medium mb-3">Диапазон цен</h3>
         <Slider
           value={localPriceRange}
           min={minPrice}
@@ -104,7 +104,7 @@ const Sidebar = ({ activeFilters, onFilterChange, onClearAllFilters }) => {
         {/* Added labeled input fields for price range */}
         <div className="flex items-center gap-4 mt-4">
           <div className="flex-1">
-            <Label htmlFor="min-price" className="text-xs text-gray-500 mb-1 block">Min Price</Label>
+            <Label htmlFor="min-price" className="text-xs text-gray-500 mb-1 block">Минимальная цена</Label>
             <div className="relative">
               <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">₸</span>
               <Input
@@ -118,7 +118,7 @@ const Sidebar = ({ activeFilters, onFilterChange, onClearAllFilters }) => {
             </div>
           </div>
           <div className="flex-1">
-            <Label htmlFor="max-price" className="text-xs text-gray-500 mb-1 block">Max Price</Label>
+            <Label htmlFor="max-price" className="text-xs text-gray-500 mb-1 block">Максимальная цена</Label>
             <div className="relative">
               <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">₸</span>
               <Input
@@ -141,7 +141,7 @@ const Sidebar = ({ activeFilters, onFilterChange, onClearAllFilters }) => {
       
       {/* Colors */}
       <div>
-        <h3 className="font-medium mb-3">Colors</h3>
+        <h3 className="font-medium mb-3">Цвета</h3>
         <div className="space-y-2">
           {flowerColors.map((color) => (
             <div key={color.value} className="flex items-center">
@@ -161,7 +161,7 @@ const Sidebar = ({ activeFilters, onFilterChange, onClearAllFilters }) => {
 
       {/* Occasions */}
       <div>
-        <h3 className="font-medium mb-3">Occasions</h3>
+        <h3 className="font-medium mb-3">Поводы</h3>
         <div className="space-y-2">
           {flowerOccasions.map((occasion) => (
             <div key={occasion} className="flex items-center">
@@ -180,7 +180,7 @@ const Sidebar = ({ activeFilters, onFilterChange, onClearAllFilters }) => {
 
       {/* Types */}
       <div>
-        <h3 className="font-medium mb-3">Types</h3>
+        <h3 className="font-medium mb-3">Типы</h3>
         <div className="space-y-2">
           {flowerTypes.map((type) => (
             <div key={type} className="flex items-center">
