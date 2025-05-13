@@ -7,6 +7,14 @@ import FlowerCard from "../components/FlowerCard";
 import Sidebar from "../components/Sidebar";
 import { searchProducts } from "@/services/productService";
 import { Button } from "@/components/ui/button";
+import { 
+  Pagination, 
+  PaginationContent, 
+  PaginationItem, 
+  PaginationLink, 
+  PaginationNext, 
+  PaginationPrevious 
+} from "@/components/ui/pagination";
 
 const Catalog = () => {
   const location = useLocation();
@@ -16,16 +24,22 @@ const Catalog = () => {
     colors: [],
     occasions: [],
     types: [],
-    priceRange: [0, 200] as [number, number], // Explicitly type as tuple
+    priceRange: [0, 90000] as [number, number], // Explicitly type as tuple
   });
   const [sortOption, setSortOption] = useState("featured");
   const [isLoading, setIsLoading] = useState(true);
+  
+  // Pagination states
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const itemsPerPage = 12;
   
   // Parse query params on page load
   useEffect(() => {
     const queryParams = new URLSearchParams(location.search);
     const search = queryParams.get('search');
     const category = queryParams.get('category');
+    const page = queryParams.get('page');
     
     if (search) {
       setSearchTerm(search);
@@ -37,6 +51,10 @@ const Catalog = () => {
         types: [category]
       }));
     }
+    
+    if (page) {
+      setCurrentPage(parseInt(page));
+    }
   }, [location.search]);
   
   // Fetch products when filters or search term change
@@ -44,6 +62,7 @@ const Catalog = () => {
     const fetchProducts = async () => {
       setIsLoading(true);
       try {
+        // Get all products matching filters without pagination
         const products = await searchProducts(searchTerm, {
           colors: activeFilters.colors,
           occasions: activeFilters.occasions,
@@ -51,17 +70,27 @@ const Catalog = () => {
           priceRange: activeFilters.priceRange
         }, sortOption);
         
-        setFilteredFlowers(products);
+        // Calculate total pages
+        setTotalPages(Math.max(1, Math.ceil(products.length / itemsPerPage)));
+        
+        // Apply pagination to the filtered results
+        const start = (currentPage - 1) * itemsPerPage;
+        const end = start + itemsPerPage;
+        const paginatedProducts = products.slice(start, end);
+        
+        setFilteredFlowers(paginatedProducts);
+        console.log(`Showing page ${currentPage} of ${Math.ceil(products.length / itemsPerPage)}, ${paginatedProducts.length} products`);
       } catch (error) {
         console.error("Error fetching products:", error);
         setFilteredFlowers([]);
+        setTotalPages(1);
       } finally {
         setIsLoading(false);
       }
     };
     
     fetchProducts();
-  }, [searchTerm, activeFilters, sortOption]);
+  }, [searchTerm, activeFilters, sortOption, currentPage]);
   
   const handleFilterChange = (filterType, value) => {
     setActiveFilters(prev => {
@@ -79,12 +108,15 @@ const Catalog = () => {
         }
       }
       
+      // Reset to first page when filters change
+      setCurrentPage(1);
       return newFilters;
     });
   };
   
   const handleSearchChange = (e) => {
     setSearchTerm(e.target.value);
+    setCurrentPage(1); // Reset to first page on new search
   };
 
   const handleSearchKeyDown = (e) => {
@@ -96,6 +128,7 @@ const Catalog = () => {
   
   const handleSortChange = (e) => {
     setSortOption(e.target.value);
+    setCurrentPage(1); // Reset to first page on sort change
   };
   
   const handleClearAllFilters = () => {
@@ -103,10 +136,51 @@ const Catalog = () => {
       colors: [],
       occasions: [],
       types: [],
-      priceRange: [0, 200],
+      priceRange: [0, 90000],
     });
     setSearchTerm("");
     setSortOption("featured");
+    setCurrentPage(1);
+  };
+
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
+    window.scrollTo(0, 0);
+  };
+
+  // Generate array of page numbers for pagination
+  const getPageNumbers = () => {
+    const pages = [];
+    const maxVisiblePages = 5;
+    
+    if (totalPages <= maxVisiblePages) {
+      // Show all pages if we have few pages
+      for (let i = 1; i <= totalPages; i++) {
+        pages.push(i);
+      }
+    } else {
+      // Show first page, current page, and some surrounding pages
+      pages.push(1);
+      
+      let startPage = Math.max(2, currentPage - 1);
+      let endPage = Math.min(totalPages - 1, currentPage + 1);
+      
+      if (startPage > 2) {
+        pages.push('...');
+      }
+      
+      for (let i = startPage; i <= endPage; i++) {
+        pages.push(i);
+      }
+      
+      if (endPage < totalPages - 1) {
+        pages.push('...');
+      }
+      
+      pages.push(totalPages);
+    }
+    
+    return pages;
   };
 
   return (
@@ -170,11 +244,47 @@ const Catalog = () => {
                 ))}
               </div>
             ) : filteredFlowers.length > 0 ? (
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 animate-fade-in">
-                {filteredFlowers.map((flower) => (
-                  <FlowerCard key={flower.id} flower={flower} />
-                ))}
-              </div>
+              <>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 animate-fade-in">
+                  {filteredFlowers.map((flower) => (
+                    <FlowerCard key={flower.id} flower={flower} />
+                  ))}
+                </div>
+                
+                {/* Pagination */}
+                {totalPages > 1 && (
+                  <Pagination className="mt-8">
+                    <PaginationContent>
+                      {currentPage > 1 && (
+                        <PaginationItem>
+                          <PaginationPrevious onClick={() => handlePageChange(currentPage - 1)} />
+                        </PaginationItem>
+                      )}
+                      
+                      {getPageNumbers().map((page, index) => (
+                        <PaginationItem key={index}>
+                          {page === '...' ? (
+                            <span className="flex h-9 w-9 items-center justify-center">...</span>
+                          ) : (
+                            <PaginationLink 
+                              isActive={page === currentPage}
+                              onClick={() => handlePageChange(page)}
+                            >
+                              {page}
+                            </PaginationLink>
+                          )}
+                        </PaginationItem>
+                      ))}
+                      
+                      {currentPage < totalPages && (
+                        <PaginationItem>
+                          <PaginationNext onClick={() => handlePageChange(currentPage + 1)} />
+                        </PaginationItem>
+                      )}
+                    </PaginationContent>
+                  </Pagination>
+                )}
+              </>
             ) : (
               <div className="text-center py-16 animate-fade-in">
                 <i className="fa-solid fa-magnifying-glass-minus text-4xl text-gray-400 mb-4"></i>

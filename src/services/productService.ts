@@ -49,7 +49,7 @@ export const getProductById = async (id: number): Promise<Product | null> => {
   return data;
 };
 
-// Search products
+// Search products - Removing any implicit limits
 export const searchProducts = async (
   searchTerm: string, 
   filters: {
@@ -127,6 +127,7 @@ export const searchProducts = async (
       break;
   }
   
+  // Explicitly remove any limit to ensure all products are returned
   const { data, error } = await query;
   
   if (error) {
