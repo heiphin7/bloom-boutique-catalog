@@ -33,9 +33,9 @@ const Wishlist = () => {
       
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full flex-grow pb-12 pt-6">
         <div className="text-center mb-8">
-          <h1 className="text-4xl md:text-5xl font-bold text-gray-800 mb-3">My Wishlist</h1>
+          <h1 className="text-4xl md:text-5xl font-bold text-gray-800 mb-3">Мой список желаний</h1>
           <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-            Items you've saved for later. Add them to your cart whenever you're ready.
+            Товары, которые вы сохранили на будущее. Добавьте их в корзину, когда будете готовы.
           </p>
         </div>
         
@@ -59,14 +59,14 @@ const Wishlist = () => {
         ) : (
           <div className="text-center py-16 animate-fade-in">
             <i className="fa-solid fa-heart-crack text-4xl text-gray-400 mb-4"></i>
-            <h3 className="text-xl font-medium text-gray-800 mb-2">Your wishlist is empty</h3>
-            <p className="text-gray-600 mb-6">Save items you love to your wishlist and find them here later.</p>
+            <h3 className="text-xl font-medium text-gray-800 mb-2">Ваш список желаний пуст</h3>
+            <p className="text-gray-600 mb-6">Сохраняйте понравившиеся товары в список желаний и находите их здесь позже.</p>
             <Button
               onClick={() => navigate('/catalog')}
               className="bg-floral-lavender hover:bg-opacity-90 text-white transition-colors"
             >
               <ShoppingBag className="mr-2 h-5 w-5" />
-              Continue Shopping
+              Продолжить покупки
             </Button>
           </div>
         )}
